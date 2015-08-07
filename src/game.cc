@@ -36,6 +36,7 @@ bool Game::Init(std::string json, int source_seed_idx) {
       unit.cells.push_back(cell);
     }
     unit.pivot = ReadCell(o_unit["pivot"].get<object>());
+    units.push_back(unit);
   }
 
   initial.resize(h * w);
