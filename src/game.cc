@@ -1,8 +1,11 @@
-#include "game.h"
+#include <cassert>
 #include "picojson/picojson.h"
+
+#include "game.h"
 
 using namespace std;
 using namespace picojson;
+
 
 namespace {
 
@@ -11,7 +14,57 @@ Cell ReadCell(object& o) {
               (int)o["y"].get<double>());
 }
 
+// return floor(a / b) (assuming that b > 0)
+int DivFloor(int a, int b) {
+  return (a >= 0) ? (a / b) : -((-a + b - 1) / b);
+}
+
 }  // namespace
+
+Cell Cell::Rotate(const Cell& pivot, int t) {
+  // Normalize pivot to (0, 0)
+  Cell res(x - pivot.x, y - pivot.y);
+
+  // Transform res to cartesian coordinate
+  res.x += -DivFloor(res.y, 2);
+
+  // cerr << "CARTESIAN:" << res.x << " " << res.y << endl;
+
+  // Calculate distance from (0, 0) to res
+  int r = ((res.x >= 0) ^ (res.y >= 0)) ? max(abs(res.x), abs(res.y))
+                                        : (abs(res.x) + abs(res.y));
+
+  // Calculate offset and position
+  int of = -1, pos = -1;
+  if (res.y == -r)              { pos = 0; of = r - res.x; }
+  if (res.y <= 0 && res.x <= 0) { pos = 1; of = -res.x; }
+  if (res.x == -r)              { pos = 2; of = res.y; }
+  if (res.y == r)               { pos = 3; of = r + res.x; }
+  if (res.y >= 0 && res.x >= 0) { pos = 4; of = res.x; }
+  if (res.x == r)               { pos = 5; of = -res.y; }
+  assert(pos >= 0);
+
+  //cerr << "###" << r << " " << pos << " " << of << "    " << (res.x==r) << endl;
+
+  // Perform rotation
+  pos = (pos + t) % 6;
+  if (pos == 0) { res.x = r - of;  res.y = -r; }
+  if (pos == 1) { res.x = -of;     res.y = -r + of; }
+  if (pos == 2) { res.x = -r;      res.y = of; }
+  if (pos == 3) { res.x = -r + of; res.y = r; }
+  if (pos == 4) { res.x = of;      res.y = r - of; }
+  if (pos == 5) { res.x = r;       res.y = -of; }
+
+  // Transform res to hex coordinate
+  res.x += DivFloor(res.y, 2);
+
+  // Finally denormalize the pivot
+  res.x += pivot.x;
+  res.y += pivot.y;
+
+  return res;
+}
+
 
 bool Game::Init(std::string json, int source_seed_idx) {
   value v;
@@ -75,4 +128,9 @@ void Game::GenerateSourceSequense(int seed, int length, int mod) {
     source_seq[i] = (int)(a) % mod;
     s = s * mul + add;
   }
+}
+
+void State::Init(const Game& g) {
+  board = g.initial;
+  visited.clear();
 }

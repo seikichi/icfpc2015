@@ -7,6 +7,47 @@
 
 using namespace std;
 
+TEST(CellTest, Rotate) {
+  // do not rotate
+  for (int x = -3; x <= 3; ++x)
+  for (int y = -3; y <= 3; ++y) {
+    Cell c(x, y);
+    Cell after = c.Rotate(Cell(1, -1), 0);
+    EXPECT_EQ(x, after.x);
+    EXPECT_EQ(y, after.y);
+  }
+
+  // rotate
+  {
+    Cell center(2, 6);
+    Cell now(3, 6);
+    
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(2, now.x);
+    EXPECT_EQ(5, now.y);
+
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(1, now.x);
+    EXPECT_EQ(5, now.y);
+
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(1, now.x);
+    EXPECT_EQ(6, now.y);
+
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(1, now.x);
+    EXPECT_EQ(7, now.y);
+
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(2, now.x);
+    EXPECT_EQ(7, now.y);
+
+    now = now.Rotate(center, 1);
+    EXPECT_EQ(3, now.x);
+    EXPECT_EQ(6, now.y);
+  }
+}
+
 TEST(GameTest, Init) {
   ifstream ifs("problems/problem_1.json");
   string json;
