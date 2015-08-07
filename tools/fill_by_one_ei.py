@@ -18,7 +18,7 @@ if len(sys.argv) != 2:
     print('Usage: field_to_ascii.py problem.json', file=sys.stderr)
     sys.exit(-1)
 
-W, E, SW, SE = '3', '2', '4', '5'
+W, E, SW, SE = '!', 'e', 'i', ' '
 
 problem = json.load(open(sys.argv[1]))
 
@@ -30,17 +30,18 @@ source_length = problem['sourceLength']
 output = []
 
 for seed in source_seeds:
+    moved = 0
     commands = []
     for i in range(source_length):
         for j in range(width):
             commands.extend([W] * ((width - 1) // 2))
-            commands.extend(([SE, SW] * height)[:height - 1])
+            commands.extend(([E, SW, W, SE] * height)[:height - 1])
             commands.extend([E] * (width - j))
 
     output.append({
         'problemId': problem['id'],
         'seed': seed,
-        'tag': 'bbbbb',
+        'tag': 'poyo}',
         'solution': ''.join(commands),
     })
 
