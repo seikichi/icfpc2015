@@ -1,5 +1,5 @@
 #include "game.h"
-#include "extlib/picojson/picojson.h"
+#include "picojson/picojson.h"
 
 using namespace std;
 using namespace picojson;
