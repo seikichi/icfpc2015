@@ -8,12 +8,12 @@ WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual -Werror #-fcolor-diagnostic
 OPTIMIZATION_OPTIONS = #-O3 -fno-omit-frame-pointer -march=native -mtune=native
 CODE_GENERATION_OPTIONS = -fPIC
 PREPROCESSOR_OPTIONS = -MMD -MP
-DEBUGGING_OPTIONS = -gdwarf-3 -fsanitize=address
+DEBUGGING_OPTIONS = -gdwarf-3 #-fsanitize=address
 INCLUDE_OPTIONS = -Iextlib
 CXXFLAGS = $(OVERALL_OPTIONS) $(LANGUAGE_OPTIONS) $(WARNING_OPTIONS) $(OPTIMIZATION_OPTIONS) \
            $(CODE_GENERATION_OPTIONS) $(PREPROCESSOR_OPTIONS) $(DEBUGGING_OPTIONS) $(INCLUDE_OPTIONS)
 
-LDFLAGS = -fsanitize=address
+LDFLAGS = #-fsanitize=address
 LIBS = -lm
 
 SOURCES = $(wildcard src/*.cc)
@@ -53,7 +53,6 @@ test: $(TESTS)
 
 obj/test/%.exe: obj/test/%.o $(filter-out obj/main/main.o, $(OBJECTS)) $(GTEST_OBJ_DIR)/gtest_main.a
 	$(CXX) $(LDFLAGS) -lpthread $^ -o $@ $(LIBS)
-	$@
 
 obj/test/%.o: test/%.cc
 	@mkdir -p obj/test
