@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 typedef std::vector<bool> Board;
@@ -11,6 +12,14 @@ struct Cell {
   Cell(int x, int y) : x(x), y(y) {}
 
   int Lin(int w) { return y * w + x; }
+
+  bool operator<(const Cell& rhs) const {
+    return std::make_pair(x, y) < std::make_pair(rhs.x, rhs.y);
+  }
+  bool operator==(const Cell& rhs) const {
+    return std::make_pair(x, y) == std::make_pair(rhs.x, rhs.y);
+  }
+
   // t must be specified in ccw order
   Cell Rotate(const Cell& pivot, int t);
 };
@@ -31,8 +40,7 @@ struct Game {
   bool Init(std::string json, int source_seed_idx);
 
   void GenerateSourceSequense(int seed, int length, int mod);
-  void ComputePeriod() {
-  }
+  void ComputePeriod();
 };
 
 struct State {

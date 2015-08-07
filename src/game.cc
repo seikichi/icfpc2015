@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include "picojson/picojson.h"
 
@@ -28,8 +29,6 @@ Cell Cell::Rotate(const Cell& pivot, int t) {
   // Transform res to cartesian coordinate
   res.x += -DivFloor(res.y, 2);
 
-  // cerr << "CARTESIAN:" << res.x << " " << res.y << endl;
-
   // Calculate distance from (0, 0) to res
   int r = ((res.x >= 0) ^ (res.y >= 0)) ? max(abs(res.x), abs(res.y))
                                         : (abs(res.x) + abs(res.y));
@@ -43,8 +42,6 @@ Cell Cell::Rotate(const Cell& pivot, int t) {
   if (res.y >= 0 && res.x >= 0) { pos = 4; of = res.x; }
   if (res.x == r)               { pos = 5; of = -res.y; }
   assert(pos >= 0);
-
-  //cerr << "###" << r << " " << pos << " " << of << "    " << (res.x==r) << endl;
 
   // Perform rotation
   pos = (pos + t) % 6;
@@ -115,6 +112,9 @@ bool Game::Init(std::string json, int source_seed_idx) {
                          source_length,
                          units.size());
 
+  // Compute period of each unit
+  ComputePeriod();
+
   return true;
 }
 
@@ -127,6 +127,26 @@ void Game::GenerateSourceSequense(int seed, int length, int mod) {
     uint32_t a = (s >> 16) & ((1 << 15) - 1);
     source_seq[i] = (int)(a) % mod;
     s = s * mul + add;
+  }
+}
+
+void Game::ComputePeriod() {
+  period.clear();
+
+  for (const auto& unit : units) {
+    std::vector<Cell> s1 = unit.cells, s2;
+    sort(s1.begin(), s1.end());
+    s2 = s1;
+
+    for (int p = 1; ; ++p) {
+      for (auto& c : s2) c = c.Rotate(unit.pivot, 1);
+      sort(s2.begin(), s2.end());
+
+      if (s1 == s2) {
+        period.push_back(p);
+        break;
+      }
+    }
   }
 }
 

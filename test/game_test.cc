@@ -83,3 +83,17 @@ TEST(GameTest, GenerateSourceSequense) {
     EXPECT_EQ(ans[i], g.source_seq[i]);
   }
 }
+
+TEST(GameTest, ComputePeriod) {
+  ifstream ifs("test/game_test_compute_period.json");
+  string json, line;
+  while (getline(ifs, line)) json += line;
+
+  Game g;
+  g.Init(json, 0);
+
+  EXPECT_EQ(1, g.period[0]);
+  EXPECT_EQ(2, g.period[1]);
+  EXPECT_EQ(3, g.period[2]);
+  EXPECT_EQ(6, g.period[3]);
+}
