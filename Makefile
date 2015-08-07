@@ -14,7 +14,7 @@ CXXFLAGS = $(OVERALL_OPTIONS) $(LANGUAGE_OPTIONS) $(WARNING_OPTIONS) $(OPTIMIZAT
            $(CODE_GENERATION_OPTIONS) $(PREPROCESSOR_OPTIONS) $(DEBUGGING_OPTIONS) $(INCLUDE_OPTIONS)
 
 LDFLAGS = #-fsanitize=address
-LIBS = -lm
+LIBS = -lm -lpthread
 
 SOURCES = $(wildcard src/*.cc)
 OBJECTS = $(patsubst src/%.cc, obj/main/%.o, $(SOURCES))
@@ -52,7 +52,7 @@ obj/main/%.o: src/%.cc
 test: $(TESTS)
 
 obj/test/%.exe: obj/test/%.o $(filter-out obj/main/main.o, $(OBJECTS)) $(GTEST_OBJ_DIR)/gtest_main.a
-	$(CXX) $(LDFLAGS) -lpthread $^ -o $@ $(LIBS)
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LIBS)
 
 obj/test/%.o: test/%.cc
 	@mkdir -p obj/test
