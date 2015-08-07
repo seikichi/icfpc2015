@@ -107,6 +107,7 @@ bool Game::Init(std::string json, int source_seed_idx) {
     // invalid
     return false;
   }
+  source_seed = source_seeds[source_seed_idx];
   int source_length = (int)o["sourceLength"].get<double>();
   GenerateSourceSequense(source_seeds[source_seed_idx],
                          source_length,

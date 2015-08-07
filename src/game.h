@@ -31,6 +31,7 @@ struct Unit {
 
 struct Game {
   int problem_id;
+  int source_seed;
   int h, w;
   Board initial;
   std::vector<Unit> units;
