@@ -25,6 +25,7 @@ bool Visualizer::CreateSDL(const Game& game) {
     exit(1);
   }
 
+  if (game.w > 60 || game.h > 30) { tile_size = 16; }
   int width = GetBoardWidth(game) + 196;
   int height = GetBoardHeight(game) + 128;
   win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, width, height, SDL_WINDOW_SHOWN);
@@ -45,6 +46,7 @@ bool Visualizer::CreateSDL(const Game& game) {
   }
 
   std::string imagePath = "resources/tiles.png";
+  if (tile_size == 16) { imagePath = "resources/small_tiles.png"; }
   tex = LoadTexture(imagePath, ren);
   if (tex == nullptr){
     SDL_DestroyRenderer(ren);
@@ -118,23 +120,23 @@ void Visualizer::DrawText(int x, int y, const char* format, ...)
 
 void Visualizer::Draw(int x, int y, Image image) {
   SDL_Rect srcrect, destrect;
-  srcrect.x = (int)image * TILE_SIZE;
+  srcrect.x = (int)image * tile_size;
   srcrect.y = 0;
-  srcrect.w = TILE_SIZE;
-  srcrect.h = TILE_SIZE;
+  srcrect.w = tile_size;
+  srcrect.h = tile_size;
   destrect.x = x;
   destrect.y = y;
-  destrect.w = TILE_SIZE;
-  destrect.h = TILE_SIZE;
+  destrect.w = tile_size;
+  destrect.h = tile_size;
   SDL_RenderCopy(ren, tex, &srcrect, &destrect);
 }
 int Visualizer::CellX(const Cell &cell) {
-  const int dx = TILE_SIZE;
-  const int offset = TILE_SIZE / 2;
+  const int dx = tile_size;
+  const int offset = tile_size / 2;
   return dx * cell.x + (cell.y % 2 * offset);
 }
 int Visualizer::CellY(const Cell & cell) {
-  const int dy = TILE_SIZE - 4;
+  const int dy = tile_size * 7 / 8;
   return cell.y * dy;
 }
 
