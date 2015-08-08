@@ -1,5 +1,6 @@
 #include "ai.h"
 #include "chickai.h"
+#include "echo_ai.h"
 #include "game.h"
 
 #include <cstdio>
@@ -15,6 +16,24 @@
 
 #include "picojson/picojson.h"
 using namespace std;
+
+namespace {
+
+int Evaluate(const Game& g, const string commands) {
+  State s;
+  s.Init(g);
+
+  for (char c : commands) {
+    auto res = s.Command(g, c);
+    if (res != MOVE && res != LOCK) {
+      return 0;
+    }
+  }
+
+  return s.score;
+}
+
+}  // namespace
 
 int main(int argc, char** argv) {
   // input
@@ -58,11 +77,32 @@ int main(int argc, char** argv) {
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
 
     while (game.Init(problem, source_seed_idx++)) {
-      auto ai = AI::CreateAI();
-      ai->Init();
-
       if (!first) { ss << ","; }
-      auto solution = ai->Run(game);
+
+      pair<int, string> best{-1, "???????"};
+
+      // Fetch result of annotated solution
+      {
+        auto echo_ai = make_shared<EchoAI>();
+        echo_ai->Init();
+        string solution = echo_ai->Run(game);
+
+        int eval = Evaluate(game, solution);
+        best = max(best, make_pair(eval, solution));
+        cerr << "Annotated score: " << eval << endl;
+      }
+
+      // Then, execute specified AI
+      {
+        auto ai = AI::CreateAI();
+        ai->Init();
+        auto solution = ai->Run(game);
+
+        best = max(best, make_pair(Evaluate(game, solution),
+                                   solution));
+      }
+
+      auto solution = best.second;
       ss << "{";
       ss << "\"problemId\": " << game.problem_id << ", ";
       ss << "\"seed\": " << game.source_seed << ", ";

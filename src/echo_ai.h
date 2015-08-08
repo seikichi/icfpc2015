@@ -12,6 +12,8 @@ struct EchoAI : public AI {
     sprintf(buf, "solutions/%d.txt", game.problem_id);
     std::ifstream ifs(buf);
 
+    if (!ifs.is_open()) return "";
+
     std::string nop, commands;
     std::getline(ifs, nop);
     std::getline(ifs, commands);
