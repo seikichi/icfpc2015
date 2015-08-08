@@ -14,7 +14,7 @@ struct Replay {
     return true;
   }
   State GetCurrentState() const { return state; }
-  bool KeyInput(const Game& game) {
+  bool OneCommandStep(const Game& game) {
     if (turn == (int)commands_.size()) { return false; }
     char c = commands_[turn++];
     state.Command(game, c);

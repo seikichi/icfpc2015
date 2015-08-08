@@ -24,13 +24,14 @@ using namespace std;
 int CalcScore(const Game &game, const std::string& commands) {
   Replay replay;
   replay.Init(game, commands);
-  while (replay.KeyInput(game)) {;}
+  while (replay.OneCommandStep(game)) {;}
   return replay.GetCurrentState().score;
 }
 
 void EventLoopAI(const Game& game, const std::string& commands) {
   SDL_Event event;
   double next_frame = SDL_GetTicks();
+  int speed = 1;
   double wait = 1000.0 / 60;
   KeyInput keys;
   keys.Init();
@@ -52,11 +53,28 @@ void EventLoopAI(const Game& game, const std::string& commands) {
     /* 1秒間に60回Updateされるようにする */
     if (SDL_GetTicks() >= next_frame) {
       keys.Update();
-      if (!replay.KeyInput(game)) { goto end; }
+      if (keys.Pushed('x')) {
+        speed++;
+      } else if (keys.Pushed('z')) {
+        speed--;
+      } else if (keys.Pushed('d')) {
+        speed += 10;
+      } else if (keys.Pushed('a')) {
+        speed -= 10;
+      } else if (keys.Pushed(' ')) {
+        replay.Init(game, commands);
+      }
+      speed = max(speed, 0);
+      bool end = false;
+      for (int i = 0; i < speed; i++)  {
+        end = !replay.OneCommandStep(game);
+        if (end) { speed = 0; break; }
+      }
 
       visualizer.BeginDraw();
       visualizer.DrawGameState(game, replay.GetCurrentState());
       visualizer.DrawCommandResult(game, command_result);
+      visualizer.DrawText(196, visualizer.GetBoardHeight(game) + 8, "Speed x %d", speed);
       visualizer.EndDraw();
       next_frame += wait;
       // SDL_Delay(1);
@@ -142,11 +160,11 @@ end:
 int main(int argc, char** argv) {
   // input
   vector<string> problem_files;
-  int time_limit_seconds;
+  int time_limit_seconds = 300;
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
-  string replay_file;
+  string replay_filename;
   bool manual_play = false;
 
   int result;
@@ -167,7 +185,7 @@ int main(int argc, char** argv) {
         phrases_of_power.push_back(optarg);
         break;
       case 'r':
-        replay_file = optarg;
+        replay_filename = optarg;
         break;
       case 'i':
         manual_play = true;
@@ -186,9 +204,19 @@ int main(int argc, char** argv) {
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
       if (!manual_play) {
-        auto ai = AI::CreateAI();
-        ai->Init();
-        string commands = ai->Run(game);
+        string commands;
+        if (replay_filename == "") {
+          auto ai = AI::CreateAI();
+          ai->Init(time_limit_seconds);
+          commands = ai->Run(game);
+        } else {
+          std::ifstream ifs(replay_filename);
+          if (!ifs.is_open()) {
+            fprintf(stderr, "No such file: %s\n", replay_filename.c_str());
+            exit(1);
+          }
+          getline(ifs, commands);
+        }
         EventLoopAI(game, commands);
       } else {
         EventLoopManual(game);

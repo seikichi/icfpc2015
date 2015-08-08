@@ -54,6 +54,7 @@ struct Game {
   std::vector<Unit> units;
   std::vector<int> period;
   std::vector<int> source_seq;
+  int num_source_seeds;
   // return true if source_seed_idx < num of source seeds.
   bool Init(std::string json, int source_seed_idx);
 
