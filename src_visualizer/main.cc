@@ -1,6 +1,8 @@
 #include "ai.h"
 #include "game.h"
 #include "visualizer.h"
+#include "kichiai.h"
+#include "replay.h"
 
 #include <cstdio>
 #include <unistd.h>
@@ -22,9 +24,10 @@ int main(int argc, char** argv) {
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
+  string replay_file;
 
   int result;
-  while ((result = getopt(argc, argv, "f:t:m:c:p:")) != -1) {
+  while ((result = getopt(argc, argv, "f:t:m:c:p:r:")) != -1) {
     switch (result) {
     case 'f':
       problem_files.push_back(optarg);
@@ -40,6 +43,9 @@ int main(int argc, char** argv) {
     case 'p':
       phrases_of_power.push_back(optarg);
       break;
+    case 'r':
+      replay_file = optarg;
+      break;
     default:
       break;
     }
@@ -49,7 +55,7 @@ int main(int argc, char** argv) {
   visualizer.Init();
   // process
   stringstream ss;
-  ss << "[";
+  // ss << "[";
   bool first = true;
   for (const auto& problem_file : problem_files) {
     Game game;
@@ -58,12 +64,19 @@ int main(int argc, char** argv) {
     ifstream ifs(problem_file.c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
-      // auto ai = make_shared<AI>();
-      // ai->Init();
-      visualizer.DrawGameState(game);
+      auto ai = make_shared<KichiAI>();
+      ai->Init();
 
       if (!first) { ss << ","; }
-      // auto solution = ai->Run(game);
+      string commands = ai->Run(game);
+
+      Replay replay;
+      replay.Init(game, commands);
+
+      while (true) {
+        visualizer.DrawGameState(game, replay.GetCurrentState());
+        if (!replay.KeyInput(game)) { break; }
+      }
       // ss << "{";
       // ss << "\"problemId\": " << game.problem_id << ", ";
       // ss << "\"seed\": " << game.source_seed << ", ";
@@ -71,10 +84,11 @@ int main(int argc, char** argv) {
       // ss << "\"solution\": " << "\"" << solution << "\"";
       // ss << "}";
       // first = false;
+      break;
     }
+    break;
   }
-  ss << "]";
-  sleep(10);
+  // ss << "]";
 
   // output
   cout << ss.str() << endl;
