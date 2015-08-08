@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include <string>
+#include <memory>
 
 struct AI {
   void Init();
