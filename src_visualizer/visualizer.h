@@ -22,6 +22,7 @@ struct Visualizer {
     if (!CreateSDL()) { return false; }
     return true;
   }
+  virtual ~Visualizer() { DestroySDL(); }
   bool CreateSDL();
   SDL_Texture* LoadTexture(const std::string &file, SDL_Renderer *ren);
   void DestroySDL();
