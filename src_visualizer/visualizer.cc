@@ -27,7 +27,7 @@ bool Visualizer::CreateSDL(const Game &game) {
   }
 
   int width = GetBoardWidth(game) + 64;
-  int height = GetBoardHeight(game) + 64;
+  int height = GetBoardHeight(game) + 128;
   win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, width, height, SDL_WINDOW_SHOWN);
 
   if (win == nullptr){
@@ -138,8 +138,11 @@ int Visualizer::CellY(const Cell & cell) {
   const int dy = TILE_SIZE - 4;
   return cell.y * dy;
 }
-void Visualizer::DrawGameState(const Game &game, const State &state) {
+
+void Visualizer::BeginDraw() {
   SDL_RenderClear(ren);
+}
+void Visualizer::DrawGameState(const Game &game, const State &state) {
   for (int y = 0; y < game.h; y++) {
     for (int x = 0; x < game.w; x++) {
       Cell cell(x, y);
@@ -155,5 +158,20 @@ void Visualizer::DrawGameState(const Game &game, const State &state) {
   }
   Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
   DrawText(8, GetBoardHeight(game) + 8, "Score: %d", state.score);
+  if (state.gameover) {
+    DrawText(8, GetBoardHeight(game) + 8 + 24, "Game Over!");
+  }
+}
+void Visualizer::DrawCommandResult(const Game& game, const CommandResult result) {
+  map<CommandResult, string> message {
+    { MOVE, "" },
+    { LOCK, "Lock" },
+    { ERROR, "Error" },
+    { CLEAR, "Clear" },
+    { GAMEOVER, "Game End" },
+  };
+  DrawText(8, GetBoardHeight(game) + 8 + 48, "%s", message[result].c_str());
+}
+void Visualizer::EndDraw() {
   SDL_RenderPresent(ren);
 }
