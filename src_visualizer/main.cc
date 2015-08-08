@@ -104,7 +104,17 @@ void EventLoopManual(const Game& game) {
     }
     SDL_Delay(5);
   }
-end:;
+end:
+  stringstream ss;
+  ss << "[";
+  ss << "{";
+  ss << "\"problemId\": " << game.problem_id << ", ";
+  ss << "\"seed\": " << game.source_seed << ", ";
+  ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
+  ss << "\"solution\": " << "\"" << player.GetCommands() << "\"";
+  ss << "}";
+  ss << "]";
+  cout << ss.str() << endl;
 }
 
 int main(int argc, char** argv) {
