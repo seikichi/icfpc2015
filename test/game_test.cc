@@ -209,8 +209,8 @@ TEST(StateTest, Command) {
     EXPECT_EQ(0, s.score);
 
     char c = mp[commands[i]];
-    bool res = s.Command(g, c);
-    EXPECT_TRUE(res);
+    auto res = s.Command(g, c);
+    EXPECT_NE(ERROR, res);
   }
   EXPECT_EQ(1, s.source_idx);
   EXPECT_EQ(1, s.score);
@@ -220,8 +220,8 @@ TEST(StateTest, Command) {
     EXPECT_EQ(1, s.score);
 
     char c = mp[commands[i]];
-    bool res = s.Command(g, c);
-    EXPECT_TRUE(res);
+    auto res = s.Command(g, c);
+    EXPECT_NE(ERROR, res);
   }
   EXPECT_EQ(2, s.source_idx);
   EXPECT_EQ(1 + 1 + 100, s.score);
@@ -270,8 +270,8 @@ TEST(StateTest, CommandRotation) {
     EXPECT_EQ(0, s.score);
 
     char c = mp[commands[i]];
-    bool res = s.Command(g, c);
-    EXPECT_TRUE(res);
+    auto res = s.Command(g, c);
+    EXPECT_NE(ERROR, res);
   }
   EXPECT_EQ(1, s.source_idx);
   EXPECT_EQ(2, s.score);
@@ -281,8 +281,8 @@ TEST(StateTest, CommandRotation) {
     EXPECT_EQ(2, s.score);
 
     char c = mp[commands[i]];
-    bool res = s.Command(g, c);
-    EXPECT_TRUE(res);
+    auto res = s.Command(g, c);
+    EXPECT_NE(ERROR, res);
   }
   EXPECT_EQ(2, s.source_idx);
   EXPECT_EQ(2 + 2 + 100, s.score);

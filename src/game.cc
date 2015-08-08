@@ -195,7 +195,7 @@ void State::Init(const Game& g) {
   Reset(g);
 }
 
-bool State::Command(const Game& g, char c) {
+CommandResult State::Command(const Game& g, char c) {
   const string command_chars[] = {
     "p'!.03",
     "bcefy2",
@@ -247,15 +247,15 @@ bool State::Command(const Game& g, char c) {
 
   if (command == "I") {
     // just ignore
-    return true;
+    return MOVE;
   }
 
   cerr << "?????" << endl;
   exit(1);
-  return false;
+  return ERROR;
 }
 
-bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
+CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move) {
   assert(move.y >= 0);
   // Check visited
   pivot = pivot.TranslateAdd(move);
@@ -267,7 +267,7 @@ bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
   if (visited[pivot.x + g.w] & (1 << rot)) {
     // Invalid operation
     pivot = pivot.TranslateSub(move);
-    return false;
+    return ERROR;
   }
   visited[pivot.x + g.w] |= 1 << rot;
 
@@ -279,21 +279,21 @@ bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
       // The unit must be locked, revert the pivot and terminate
       pivot = pivot.TranslateSub(move);
       Lock(g);
-      return true;
+      return LOCK;
     }
   }
 
-  return true;
+  return MOVE;
 }
 
-bool State::UpdateRotAndLock(const Game& g, int dir) {
+CommandResult State::UpdateRotAndLock(const Game& g, int dir) {
   int p = g.CurrentPeriod(source_idx);
   rot = (rot + dir + p) % p;
 
   if (visited[pivot.x + g.w] & (1 << rot)) {
     // Invalid operation
     rot = (rot - dir + p) % p;
-    return false;
+    return ERROR;
   }
   visited[pivot.x + g.w] |= 1 << rot;
 
@@ -305,11 +305,11 @@ bool State::UpdateRotAndLock(const Game& g, int dir) {
       // Revert and lock
       rot = (rot - dir + p) % p;
       Lock(g);
-      return true;
+      return LOCK;
     }
   }
 
-  return true;
+  return MOVE;
 }
 
 void State::Lock(const Game& g) {

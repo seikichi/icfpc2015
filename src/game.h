@@ -67,11 +67,17 @@ struct Game {
   }
 };
 
+enum CommandResult {
+  MOVE,
+  LOCK,
+  ERROR,
+};
+
 struct State {
   void Init(const Game& g);
   // return true if the given command is valid
   // TODO(ir5): Is it better that the return value is enum instead of bool?
-  bool Command(const Game& g, char c);
+  CommandResult Command(const Game& g, char c);
 
   Board board;
   std::vector<char> visited; // dimension is w * 3
@@ -83,8 +89,8 @@ struct State {
 
  // private:
   // return true if the move is valid
-  bool UpdateVisitedAndLock(const Game& g, Cell move);
-  bool UpdateRotAndLock(const Game& g, int dir);
+  CommandResult UpdateVisitedAndLock(const Game& g, Cell move);
+  CommandResult UpdateRotAndLock(const Game& g, int dir);
   void Lock(const Game& g);
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
