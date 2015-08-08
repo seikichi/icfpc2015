@@ -1,7 +1,9 @@
 #include "ai.h"
+#include "chickai.h"
 #include "game.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
 
 #include <fstream>
@@ -54,8 +56,9 @@ int main(int argc, char** argv) {
 
     ifstream ifs(problem_file.c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
+
     while (game.Init(problem, source_seed_idx++)) {
-      auto ai = make_shared<AI>();
+      auto ai = AI::CreateAI(getenv("AI"));
       ai->Init();
 
       if (!first) { ss << ","; }

@@ -6,5 +6,9 @@
 struct AI {
   void Init();
   std::string Run(const Game& game);
-  char Step(const Game& game, const State& state);
+  virtual std::string Step(const Game& game,
+                           const State& state,
+                           const Unit& unit) = 0;
+
+  static std::shared_ptr<AI> CreateAI(const std::string& name);
 };
