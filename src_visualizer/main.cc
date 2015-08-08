@@ -2,6 +2,7 @@
 #include "game.h"
 #include "visualizer.h"
 #include "kichiai.h"
+#include "key_input.h"
 #include "manual_player.h"
 #include "replay.h"
 
@@ -15,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include <SDL.h>
 #include "picojson/picojson.h"
 using namespace std;
 
@@ -22,9 +24,8 @@ void EventLoopAI(const Game& game, const std::string& commands) {
   SDL_Event event;
   double next_frame = SDL_GetTicks();
   double wait = 1000.0 / 60;
-  int prev_z = 0;
-  int prev_x = 0;
-  int prev_c = 0;
+  KeyInput keys;
+  keys.Init();
 
   CommandResult command_result = MOVE;
   Replay replay;
@@ -39,31 +40,11 @@ void EventLoopAI(const Game& game, const std::string& commands) {
           (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE)) {
         goto end;
       }
-      // if (event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_r) {
-      //   game_state = GameState(field_filename);
-      //   ais = GameAI(game_state, lambda_man_ai_filename, ghost_ai_filenames, is_debug);
-      // }
     }
     /* 1秒間に60回Updateされるようにする */
-    // cout << game_state << endl;
     if (SDL_GetTicks() >= next_frame) {
-          const Uint8* keys = SDL_GetKeyboardState(NULL);
-          int z = keys[SDL_GetScancodeFromKey(SDLK_z)];
-          int x = keys[SDL_GetScancodeFromKey(SDLK_x)];
-          int c = keys[SDL_GetScancodeFromKey(SDLK_c)];
-          // int step = 0;
-          if ((z && !prev_z) || x) {
-            // step = game_state.lambda_man[0].NextStepTime() - game_state.utc;
-          } else if (c && !prev_c) {
-            // step = 10000;
-          }
-          if (!replay.KeyInput(game)) { goto end; }
-          // routine.StepFrame(game_state, ais, step);
-          prev_z = z;
-          prev_x = x;
-          prev_c = c;
-        // }
-      // }
+      keys.Update();
+      if (!replay.KeyInput(game)) { goto end; }
 
       visualizer.BeginDraw();
       visualizer.DrawGameState(game, replay.GetCurrentState());
@@ -77,25 +58,13 @@ void EventLoopAI(const Game& game, const std::string& commands) {
 end:;
 }
 
-bool Pushed(int now, int prev) {
-  return now && !prev;
-}
 
 void EventLoopManual(const Game& game) {
   SDL_Event event;
   double next_frame = SDL_GetTicks();
   double wait = 1000.0 / 60;
-  int prev_keys[256];
-  memset(prev_keys, 0, sizeof(prev_keys));
-  vector<pair<char, int> > target_keys = {
-    { 'a', SDLK_a },
-    { 'z', SDLK_z },
-    { 'x', SDLK_x },
-    { 'd', SDLK_d },
-    { 'j', SDLK_j },
-    { 'k', SDLK_k },
-    { ' ', SDLK_SPACE },
-  };
+  KeyInput keys;
+  keys.Init();
 
   CommandResult command_result = MOVE;
 
@@ -115,20 +84,16 @@ void EventLoopManual(const Game& game) {
     }
     /* 1秒間に60回Updateされるようにする */
     if (SDL_GetTicks() >= next_frame) {
-      const Uint8* keys = SDL_GetKeyboardState(NULL);
-      int now_keys[256];
-      memset(now_keys, 0, sizeof(now_keys));
+      keys.Update();
       char c = 0;
-      for (auto key : target_keys) {
-        now_keys[(int)key.first] = keys[SDL_GetScancodeFromKey(key.second)];
-        if (Pushed(now_keys[(int)key.first], prev_keys[(int)key.second])) {
+      for (auto key : keys.target_keys) {
+        if (keys.Pushed(key.first)) {
           c = key.first;
         }
       }
       if (c != 0) {
         command_result = player.Move(game, c);
       }
-      memcpy(prev_keys, now_keys, sizeof(prev_keys));
 
       visualizer.BeginDraw();
       visualizer.DrawGameState(game, player.GetCurrentState());
