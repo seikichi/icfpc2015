@@ -19,17 +19,17 @@
 
 using namespace std;
 
-bool Visualizer::CreateSDL(const Game &game) {
+bool Visualizer::CreateSDL(const Game& game) {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
     std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  int width = GetBoardWidth(game) + 64;
+  int width = GetBoardWidth(game) + 196;
   int height = GetBoardHeight(game) + 128;
   win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, width, height, SDL_WINDOW_SHOWN);
 
-  if (win == nullptr){
+  if (win == nullptr) {
     std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
     SDL_Quit();
     return false;
@@ -141,7 +141,7 @@ int Visualizer::CellY(const Cell & cell) {
 void Visualizer::BeginDraw() {
   SDL_RenderClear(ren);
 }
-void Visualizer::DrawGameState(const Game &game, const State &state) {
+void Visualizer::DrawGameState(const Game& game, const State& state) {
   for (int y = 0; y < game.h; y++) {
     for (int x = 0; x < game.w; x++) {
       Cell cell(x, y);
@@ -160,7 +160,12 @@ void Visualizer::DrawGameState(const Game &game, const State &state) {
   if (state.gameover) {
     DrawText(8, GetBoardHeight(game) + 8 + 24, "Game Over!");
   }
+  // DrawNext(game, state);
 }
+// void Visualizer::DrawNext(const Game& game, const State& state) {
+//   int rest = game.source_seq.size() - state.source_idx - 1;
+//   DrawText(GetBoardWidth(game) + 32, 8, "Rest: %d", rest);
+// }
 void Visualizer::DrawCommandResult(const Game& game, const CommandResult result) {
   map<CommandResult, string> message {
     { MOVE, "" },
