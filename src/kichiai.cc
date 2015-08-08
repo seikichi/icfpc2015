@@ -29,8 +29,7 @@ string KichiAI::Step(const Game& game, const State& initial_state) {
     const State& state = search_state.state;
 
     int visited_index = game.w * 6 * state.pivot.y +
-      6 * state.pivot.x +
-      (state.rot % game.CurrentPeriod(state.source_idx));
+      6 * state.pivot.x + state.rot;
 
     if (visited[visited_index]) { continue; }
     visited[visited_index] = true;
