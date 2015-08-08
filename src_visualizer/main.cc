@@ -5,6 +5,7 @@
 #include "key_input.h"
 #include "manual_player.h"
 #include "replay.h"
+#include "echo_ai.h"
 
 #include <cstdio>
 #include <unistd.h>
@@ -19,6 +20,13 @@
 #include <SDL.h>
 #include "picojson/picojson.h"
 using namespace std;
+
+int CalcScore(const Game &game, const std::string& commands) {
+  Replay replay;
+  replay.Init(game, commands);
+  while (replay.KeyInput(game)) {;}
+  return replay.GetCurrentState().score;
+}
 
 void EventLoopAI(const Game& game, const std::string& commands) {
   SDL_Event event;
@@ -105,16 +113,30 @@ void EventLoopManual(const Game& game) {
     SDL_Delay(5);
   }
 end:
-  stringstream ss;
-  ss << "[";
-  ss << "{";
-  ss << "\"problemId\": " << game.problem_id << ", ";
-  ss << "\"seed\": " << game.source_seed << ", ";
-  ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
-  ss << "\"solution\": " << "\"" << player.GetCommands() << "\"";
-  ss << "}";
-  ss << "]";
-  cout << ss.str() << endl;
+  EchoAI ai;
+  string commands = ai.Run(game);
+  int prev_score = CalcScore(game, commands);
+  int score = player.GetCurrentState().score;
+  if (score > prev_score) {
+    char filename[1000];
+    snprintf(filename, 999, "./solutions/%d.txt", game.problem_id);
+    stringstream ss;
+    ss << game.problem_id << " " << game.source_seed << endl << player.GetCommands() << endl;
+    FILE *fp = fopen(filename, "w");
+    if (fp == nullptr) { return; }
+    fprintf(fp, "%s", ss.str().c_str());
+    fclose(fp);
+  }
+  cout << prev_score << " " << score << endl;
+  // ss << "[";
+  // ss << "{";
+  // ss << "\"problemId\": " << game.problem_id << ", ";
+  // ss << "\"seed\": " << game.source_seed << ", ";
+  // ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
+  // ss << "\"solution\": " << "\"" << player.GetCommands() << "\"";
+  // ss << "}";
+  // ss << "]";
+  // cout << ss.str() << endl;
 }
 
 int main(int argc, char** argv) {
