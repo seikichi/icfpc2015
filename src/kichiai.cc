@@ -80,7 +80,7 @@ string KichiAI::Run(const Game& game) {
         return solution.str();
       }
       if (result == CLEAR) {
-        solution << c;
+        // solution << c;
         return solution.str();
       }
       solution << c;

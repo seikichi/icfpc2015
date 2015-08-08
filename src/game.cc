@@ -195,12 +195,20 @@ void State::Init(const Game& g) {
   Reset(g);
 }
 
+bool State::IsGameOver(const Game&) const {
+  return gameover;
+}
+
+bool State::IsClear(const Game& g) const {
+  return source_idx >= (int)g.source_seq.size();
+}
+
 CommandResult State::Command(const Game& g, char c) {
-  if (source_idx >= (int)g.source_seq.size()) {
+  if (IsClear(g)) {
     return CLEAR;
   }
   // NOTE: Return LOCK instead of GAMEOVER if a command leads to game over result.
-  if (gameover) {
+  if (IsGameOver(g)) {
     return GAMEOVER;
   }
 

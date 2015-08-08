@@ -84,6 +84,8 @@ struct State {
   // return true if the given command is valid
   // TODO(ir5): Is it better that the return value is enum instead of bool?
   CommandResult Command(const Game& g, char c);
+  bool IsGameOver(const Game& g) const;
+  bool IsClear(const Game& g) const;
 
   Board board;
   std::vector<char> visited; // dimension is w * 3
