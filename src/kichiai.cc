@@ -1,5 +1,6 @@
 #include "kichiai.h"
 #include <iostream>
+#include <sstream>
 #include <queue>
 using namespace std;
 
@@ -13,9 +14,8 @@ struct SearchState {
   SearchState(State state, string commands)
     : state(state), commands(commands) {}
 };
-};
 
-string KichiAI::Step(const Game& game, const State& initial_state) {
+string Step(const Game& game, const State& initial_state) {
   // game.CurrentUnit(state.source_idx);
   vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
   queue<SearchState> que;
@@ -57,3 +57,27 @@ string KichiAI::Step(const Game& game, const State& initial_state) {
 
 // pivot.{y,x} , rot % period (max 0~5)
 // 
+};
+
+string KichiAI::Run(const Game& game) {
+  State state;
+  state.Init(game);
+
+  stringstream solution;
+  while (true) {
+    string next = Step(game, state);
+    if (next == "") { break; }
+    for (const char c : next) {
+      CommandResult result = state.Command(game, c);
+      if (result == ERROR || result == GAMEOVER) {
+        return solution.str();
+      }
+      if (result == CLEAR) {
+        solution << c;
+        return solution.str();
+      }
+      solution << c;
+    }
+  }
+  return solution.str();
+}
