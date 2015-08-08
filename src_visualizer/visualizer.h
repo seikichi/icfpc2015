@@ -2,7 +2,6 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
-//#include <SDL_ttf.h>
 
 struct Visualizer {
   enum class Image {
@@ -31,7 +30,10 @@ struct Visualizer {
   void Draw(int x, int y, Image image);
   int CellX(const Cell& cell);
   int CellY(const Cell& cell);
+  void BeginDraw();
   void DrawGameState(const Game& game, const State& state);
+  void DrawCommandResult(const Game& game, const CommandResult result);
+  void EndDraw();
   int GetBoardWidth(const Game& game) {
     return game.w * TILE_SIZE;
   }
