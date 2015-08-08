@@ -83,6 +83,7 @@ struct State {
  // private:
   // return true if the move is valid
   bool UpdateVisitedAndLock(const Game& g, Cell move);
+  bool UpdateRotAndLock(const Game& g, int dir);
   void Lock(const Game& g);
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
