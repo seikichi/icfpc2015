@@ -1,4 +1,4 @@
-TARGET = ella6
+TARGET = play_icfp2015
 VISUALIZER = visualizer
 
 CXX = g++
