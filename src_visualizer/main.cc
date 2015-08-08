@@ -58,19 +58,19 @@ int main(int argc, char** argv) {
     ifstream ifs(problem_file.c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
-      auto ai = make_shared<AI>();
-      ai->Init();
+      // auto ai = make_shared<AI>();
+      // ai->Init();
       visualizer.DrawGameState(game);
 
       if (!first) { ss << ","; }
-      auto solution = ai->Run(game);
-      ss << "{";
-      ss << "\"problemId\": " << game.problem_id << ", ";
-      ss << "\"seed\": " << game.source_seed << ", ";
-      ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
-      ss << "\"solution\": " << "\"" << solution << "\"";
-      ss << "}";
-      first = false;
+      // auto solution = ai->Run(game);
+      // ss << "{";
+      // ss << "\"problemId\": " << game.problem_id << ", ";
+      // ss << "\"seed\": " << game.source_seed << ", ";
+      // ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
+      // ss << "\"solution\": " << "\"" << solution << "\"";
+      // ss << "}";
+      // first = false;
     }
   }
   ss << "]";
