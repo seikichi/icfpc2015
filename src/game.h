@@ -71,6 +71,8 @@ enum CommandResult {
   MOVE,
   LOCK,
   ERROR,
+  CLEAR,
+  GAMEOVER,
 };
 
 struct State {
@@ -86,6 +88,7 @@ struct State {
   int source_idx;
   int score;
   int ls_old;  // the number of lines cleared with the previous unit
+  bool gameover;
 
  // private:
   // return true if the move is valid

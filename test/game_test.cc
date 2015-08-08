@@ -17,6 +17,16 @@ string ReadAll(const char* file) {
   return all;
 }
 
+
+std::map<string, char> mp{
+  {"W", 'p'},
+  {"E", 'b'},
+  {"SW", 'a'},
+  {"SE", 'l'},
+  {"CW", 'd'},
+  {"CCW", 'k'},
+};
+
 }  // namespace
 
 TEST(CellTest, Rotate) {
@@ -197,13 +207,6 @@ TEST(StateTest, Command) {
     "W"
   };
 
-  std::map<string, char> mp{
-    {"W", 'p'},
-    {"E", 'b'},
-    {"SW", 'a'},
-    {"SE", 'l'},
-  };
-
   for (int i = 0; i < 3; ++i) {
     EXPECT_EQ(0, s.source_idx);
     EXPECT_EQ(0, s.score);
@@ -256,15 +259,6 @@ TEST(StateTest, CommandRotation) {
     "CW", // 15
   };
 
-  std::map<string, char> mp{
-    {"W", 'p'},
-    {"E", 'b'},
-    {"SW", 'a'},
-    {"SE", 'l'},
-    {"CW", 'd'},
-    {"CCW", 'k'},
-  };
-
   for (int i = 0; i < 7; ++i) {
     EXPECT_EQ(0, s.source_idx);
     EXPECT_EQ(0, s.score);
@@ -286,4 +280,20 @@ TEST(StateTest, CommandRotation) {
   }
   EXPECT_EQ(2, s.source_idx);
   EXPECT_EQ(2 + 2 + 100, s.score);
+}
+
+TEST(StateTest, GameOver) {
+  auto json = ReadAll("test/game_test/state_command.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  auto res1 = s.Command(g, mp["W"]);
+  EXPECT_EQ(LOCK, res1);
+
+  auto res2 = s.Command(g, mp["SW"]);
+  EXPECT_EQ(GAMEOVER, res2);
 }

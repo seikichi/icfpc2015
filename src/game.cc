@@ -191,11 +191,20 @@ void State::Init(const Game& g) {
   source_idx = 0;
   score = 0;
   ls_old = 0;
+  gameover = 0;
 
   Reset(g);
 }
 
 CommandResult State::Command(const Game& g, char c) {
+  if (source_idx >= (int)g.source_seq.size()) {
+    return CLEAR;
+  }
+  // NOTE: Return LOCK instead of GAMEOVER if a command leads to game over result.
+  if (gameover) {
+    return GAMEOVER;
+  }
+
   const string command_chars[] = {
     "p'!.03",
     "bcefy2",
@@ -340,13 +349,23 @@ void State::Reset(const Game& g) {
   if (source_idx >= (int)g.source_seq.size()) {
     return;
   }
-  auto& unit = g.CurrentUnit(source_idx);
+  const auto& unit = g.CurrentUnit(source_idx);
   auto b = unit.GetBoundary();
   int bw = b.xmax - b.xmin + 1;
   Cell top_left_u(b.xmin, b.ymin);
   Cell top_left_o((g.w - bw) / 2, 0);
 
   pivot = top_left_o.TranslateSub(top_left_u);
+
+  // Check game over
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    assert(!(c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h)); // something is strange!
+    if (board[c.Lin(g.w)]) {
+      gameover = 1;
+      return;
+    }
+  }
 }
 
 int State::LineDelete(const Game& g) {
