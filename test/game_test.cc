@@ -297,3 +297,38 @@ TEST(StateTest, GameOver) {
   auto res2 = s.Command(g, mp["SW"]);
   EXPECT_EQ(GAMEOVER, res2);
 }
+
+TEST(StateTest, Clear) {
+  auto json = ReadAll("test/game_test/state_clear.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  auto res1 = s.Command(g, mp["SW"]);
+  EXPECT_EQ(LOCK, res1);
+
+  auto res2 = s.Command(g, mp["SW"]);
+  EXPECT_EQ(LOCK, res2);
+
+  auto res3 = s.Command(g, mp["SW"]);
+  EXPECT_EQ(CLEAR, res3);
+}
+
+TEST(StateTest, Error) {
+  auto json = ReadAll("test/game_test/state_clear.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  auto res1 = s.Command(g, mp["CW"]);
+  EXPECT_EQ(ERROR, res1);
+
+  auto res2 = s.Command(g, mp["W"]);
+  EXPECT_EQ(LOCK, res2);
+}
