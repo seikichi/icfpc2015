@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
 
     while (game.Init(problem, source_seed_idx++)) {
-      auto ai = AI::CreateAI(getenv("AI"));
+      auto ai = AI::CreateAI();
       ai->Init();
 
       if (!first) { ss << ","; }

@@ -12,12 +12,7 @@ using namespace std;
 
 void AI::Init() {}
 
-shared_ptr<AI> AI::CreateAI(const std::string& name) {
-  if (name == "chickai") {
-    return make_shared<ChickAI>();
-  } else if (name == "kichiai") {
-    return make_shared<KichiAI>();
-  }
-
-  return make_shared<KichiAI>();
+shared_ptr<AI> AI::CreateAI() {
+  shared_ptr<AI> result = make_shared<KichiAI>();
+  return result;
 }

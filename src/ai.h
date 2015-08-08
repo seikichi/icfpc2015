@@ -9,5 +9,5 @@ struct AI {
   virtual std::string Run(const Game& game) = 0;
   virtual ~AI() {};
 
-  static std::shared_ptr<AI> CreateAI(const std::string& name);
+  static std::shared_ptr<AI> CreateAI();
 };
