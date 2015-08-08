@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
-  string replay_file;
+  string replay_filename;
   bool manual_play = false;
 
   int result;
@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
         phrases_of_power.push_back(optarg);
         break;
       case 'r':
-        replay_file = optarg;
+        replay_filename = optarg;
         break;
       case 'i':
         manual_play = true;
@@ -204,9 +204,19 @@ int main(int argc, char** argv) {
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
       if (!manual_play) {
-        auto ai = AI::CreateAI();
-        ai->Init(time_limit_seconds);
-        string commands = ai->Run(game);
+        string commands;
+        if (replay_filename == "") {
+          auto ai = AI::CreateAI();
+          ai->Init(time_limit_seconds);
+          commands = ai->Run(game);
+        } else {
+          std::ifstream ifs(replay_filename);
+          if (!ifs.is_open()) {
+            fprintf(stderr, "No such file: %s\n", replay_filename.c_str());
+            exit(1);
+          }
+          getline(ifs, commands);
+        }
         EventLoopAI(game, commands);
       } else {
         EventLoopManual(game);
