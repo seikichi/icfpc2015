@@ -19,10 +19,11 @@ int main(int argc, char** argv) {
   vector<string> problem_files;
   int time_limit_seconds;
   int memory_limit;
+  int cores;
   vector<string> phrases_of_power;
 
   int result;
-  while ((result = getopt(argc, argv, "f:t:m:p:")) != -1) {
+  while ((result = getopt(argc, argv, "f:t:m:c:p:")) != -1) {
     switch (result) {
     case 'f':
       problem_files.push_back(optarg);
@@ -33,6 +34,8 @@ int main(int argc, char** argv) {
     case 'm':
       memory_limit = stoi(optarg);
       break;
+    case 'c':
+      cores = stoi(optarg);
     case 'p':
       phrases_of_power.push_back(optarg);
       break;
