@@ -31,5 +31,11 @@ struct Visualizer {
   void Draw(int x, int y, Image image);
   int CellX(const Cell& cell);
   int CellY(const Cell& cell);
-  void DrawGameState(const Game &game, const State &state);
+  void DrawGameState(const Game& game, const State& state);
+  int GetBoardWidth(const Game& game) {
+    return game.w * TILE_SIZE;
+  }
+  int GetBoardHeight(const Game& game) {
+    return game.h * (TILE_SIZE - 4);
+  }
 };
