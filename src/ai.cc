@@ -18,7 +18,7 @@ shared_ptr<AI> AI::CreateAI() {
   string name = "";
   if (getenv("AI") != NULL) { name = getenv("AI"); }
 
-  shared_ptr<AI> result = make_shared<KichiAI>();
+  shared_ptr<AI> result = make_shared<LightningAI>();
   if (name == "kichiai") {
     result = make_shared<KichiAI>();
   } else if (name == "lightningai") {

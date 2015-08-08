@@ -6,6 +6,7 @@
 using namespace std;
 
 namespace {
+
 struct Item {
   State state;
   string commands;
@@ -23,8 +24,13 @@ struct Item {
   }
 };
 
-int evaluateScore(const Game&, const State& state) {
-  return state.pivot.y; // TODO
+// int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
+//   return state.pivot.y;
+// }
+
+int evaluateScore(const Game&, const State& state, const State& next_state) {
+  return state.pivot.y + next_state.score;
+  // return state.pivot.y;
 }
 
 };
@@ -42,9 +48,7 @@ string LightningAI::Run(const Game& game) {
     const int visited_offset_y = game.h;
     vector<bool> visited(visited_h * visited_w * 6, false);
 
-    if (state.IsClear(game) || state.IsGameOver(game)) {
-      return solution;
-    }
+    if (state.IsClear(game) || state.IsGameOver(game)) { break; }
 
     int max_score = -1;
     string best_commands = "";
@@ -75,7 +79,7 @@ string LightningAI::Run(const Game& game) {
         if (result == ERROR) {
           continue; 
         } else if (result == LOCK) {
-          const int score = evaluateScore(game, item.state);
+          const int score = evaluateScore(game, item.state, next_state);
           if (score > max_score) {
             max_score = score;
             best_commands = next_commands;
@@ -93,5 +97,7 @@ string LightningAI::Run(const Game& game) {
     for (char c : best_commands) { state.Command(game, c); }
     solution += best_commands;
   }
+
+  std::cerr << state.score << endl;
   return solution;
 }
