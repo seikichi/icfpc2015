@@ -3,6 +3,7 @@
 #include <sstream>
 #include <queue>
 #include <cassert>
+#include <sys/time.h>
 using namespace std;
 
 namespace {
@@ -33,12 +34,20 @@ int evaluateScore(const Game&, const State& state, const State& next_state) {
   // return state.pivot.y;
 }
 
+long long getTime() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
+}
+
 };
 
 string LightningAI::Run(const Game& game) {
   string solution;
   State state;
   state.Init(game);
+
+  long long time_limit_per_unit = (long long)time_limit_seconds * 1000000 / (2 * game.num_source_seeds * game.source_seq.size());
 
   while (true) {
     // 1ユニットごとにループ
@@ -55,7 +64,12 @@ string LightningAI::Run(const Game& game) {
     priority_queue<Item> Q;
     Q.push(Item(game, state, ""));
 
-    while (!Q.empty()) {
+    long long start_time = getTime();
+    for (unsigned loop_count = 0; !Q.empty(); ++loop_count) {
+      long long now = getTime();
+      long long elapse = now - start_time;
+      if (elapse >= time_limit_per_unit)
+          break;
       const Item item = Q.top(); Q.pop();
 
       assert(0 <= state.pivot.x + visited_offset_x);
