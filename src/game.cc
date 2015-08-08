@@ -394,3 +394,12 @@ int State::LineDelete(const Game& g) {
   }
   return ls;
 }
+
+vector<Cell> State::GetCurrentUnitCells(const Game& game) const {
+  const Unit& unit = game.CurrentUnit(source_idx);
+  std::vector<Cell> ret;
+  for (const Cell& cell : unit.cells) {
+    ret.push_back(cell.GetCurrentPos(rot, pivot));
+  }
+  return ret;
+}

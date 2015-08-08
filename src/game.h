@@ -29,6 +29,10 @@ struct Cell {
   Cell TranslateAdd(Cell o) const;
   // Return coordinate after translation s.t. o is moved to (0, 0).
   Cell TranslateSub(Cell o) const;
+
+  Cell GetCurrentPos(int rot, const Cell &pivot) const {
+    return Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+  }
 };
 
 struct Unit {
@@ -98,6 +102,7 @@ struct State {
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
   int LineDelete(const Game& g);
+  std::vector<Cell> GetCurrentUnitCells(const Game& gaem) const;
 
   // For debug use
   void PrintBoard(const Game& g) const {
