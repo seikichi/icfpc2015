@@ -94,7 +94,7 @@ TEST(GameTest, GenerateSourceSequense) {
 }
 
 TEST(GameTest, ComputePeriod) {
-  ifstream ifs("test/game_test_compute_period.json");
+  ifstream ifs("test/game_test/compute_period.json");
   string json, line;
   while (getline(ifs, line)) json += line;
 
@@ -108,7 +108,7 @@ TEST(GameTest, ComputePeriod) {
 }
 
 TEST(StateTest, Init) {
-  ifstream ifs("test/game_test_state_init.json");
+  ifstream ifs("test/game_test/state_init.json");
   string json, line;
   while (getline(ifs, line)) json += line;
 
@@ -148,7 +148,7 @@ TEST(StateTest, LineDelete) {
     "1.111",
   };
 
-  ifstream ifs("test/game_test_state_init.json");
+  ifstream ifs("test/game_test/state_init.json");
   string json, line;
   while (getline(ifs, line)) json += line;
 
