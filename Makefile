@@ -1,10 +1,11 @@
 TARGET = ella6
+VISUALIZER = visualizer
 
 CXX = g++
 
 OVERALL_OPTIONS = -pipe
 LANGUAGE_OPTIONS = -std=c++11
-WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual -Werror #-fcolor-diagnostics
+WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual #-Werror #-fcolor-diagnostics
 OPTIMIZATION_OPTIONS = #-O3 -fno-omit-frame-pointer -march=native -mtune=native
 CODE_GENERATION_OPTIONS = -fPIC
 PREPROCESSOR_OPTIONS = -MMD -MP
@@ -25,10 +26,18 @@ TEST_OBJECTS = $(patsubst test/%.cc, obj/test/%.o, $(TEST_SOURCES))
 TEST_DEPENDS = $(patsubst %.o, %.d, $(TEST_OBJECTS))
 TESTS = $(patsubst test/%.cc, obj/test/%.exe, $(TEST_SOURCES))
 
+VISUALIZER_SOURCES = $(wildcard src_visualizer/*.cc)
+VISUALIZER_OBJECTS = $(patsubst src_visualizer/%.cc, obj/visualizer/%.o, $(VISUALIZER_SOURCES))
+VISUALIZER_DEPENDS = $(patsubst %.o, %.d, $(VISUALIZER_OBJECTS))
+VISUALIZER_CPPFLAGS = -Isrc -I/usr/include/SDL2 -D_REENTRANT
+VISUALIZER_LIBS = -L/usr/lib/x86_64-linux-gnu -lSDL2 -lSDL2_image
+
 GTEST_DIR = extlib/gtest
 GTEST_OBJ_DIR = obj/gtest
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SOURCES = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
+
+
 
 
 #==============================================================================
@@ -43,6 +52,19 @@ obj/main/%.o: src/%.cc
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 -include $(DEPENDS)
+
+#==============================================================================
+# Build rules for VISUALIZER
+#==============================================================================
+
+$(VISUALIZER): $(filter-out obj/main/main.o, $(OBJECTS)) $(VISUALIZER_OBJECTS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS) $(VISUALIZER_LIBS)
+
+obj/visualizer/%.o: src_visualizer/%.cc
+	@mkdir -p obj/visualizer
+	$(CXX) $(CXXFLAGS) $(VISUALIZER_CPPFLAGS) -o $@ -c $<
+
+-include $(VISUALIZER_DEPENDS)
 
 
 #==============================================================================
@@ -85,7 +107,7 @@ $(GTEST_OBJ_DIR)/gtest_main.a: $(GTEST_OBJ_DIR)/gtest-all.o $(GTEST_OBJ_DIR)/gte
 #==============================================================================
 
 clean:
-	rm -rf obj/ $(TARGET)
+	rm -rf obj/ $(TARGET) $(VISUALIZER)
 
 .PHONY: clean test
 
