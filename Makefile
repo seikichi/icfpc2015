@@ -29,8 +29,8 @@ TESTS = $(patsubst test/%.cc, obj/test/%.exe, $(TEST_SOURCES))
 VISUALIZER_SOURCES = $(wildcard src_visualizer/*.cc)
 VISUALIZER_OBJECTS = $(patsubst src_visualizer/%.cc, obj/visualizer/%.o, $(VISUALIZER_SOURCES))
 VISUALIZER_DEPENDS = $(patsubst %.o, %.d, $(VISUALIZER_OBJECTS))
-VISUALIZER_CPPFLAGS = -Isrc -I/usr/include/SDL2 -D_REENTRANT
-VISUALIZER_LIBS = -L/usr/lib/x86_64-linux-gnu -lSDL2 -lSDL2_image
+#VISUALIZER_CPPFLAGS = -Isrc -I/usr/include/SDL2 -D_REENTRANT
+#VISUALIZER_LIBS = -L/usr/lib/x86_64-linux-gnu -lSDL2 -lSDL2_image
 
 GTEST_DIR = extlib/gtest
 GTEST_OBJ_DIR = obj/gtest
@@ -58,11 +58,11 @@ obj/main/%.o: src/%.cc
 #==============================================================================
 
 $(VISUALIZER): $(filter-out obj/main/main.o, $(OBJECTS)) $(VISUALIZER_OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS) $(VISUALIZER_LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS) $(shell sdl2-config --libs) -lSDL2_image
 
 obj/visualizer/%.o: src_visualizer/%.cc
 	@mkdir -p obj/visualizer
-	$(CXX) $(CXXFLAGS) $(VISUALIZER_CPPFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -Isrc $(shell sdl2-config --cflags) -o $@ -c $<
 
 -include $(VISUALIZER_DEPENDS)
 
