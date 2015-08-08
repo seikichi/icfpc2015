@@ -24,7 +24,7 @@ using namespace std;
 int CalcScore(const Game &game, const std::string& commands) {
   Replay replay;
   replay.Init(game, commands);
-  while (replay.KeyInput(game)) {;}
+  while (replay.OneCommandStep(game)) {;}
   return replay.GetCurrentState().score;
 }
 
@@ -57,13 +57,17 @@ void EventLoopAI(const Game& game, const std::string& commands) {
         speed++;
       } else if (keys.Pushed('z')) {
         speed--;
-        speed = max(speed, 0);
       } else if (keys.Pushed('d')) {
         speed += 10;
+      } else if (keys.Pushed('a')) {
+        speed -= 10;
+      } else if (keys.Pushed(' ')) {
+        replay.Init(game, commands);
       }
+      speed = max(speed, 0);
       bool end = false;
       for (int i = 0; i < speed; i++)  {
-        end = !replay.KeyInput(game);
+        end = !replay.OneCommandStep(game);
         if (end) { speed = 0; break; }
       }
 
