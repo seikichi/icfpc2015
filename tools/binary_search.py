@@ -52,7 +52,7 @@ def test(problem_id, seed, solution):
         data = json.loads(re.sub(r'^var\s*data\s*=\s*', r'', response.read().decode('utf8')))
         for setting in data['data']['settings']:
             for d in setting['rankings']:
-                if d['teamId'] != TEAM_ID or d['tags'] != [tag]:
+                if d['teamId'] != int(TEAM_ID) or d['tags'] != [tag]:
                     continue
                 return d['score'] != 0
             time.sleep(10)
