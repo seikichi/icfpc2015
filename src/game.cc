@@ -186,7 +186,6 @@ void Game::ComputePeriod() {
 
 void State::Init(const Game& g) {
   board = g.initial;
-  visited.assign(g.w * 3, 0);
   rot = 0;
   source_idx = 0;
   score = 0;
@@ -341,7 +340,6 @@ void State::Lock(const Game& g) {
   score += points + line_bonus;
 
   ls_old = ls;
-  visited.assign(3 * g.w, 0);
   Reset(g);
 }
 
@@ -366,6 +364,10 @@ void State::Reset(const Game& g) {
       return;
     }
   }
+
+  // Fill visited
+  visited.assign(g.w * 3, 0);
+  visited[pivot.x + g.w] |= 1 << rot;
 }
 
 int State::LineDelete(const Game& g) {
