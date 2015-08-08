@@ -4,7 +4,7 @@ CXX = g++
 
 OVERALL_OPTIONS = -pipe
 LANGUAGE_OPTIONS = -std=c++11
-WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual -Werror #-fcolor-diagnostics
+WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual #-Werror #-fcolor-diagnostics
 OPTIMIZATION_OPTIONS = #-O3 -fno-omit-frame-pointer -march=native -mtune=native
 CODE_GENERATION_OPTIONS = -fPIC
 PREPROCESSOR_OPTIONS = -MMD -MP

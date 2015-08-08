@@ -48,6 +48,15 @@ TEST(CellTest, Rotate) {
   }
 }
 
+TEST(CellTest, Translate) {
+  Cell c1(123, 456);
+  Cell c2(-999, 88);
+  EXPECT_EQ(c1.x, c1.TranslateAdd(c2).TranslateSub(c2).x);
+  EXPECT_EQ(c1.y, c1.TranslateAdd(c2).TranslateSub(c2).y);
+  EXPECT_EQ(c2.x, c2.TranslateAdd(c1).TranslateSub(c1).x);
+  EXPECT_EQ(c2.y, c2.TranslateAdd(c1).TranslateSub(c1).y);
+}
+
 TEST(GameTest, Init) {
   ifstream ifs("problems/problem_1.json");
   string json;
@@ -96,4 +105,71 @@ TEST(GameTest, ComputePeriod) {
   EXPECT_EQ(2, g.period[1]);
   EXPECT_EQ(3, g.period[2]);
   EXPECT_EQ(6, g.period[3]);
+}
+
+TEST(StateTest, Init) {
+  ifstream ifs("test/game_test_state_init.json");
+  string json, line;
+  while (getline(ifs, line)) json += line;
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+  EXPECT_EQ(2, s.pivot.x);
+  EXPECT_EQ(3, s.pivot.y);
+}
+
+TEST(StateTest, LineDelete) {
+  const int w = 5, h = 10;
+  string f[h] = {
+    "11...",
+    "..1.1",
+    ".....",
+    "11111",
+    ".1...",
+    ".....",
+    "..1..",
+    "11111",
+    "11111",
+    "1.111",
+  };
+  string ans[h] = {
+    ".....",
+    ".....",
+    ".....",
+    "11...",
+    "..1.1",
+    ".....",
+    ".1...",
+    ".....",
+    "..1..",
+    "1.111",
+  };
+
+  ifstream ifs("test/game_test_state_init.json");
+  string json, line;
+  while (getline(ifs, line)) json += line;
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  for (int x = 0; x < w; ++x)
+  for (int y = 0; y < h; ++y) {
+    s.board[Cell(x, y).Lin(w)] = (f[y][x] == '1') ? 1 : 0;
+  }
+  int ls = s.LineDelete(g);
+
+  EXPECT_EQ(3, ls);
+  for (int x = 0; x < w; ++x)
+  for (int y = 0; y < h; ++y) {
+    int idx = Cell(x, y).Lin(w);
+    bool expect = ans[y][x] == '1' ? 1 : 0;
+    EXPECT_EQ(expect,
+              s.board[idx]);
+  }
 }
