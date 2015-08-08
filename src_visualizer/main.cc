@@ -28,7 +28,7 @@ void EventLoop(const Game& game, const std::string& commands) {
   Replay replay;
   replay.Init(game, commands);
   Visualizer visualizer;
-  visualizer.Init();
+  visualizer.Init(game);
   for (;;) {
     /* すべてのイベントを処理する */
     while (SDL_PollEvent(&event)) {

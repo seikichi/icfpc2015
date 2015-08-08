@@ -1,7 +1,6 @@
 #pragma once
 
 #include "game.h"
-#include <unistd.h>
 #include <string>
 
 struct Replay {
@@ -16,7 +15,6 @@ struct Replay {
   }
   State GetCurrentState() const { return state; }
   bool KeyInput(const Game& game) {
-    sleep(1);
     if (turn == (int)commands_.size()) { return false; }
     char c = commands_[turn++];
     state.Command(game, c);

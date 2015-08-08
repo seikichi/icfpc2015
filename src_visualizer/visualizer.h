@@ -18,12 +18,12 @@ struct Visualizer {
   int TILE_SIZE = 32;
   const int TEXT_TILE_SIZE = 20;
 
-  bool Init() {
-    if (!CreateSDL()) { return false; }
+  bool Init(const Game& game) {
+    if (!CreateSDL(game)) { return false; }
     return true;
   }
   virtual ~Visualizer() { DestroySDL(); }
-  bool CreateSDL();
+  bool CreateSDL(const Game& game);
   SDL_Texture* LoadTexture(const std::string &file, SDL_Renderer *ren);
   void DestroySDL();
 

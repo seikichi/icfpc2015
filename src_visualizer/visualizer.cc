@@ -20,13 +20,15 @@
 
 using namespace std;
 
-bool Visualizer::CreateSDL() {
+bool Visualizer::CreateSDL(const Game &game) {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
     std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+  int width = game.w * TILE_SIZE + 64;
+  int height = game.h * (TILE_SIZE - 4) + 64;
+  win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, width, height, SDL_WINDOW_SHOWN);
 
   if (win == nullptr){
     std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
