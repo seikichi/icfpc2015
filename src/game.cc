@@ -277,7 +277,7 @@ bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
     Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
       // The unit must be locked, revert the pivot and terminate
-      pivot.TranslateSub(move);
+      pivot = pivot.TranslateSub(move);
       Lock(g);
       return true;
     }

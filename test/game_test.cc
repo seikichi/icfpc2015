@@ -1,4 +1,5 @@
 #include <fstream>
+#include <map>
 #include <string>
 #include <iostream>
 
@@ -6,6 +7,17 @@
 #include "game.h"
 
 using namespace std;
+
+namespace {
+
+string ReadAll(const char* file) {
+  ifstream ifs(file);
+  string all, line;
+  while (getline(ifs, line)) all += line;
+  return all;
+}
+
+}  // namespace
 
 TEST(CellTest, Rotate) {
   // do not rotate
@@ -58,9 +70,7 @@ TEST(CellTest, Translate) {
 }
 
 TEST(GameTest, Init) {
-  ifstream ifs("problems/problem_1.json");
-  string json;
-  getline(ifs, json);
+  auto json = ReadAll("problems/problem_1.json");
 
   Game g;
   bool init_result = g.Init(json, 0);
@@ -94,9 +104,7 @@ TEST(GameTest, GenerateSourceSequense) {
 }
 
 TEST(GameTest, ComputePeriod) {
-  ifstream ifs("test/game_test/compute_period.json");
-  string json, line;
-  while (getline(ifs, line)) json += line;
+  auto json = ReadAll("test/game_test/compute_period.json");
 
   Game g;
   g.Init(json, 0);
@@ -108,9 +116,7 @@ TEST(GameTest, ComputePeriod) {
 }
 
 TEST(StateTest, Init) {
-  ifstream ifs("test/game_test/state_init.json");
-  string json, line;
-  while (getline(ifs, line)) json += line;
+  auto json = ReadAll("test/game_test/state_init.json");
 
   Game g;
   g.Init(json, 0);
@@ -148,9 +154,7 @@ TEST(StateTest, LineDelete) {
     "1.111",
   };
 
-  ifstream ifs("test/game_test/state_init.json");
-  string json, line;
-  while (getline(ifs, line)) json += line;
+  auto json = ReadAll("test/game_test/state_init.json");
 
   Game g;
   g.Init(json, 0);
@@ -172,4 +176,114 @@ TEST(StateTest, LineDelete) {
     EXPECT_EQ(expect,
               s.board[idx]);
   }
+}
+
+TEST(StateTest, Command) {
+  auto json = ReadAll("test/game_test/state_command.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  vector<string> commands{
+    "SE",
+    "SW",
+    "W",
+    "E",
+    "SE",
+    "SW",
+    "W"
+  };
+
+  std::map<string, char> mp{
+    {"W", 'p'},
+    {"E", 'b'},
+    {"SW", 'a'},
+    {"SE", 'l'},
+  };
+
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_EQ(0, s.source_idx);
+    EXPECT_EQ(0, s.score);
+
+    char c = mp[commands[i]];
+    bool res = s.Command(g, c);
+    EXPECT_TRUE(res);
+  }
+  EXPECT_EQ(1, s.source_idx);
+  EXPECT_EQ(1, s.score);
+
+  for (int i = 3; i < 7; ++i) {
+    EXPECT_EQ(1, s.source_idx);
+    EXPECT_EQ(1, s.score);
+
+    char c = mp[commands[i]];
+    bool res = s.Command(g, c);
+    EXPECT_TRUE(res);
+  }
+  EXPECT_EQ(2, s.source_idx);
+  EXPECT_EQ(1 + 1 + 100, s.score);
+}
+
+TEST(StateTest, CommandRotation) {
+  auto json = ReadAll("test/game_test/state_rotation.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  vector<string> commands{
+    "E",  // 0
+    "CW",
+    "CW",
+    "CW",
+    "SE",
+    "SW",
+    "CCW", // 6
+
+    "E",  // 7
+    "CW",
+    "CW",
+    "CW",
+    "E",
+    "CCW",
+    "CCW",
+    "SW",
+    "CW", // 15
+  };
+
+  std::map<string, char> mp{
+    {"W", 'p'},
+    {"E", 'b'},
+    {"SW", 'a'},
+    {"SE", 'l'},
+    {"CW", 'd'},
+    {"CCW", 'k'},
+  };
+
+  for (int i = 0; i < 7; ++i) {
+    EXPECT_EQ(0, s.source_idx);
+    EXPECT_EQ(0, s.score);
+
+    char c = mp[commands[i]];
+    bool res = s.Command(g, c);
+    EXPECT_TRUE(res);
+  }
+  EXPECT_EQ(1, s.source_idx);
+  EXPECT_EQ(2, s.score);
+
+  for (int i = 7; i < 16; ++i) {
+    EXPECT_EQ(1, s.source_idx);
+    EXPECT_EQ(2, s.score);
+
+    char c = mp[commands[i]];
+    bool res = s.Command(g, c);
+    EXPECT_TRUE(res);
+  }
+  EXPECT_EQ(2, s.source_idx);
+  EXPECT_EQ(2 + 2 + 100, s.score);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -88,4 +89,16 @@ struct State {
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
   int LineDelete(const Game& g);
+
+  // For debug use
+  void PrintBoard(const Game& g) const {
+    for (int y = 0; y < g.h; ++y) {
+      if (y % 2) std::cerr << " ";
+      for (int x = 0; x < g.w; ++x) {
+        char z = board[Cell(x, y).Lin(g.w)] ? '#' : '.';
+        std::cerr << z << " ";
+      }
+      std::cerr << std::endl;
+    }
+  }
 };
