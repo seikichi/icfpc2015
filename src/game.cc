@@ -228,6 +228,31 @@ bool State::Command(const Game& g, char c) {
   if (command == "E") {
     return UpdateVisitedAndLock(g, Cell(+1, 0));
   }
+
+  if (command == "SW") {
+    return UpdateVisitedAndLock(g, Cell(-1, 1));
+  }
+
+  if (command == "SE") {
+    return UpdateVisitedAndLock(g, Cell(0, 1));
+  }
+
+  if (command == "RCW") {
+    return UpdateRotAndLock(g, -1);
+  }
+
+  if (command == "RCCW") {
+    return UpdateRotAndLock(g, +1);
+  }
+
+  if (command == "I") {
+    // just ignore
+    return true;
+  }
+
+  cerr << "?????" << endl;
+  exit(1);
+  return false;
 }
 
 bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
@@ -249,11 +274,36 @@ bool State::UpdateVisitedAndLock(const Game& g, Cell move) {
   // Check Lock
   const auto& unit = g.CurrentUnit(source_idx);
   for (const auto& cell : unit.cells) {
-    // FIXME
     Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
       // The unit must be locked, revert the pivot and terminate
       pivot.TranslateSub(move);
+      Lock(g);
+      return true;
+    }
+  }
+
+  return true;
+}
+
+bool State::UpdateRotAndLock(const Game& g, int dir) {
+  int p = g.CurrentPeriod(source_idx);
+  rot = (rot + dir + p) % p;
+
+  if (visited[pivot.x + g.w] & (1 << rot)) {
+    // Invalid operation
+    rot = (rot - dir + p) % p;
+    return false;
+  }
+  visited[pivot.x + g.w] |= 1 << rot;
+
+  // NOTE: Copy & Paste is good
+  const auto& unit = g.CurrentUnit(source_idx);
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
+      // Revert and lock
+      rot = (rot - dir + p) % p;
       Lock(g);
       return true;
     }
