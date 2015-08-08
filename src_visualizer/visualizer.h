@@ -32,6 +32,7 @@ struct Visualizer {
   int CellY(const Cell& cell);
   void BeginDraw();
   void DrawGameState(const Game& game, const State& state);
+  void DrawNext(const Game& game, const State& state);
   void DrawCommandResult(const Game& game, const CommandResult result);
   void EndDraw();
   int GetBoardWidth(const Game& game) {
