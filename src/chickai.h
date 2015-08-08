@@ -2,7 +2,8 @@
 
 #include "ai.h"
 
-struct ChickAI : public AI
-{
-	char Step(const Game& game, const State& state);
+struct ChickAI : public AI {
+  std::string Step(const Game& game,
+                   const State& state,
+                   const Unit& unit);
 };

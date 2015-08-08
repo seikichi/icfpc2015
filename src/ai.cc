@@ -1,6 +1,11 @@
 #include "ai.h"
 
+#include <iostream>
+#include <memory>
 #include <sstream>
+
+#include "chickai.h"
+#include "kichiai.h"
 
 using namespace std;
 
@@ -11,14 +16,26 @@ string AI::Run(const Game& game) {
   state.Init(game);
 
   stringstream solution;
-  do {
-    char next = Step(game, state);
-    solution << next;
-  } while (false);
-  // } while (!state.Command(game, next));
+  while (true) {
+    string next = Step(game, state, game.CurrentUnit(state.source_idx));
+
+    for (const char c : next) {
+      if (!state.Command(game, c)) {
+        return solution.str();
+      }
+      solution << c;
+    }
+  }
   return solution.str();
 }
 
-char AI::Step(const Game&, const State&) {
-  return 'b';
+shared_ptr<AI> AI::CreateAI(const std::string& name) {
+  if (name == "chickai") {
+    return make_shared<ChickAI>();
+  } else if (name == "kichiai") {
+    return make_shared<KichiAI>();
+  }
+  cerr << "AHOKA: Invalid AI (plese set AI env. variable)" << endl;
+  exit(1);
+  return shared_ptr<AI>(NULL);
 }
