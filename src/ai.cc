@@ -8,6 +8,7 @@
 #include "chickai.h"
 #include "lightningai.h"
 #include "kichiai.h"
+#include "echo_ai.h"
 
 using namespace std;
 
@@ -24,6 +25,8 @@ shared_ptr<AI> AI::CreateAI() {
     result = make_shared<LightningAI>();
   } else if (name == "chickai") {
     result = make_shared<ChickAI>();
+  } else if (name == "echoai") {
+    result = make_shared<EchoAI>();
   }
 
   return result;
