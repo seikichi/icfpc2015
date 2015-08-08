@@ -1,0 +1,6 @@
+# Usage
+
+```
+make
+./play_icfp2015 -f problem.json
+```

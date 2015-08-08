@@ -160,12 +160,12 @@ void Visualizer::DrawGameState(const Game& game, const State& state) {
   if (state.gameover) {
     DrawText(8, GetBoardHeight(game) + 8 + 24, "Game Over!");
   }
-  // DrawNext(game, state);
+  DrawNext(game, state);
 }
-// void Visualizer::DrawNext(const Game& game, const State& state) {
-//   int rest = game.source_seq.size() - state.source_idx - 1;
-//   DrawText(GetBoardWidth(game) + 32, 8, "Rest: %d", rest);
-// }
+void Visualizer::DrawNext(const Game& game, const State& state) {
+  int rest = game.source_seq.size() - state.source_idx - 1;
+  DrawText(GetBoardWidth(game) + 32, 8, "Rest: %d", rest);
+}
 void Visualizer::DrawCommandResult(const Game& game, const CommandResult result) {
   map<CommandResult, string> message {
     { MOVE, "" },
