@@ -3,6 +3,7 @@
 #include <sstream>
 #include <queue>
 #include <cassert>
+#include <sys/time.h>
 using namespace std;
 
 namespace {
@@ -33,6 +34,12 @@ int evaluateScore(const Game&, const State& state, const State& next_state) {
   // return state.pivot.y;
 }
 
+long long getTime() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
+}
+
 };
 
 string LightningAI::Run(const Game& game) {
@@ -40,7 +47,11 @@ string LightningAI::Run(const Game& game) {
   State state;
   state.Init(game);
 
-  while (true) {
+  long long time_limit = (long long)time_limit_seconds * 1000000;
+  long long time_limit_per_unit = time_limit / (2 * game.num_source_seeds * game.source_seq.size());
+  long long game_start_time = getTime();
+
+  for (int loop_count = 0; ; ++loop_count) {
     // 1ユニットごとにループ
     const int visited_w = 3 * game.w;
     const int visited_offset_x = game.w;
@@ -55,7 +66,14 @@ string LightningAI::Run(const Game& game) {
     priority_queue<Item> Q;
     Q.push(Item(game, state, ""));
 
-    while (!Q.empty()) {
+    long long start_time = getTime();
+    for (unsigned loop_count = 0; !Q.empty(); ++loop_count) {
+      long long now = getTime();
+      if (now - start_time >= time_limit_per_unit && max_score != -1)
+          break;
+      if (now - game_start_time >= time_limit / 2)
+          goto finish;
+
       const Item item = Q.top(); Q.pop();
 
       assert(0 <= state.pivot.x + visited_offset_x);
@@ -77,7 +95,7 @@ string LightningAI::Run(const Game& game) {
 
         assert(result != GAMEOVER && result != CLEAR);
         if (result == ERROR) {
-          continue; 
+          continue;
         } else if (result == LOCK) {
           const int score = evaluateScore(game, item.state, next_state);
           if (score > max_score) {
@@ -92,12 +110,15 @@ string LightningAI::Run(const Game& game) {
       }
     }
 
+    cerr << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - game_start_time << " usec" << endl;
+
     // modify solution by using best_commands
     if (max_score == -1) { break; }
     for (char c : best_commands) { state.Command(game, c); }
     solution += best_commands;
   }
 
+finish:
   std::cerr << state.score << endl;
   return solution;
 }

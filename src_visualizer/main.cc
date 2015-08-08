@@ -142,7 +142,7 @@ end:
 int main(int argc, char** argv) {
   // input
   vector<string> problem_files;
-  int time_limit_seconds;
+  int time_limit_seconds = 300;
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
     while (game.Init(problem, source_seed_idx++)) {
       if (!manual_play) {
         auto ai = AI::CreateAI();
-        ai->Init();
+        ai->Init(time_limit_seconds);
         string commands = ai->Run(game);
         EventLoopAI(game, commands);
       } else {
