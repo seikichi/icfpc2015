@@ -31,6 +31,7 @@ int CalcScore(const Game &game, const std::string& commands) {
 void EventLoopAI(const Game& game, const std::string& commands) {
   SDL_Event event;
   double next_frame = SDL_GetTicks();
+  int speed = 1;
   double wait = 1000.0 / 60;
   KeyInput keys;
   keys.Init();
@@ -52,11 +53,24 @@ void EventLoopAI(const Game& game, const std::string& commands) {
     /* 1秒間に60回Updateされるようにする */
     if (SDL_GetTicks() >= next_frame) {
       keys.Update();
-      if (!replay.KeyInput(game)) { goto end; }
+      if (keys.Pushed('x')) {
+        speed++;
+      } else if (keys.Pushed('z')) {
+        speed--;
+        speed = max(speed, 0);
+      } else if (keys.Pushed('d')) {
+        speed += 10;
+      }
+      bool end = false;
+      for (int i = 0; i < speed; i++)  {
+        end = !replay.KeyInput(game);
+        if (end) { speed = 0; break; }
+      }
 
       visualizer.BeginDraw();
       visualizer.DrawGameState(game, replay.GetCurrentState());
       visualizer.DrawCommandResult(game, command_result);
+      visualizer.DrawText(196, visualizer.GetBoardHeight(game) + 8, "Speed x %d", speed);
       visualizer.EndDraw();
       next_frame += wait;
       // SDL_Delay(1);
