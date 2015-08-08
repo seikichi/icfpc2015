@@ -28,7 +28,7 @@ struct Visualizer {
 
   void DrawText(int x, int y, const char* format, ...);
   void Draw(int x, int y, Image image);
-  int CellX(int x, int y);
-  int CellY(int x, int y);
-  void DrawGameState(const Game &game);
+  int CellX(const Cell& cell);
+  int CellY(const Cell& cell);
+  void DrawGameState(const Game &game, const State &state);
 };

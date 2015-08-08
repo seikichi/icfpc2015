@@ -127,30 +127,30 @@ void Visualizer::Draw(int x, int y, Image image) {
   destrect.h = TILE_SIZE;
   SDL_RenderCopy(ren, tex, &srcrect, &destrect);
 }
-int Visualizer::CellX(int x, int y) {
+int Visualizer::CellX(const Cell &cell) {
   const int dx = TILE_SIZE;
   const int offset = TILE_SIZE / 2;
-  return dx * x + (y % 2 * offset);
+  return dx * cell.x + (cell.y % 2 * offset);
 }
-int Visualizer::CellY(int x, int y) {
+int Visualizer::CellY(const Cell & cell) {
   const int dy = TILE_SIZE - 4;
-  return y * dy;
+  return cell.y * dy;
 }
-void Visualizer::DrawGameState(const Game &game) {
+void Visualizer::DrawGameState(const Game &game, const State &state) {
   SDL_RenderClear(ren);
   for (int y = 0; y < game.h; y++) {
     for (int x = 0; x < game.w; x++) {
-      if (game.initial[y * game.w + x]) {
-        Draw(CellX(x, y), CellY(x, y), Image::FILLED);
-      } else if (false) {
-        Draw(CellX(x, y), CellY(x, y), Image::UNIT);
-        // TODO draw units
+      Cell cell(x, y);
+      if (state.board[cell.Lin(game.w)]) {
+       Draw(CellX(cell), CellY(cell), Image::FILLED);
       } else {
-        Draw(CellX(x, y), CellY(x, y), Image::EMPTY);
+        Draw(CellX(cell), CellY(cell), Image::EMPTY);
       }
     }
   }
-  Draw(CellX(0, 0), CellY(0, 0), Image::PIVOT);
+  for (const Cell& cell : state.GetCurrentUnitCells(game)) {
+    Draw(CellX(cell), CellY(cell), Image::UNIT);
+  }
+  Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
   SDL_RenderPresent(ren);
-  // TODO draw pivot
 }
