@@ -4,6 +4,7 @@
 #include <memory>
 #include <sstream>
 
+#include "game.h"
 #include "chickai.h"
 #include "kichiai.h"
 
@@ -17,14 +18,20 @@ string AI::Run(const Game& game) {
 
   stringstream solution;
   while (true) {
-    string next = Step(game, state, game.CurrentUnit(state.source_idx));
+    string next = Step(game, state);
 
     for (const char c : next) {
-      if (!state.Command(game, c)) {
+      CommandResult result = state.Command(game, c);
+      if (result == ERROR || result == GAMEOVER) {
+        return solution.str();
+      }
+      if (result == CLEAR) {
+        solution << c;
         return solution.str();
       }
       solution << c;
     }
+    return solution.str();
   }
   return solution.str();
 }

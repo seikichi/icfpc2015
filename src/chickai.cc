@@ -1,5 +1,5 @@
 #include "chickai.h"
 
-std::string ChickAI::Step(const Game&, const State&, const Unit&) {
+std::string ChickAI::Step(const Game&, const State&) {
 	return "b";
 }
