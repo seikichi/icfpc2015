@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <queue>
+#include <cassert>
 using namespace std;
 
 namespace {
@@ -20,12 +21,19 @@ string KichiAI::Run(const Game& game) {
   State state;
   state.Init(game);
 
+  const int visited_w = 3 * game.w;
+  const int visited_offset_x = game.w;
+  const int visited_h = 3 * game.h;
+  const int visited_offset_y = game.h;
+
   stringstream solution;
 
   while (true) {
     // 1ユニットごとにループ
     State initial_state = state;
-    vector<bool> visited(game.h * game.w * 6, false);
+
+    vector<bool> visited(visited_h * visited_w * 6, false);
+
     queue<SearchState> que;
     string step_result = "";
     double max_score = -1;
@@ -36,8 +44,13 @@ string KichiAI::Run(const Game& game) {
       que.pop();
       const State& state = search_state.state;
 
-      const int visited_index = game.w * 6 * state.pivot.y +
-        6 * state.pivot.x + state.rot;
+      assert(0 <= state.pivot.x + visited_offset_x);
+      assert(state.pivot.x + visited_offset_x < visited_w);
+      assert(0 <= state.pivot.y + visited_offset_y);
+      assert(state.pivot.y + visited_offset_y < visited_h);
+      const int visited_index =
+        visited_w * 6 * (state.pivot.y + visited_offset_y) +
+        6 * (state.pivot.x + visited_offset_x) + state.rot;
 
       if (visited[visited_index]) { continue; }
       visited[visited_index] = true;
