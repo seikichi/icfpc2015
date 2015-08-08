@@ -18,7 +18,6 @@ shared_ptr<AI> AI::CreateAI(const std::string& name) {
   } else if (name == "kichiai") {
     return make_shared<KichiAI>();
   }
-  cerr << "AHOKA: Invalid AI (plese set AI env. variable)" << endl;
-  exit(1);
-  return shared_ptr<AI>(NULL);
+
+  return make_shared<KichiAI>();
 }
