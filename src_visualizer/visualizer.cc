@@ -26,8 +26,8 @@ bool Visualizer::CreateSDL(const Game &game) {
     exit(1);
   }
 
-  int width = game.w * TILE_SIZE + 64;
-  int height = game.h * (TILE_SIZE - 4) + 64;
+  int width = GetBoardWidth(game) + 64;
+  int height = GetBoardHeight(game) + 64;
   win = SDL_CreateWindow("Honeycomb Tetris", 100, 100, width, height, SDL_WINDOW_SHOWN);
 
   if (win == nullptr){
@@ -154,5 +154,6 @@ void Visualizer::DrawGameState(const Game &game, const State &state) {
     Draw(CellX(cell), CellY(cell), Image::UNIT);
   }
   Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
+  DrawText(8, GetBoardHeight(game) + 8, "Score: %d", state.score);
   SDL_RenderPresent(ren);
 }
