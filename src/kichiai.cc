@@ -15,14 +15,14 @@ struct SearchState {
 };
 };
 
-string KichiAI::Step(const Game& game, const State& state) {
+string KichiAI::Step(const Game& game, const State& initial_state) {
   // game.CurrentUnit(state.source_idx);
   vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
   queue<SearchState> que;
   string step_result = "";
   double max_score = -1;
   vector<bool> visited(game.h * game.w * 6, false);
-  que.push(SearchState(state, ""));
+  que.push(SearchState(initial_state, ""));
 
   while (!que.empty()) {
     SearchState search_state = que.front(); que.pop();
