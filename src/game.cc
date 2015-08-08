@@ -22,7 +22,7 @@ int DivFloor(int a, int b) {
 
 }  // namespace
 
-Cell Cell::Rotate(const Cell& pivot, int t) {
+Cell Cell::Rotate(const Cell& pivot, int t) const {
   // Normalize pivot to (0, 0)
   Cell res(x - pivot.x, y - pivot.y);
 
@@ -62,6 +62,37 @@ Cell Cell::Rotate(const Cell& pivot, int t) {
   return res;
 }
 
+Cell Cell::TranslateAdd(Cell o) const {
+  Cell res(x - DivFloor(y, 2), y);
+  o.x += -DivFloor(o.y, 2);
+
+  res.x += o.x;
+  res.y += o.y;
+
+  res.x += DivFloor(res.y, 2);
+  return res;
+}
+
+Cell Cell::TranslateSub(Cell o) const {
+  Cell res(x - DivFloor(y, 2), y);
+  o.x += -DivFloor(o.y, 2);
+
+  res.x -= o.x;
+  res.y -= o.y;
+
+  res.x += DivFloor(res.y, 2);
+  return res;
+}
+
+Unit::Boundary Unit::GetBoundary() const {
+  Unit::Boundary ret{9999, -9999, 9999};
+  for (const auto& cell : cells) {
+    ret.xmin = min(ret.xmin, cell.x);
+    ret.xmax = max(ret.xmax, cell.x);
+    ret.ymin = min(ret.ymin, cell.y);
+  }
+  return ret;
+}
 
 bool Game::Init(std::string json, int source_seed_idx) {
   value v;
@@ -81,11 +112,13 @@ bool Game::Init(std::string json, int source_seed_idx) {
     Unit unit;
     auto o_unit = v_unit.get<object>();
     auto members = o_unit["members"].get<picojson::array>();
+    auto pivot = ReadCell(o_unit["pivot"].get<object>());
     for (auto& member : members) {
       auto cell = ReadCell(member.get<object>());
-      unit.cells.push_back(cell);
+      auto normalized_cell = cell.TranslateSub(pivot);
+      unit.cells.push_back(normalized_cell);
     }
-    unit.pivot = ReadCell(o_unit["pivot"].get<object>());
+    unit.pivot = Cell(0, 0);  // NOTE: Do not use this
     units.push_back(unit);
   }
 
@@ -153,5 +186,211 @@ void Game::ComputePeriod() {
 
 void State::Init(const Game& g) {
   board = g.initial;
-  visited.clear();
+  rot = 0;
+  source_idx = 0;
+  score = 0;
+  ls_old = 0;
+  gameover = 0;
+
+  Reset(g);
+}
+
+CommandResult State::Command(const Game& g, char c) {
+  if (source_idx >= (int)g.source_seq.size()) {
+    return CLEAR;
+  }
+  // NOTE: Return LOCK instead of GAMEOVER if a command leads to game over result.
+  if (gameover) {
+    return GAMEOVER;
+  }
+
+  const string command_chars[] = {
+    "p'!.03",
+    "bcefy2",
+    "aghij4",
+    "lmno 5",
+    "dqrvz1",
+    "kstuwx",
+    "\t\n\r",
+  };
+  const string command_list[] = {
+    "W", "E", "SW", "SE", "RCW", "RCCW", "I",
+  };
+
+  string command;
+  for (int i = 0; i < 7; ++i) {
+    if (command_chars[i].find(c) != string::npos) {
+      command = command_list[i];
+    }
+  }
+
+  if (command.empty()) {
+    cerr << "AHOKA:Invalid command c=" << c << endl;
+    exit(1);
+  }
+
+  if (command == "W") {
+    return UpdateVisitedAndLock(g, Cell(-1, 0));
+  }
+
+  if (command == "E") {
+    return UpdateVisitedAndLock(g, Cell(+1, 0));
+  }
+
+  if (command == "SW") {
+    return UpdateVisitedAndLock(g, Cell(-1, 1));
+  }
+
+  if (command == "SE") {
+    return UpdateVisitedAndLock(g, Cell(0, 1));
+  }
+
+  if (command == "RCW") {
+    return UpdateRotAndLock(g, -1);
+  }
+
+  if (command == "RCCW") {
+    return UpdateRotAndLock(g, +1);
+  }
+
+  if (command == "I") {
+    // just ignore
+    return MOVE;
+  }
+
+  cerr << "?????" << endl;
+  exit(1);
+  return ERROR;
+}
+
+CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move) {
+  assert(move.y >= 0);
+  // Check visited
+  pivot = pivot.TranslateAdd(move);
+
+  if (move.y) {
+    visited.assign(3 * g.w, 0);
+  }
+
+  if (visited[pivot.x + g.w] & (1 << rot)) {
+    // Invalid operation
+    pivot = pivot.TranslateSub(move);
+    return ERROR;
+  }
+  visited[pivot.x + g.w] |= 1 << rot;
+
+  // Check Lock
+  const auto& unit = g.CurrentUnit(source_idx);
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
+      // The unit must be locked, revert the pivot and terminate
+      pivot = pivot.TranslateSub(move);
+      Lock(g);
+      return LOCK;
+    }
+  }
+
+  return MOVE;
+}
+
+CommandResult State::UpdateRotAndLock(const Game& g, int dir) {
+  int p = g.CurrentPeriod(source_idx);
+  rot = (rot + dir + p) % p;
+
+  if (visited[pivot.x + g.w] & (1 << rot)) {
+    // Invalid operation
+    rot = (rot - dir + p) % p;
+    return ERROR;
+  }
+  visited[pivot.x + g.w] |= 1 << rot;
+
+  // NOTE: Copy & Paste is good
+  const auto& unit = g.CurrentUnit(source_idx);
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
+      // Revert and lock
+      rot = (rot - dir + p) % p;
+      Lock(g);
+      return LOCK;
+    }
+  }
+
+  return MOVE;
+}
+
+void State::Lock(const Game& g) {
+  const auto& unit = g.CurrentUnit(source_idx);
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    assert(board[c.Lin(g.w)] == 0);
+    board[c.Lin(g.w)] = 1;
+  }
+
+  // Line deletion
+  int ls = LineDelete(g);
+
+  source_idx++;
+  rot = 0;
+  // Compute and update score
+  int size = (int)unit.cells.size();
+  int points = size + 100 * (1 + ls) * ls / 2;
+  int line_bonus = (ls_old > 1) ? (ls_old - 1) * points / 10 : 0;
+  score += points + line_bonus;
+
+  ls_old = ls;
+  Reset(g);
+}
+
+void State::Reset(const Game& g) {
+  if (source_idx >= (int)g.source_seq.size()) {
+    return;
+  }
+  const auto& unit = g.CurrentUnit(source_idx);
+  auto b = unit.GetBoundary();
+  int bw = b.xmax - b.xmin + 1;
+  Cell top_left_u(b.xmin, b.ymin);
+  Cell top_left_o((g.w - bw) / 2, 0);
+
+  pivot = top_left_o.TranslateSub(top_left_u);
+
+  // Check game over
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    assert(!(c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h)); // something is strange!
+    if (board[c.Lin(g.w)]) {
+      gameover = 1;
+      return;
+    }
+  }
+
+  // Fill visited
+  visited.assign(g.w * 3, 0);
+  visited[pivot.x + g.w] |= 1 << rot;
+}
+
+int State::LineDelete(const Game& g) {
+  int ls = 0;
+  int ty = g.h - 1;
+  for (int y = g.h - 1; y >= 0; --y) {
+    bool del = 1;
+    for (int x = 0; x < g.w; ++x) del &= board[Cell(x, y).Lin(g.w)];
+    if (!del) {
+      if (ty != y) {
+        for (int x = 0; x < g.w; ++x) {
+          board[Cell(x, ty).Lin(g.w)] = board[Cell(x, y).Lin(g.w)];
+        }
+      }
+      ty--;
+    } else {
+      ls++;
+    }
+  }
+
+  // zero-fill
+  for (int y = ty; y >= 0; --y) {
+    for (int x = 0; x < g.w; ++x) board[Cell(x, y).Lin(g.w)] = 0;
+  }
+  return ls;
 }

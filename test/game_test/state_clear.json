@@ -1,0 +1,19 @@
+{
+    "filled": [], 
+    "width": 1,
+    "height": 1, 
+    "id": 0, 
+    "sourceLength": 2, 
+    "sourceSeeds": [ 0 ], 
+    "units": [
+        {
+            "members": [
+                {
+                    "x": 0, 
+                    "y": 0
+                }
+            ], 
+            "pivot": { "x": 0, "y": 0 }
+        }
+    ]
+}

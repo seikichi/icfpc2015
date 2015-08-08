@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -21,12 +22,24 @@ struct Cell {
   }
 
   // t must be specified in ccw order
-  Cell Rotate(const Cell& pivot, int t);
+  Cell Rotate(const Cell& pivot, int t) const;
+
+  // Return coordinate after translation s.t. (0, 0) is moved to o.
+  // (Coordinate must be specified in zigzag-coordinate(?))
+  Cell TranslateAdd(Cell o) const;
+  // Return coordinate after translation s.t. o is moved to (0, 0).
+  Cell TranslateSub(Cell o) const;
 };
 
 struct Unit {
   std::vector<Cell> cells;
+  // NOTE: This variable is set to (0, 0). Do not use this variable!!
   Cell pivot;
+
+  struct Boundary {
+    int xmin, xmax, ymin;
+  };
+  Boundary GetBoundary() const;
 };
 
 struct Game {
@@ -42,17 +55,59 @@ struct Game {
 
   void GenerateSourceSequense(int seed, int length, int mod);
   void ComputePeriod();
+
+  Unit& CurrentUnit(int source_idx) {
+    return units[source_seq[source_idx]];
+  }
+  const Unit& CurrentUnit(int source_idx) const {
+    return units[source_seq[source_idx]];
+  }
+  int CurrentPeriod(int source_idx) const {
+    return period[source_seq[source_idx]];
+  }
+};
+
+enum CommandResult {
+  MOVE,
+  LOCK,
+  ERROR,
+  CLEAR,
+  GAMEOVER,
 };
 
 struct State {
   void Init(const Game& g);
   // return true if the given command is valid
-  bool Command(const Game& g, char c);
+  // TODO(ir5): Is it better that the return value is enum instead of bool?
+  CommandResult Command(const Game& g, char c);
 
   Board board;
-  std::vector<char> visited;
-  Cell pivot;
+  std::vector<char> visited; // dimension is w * 3
+  Cell pivot;  // pivot location
   int rot;
   int source_idx;
   int score;
+  int ls_old;  // the number of lines cleared with the previous unit
+  bool gameover;
+
+ // private:
+  // return true if the move is valid
+  CommandResult UpdateVisitedAndLock(const Game& g, Cell move);
+  CommandResult UpdateRotAndLock(const Game& g, int dir);
+  void Lock(const Game& g);
+  void Reset(const Game& g);
+  // return the number of lines cleared with the current unit
+  int LineDelete(const Game& g);
+
+  // For debug use
+  void PrintBoard(const Game& g) const {
+    for (int y = 0; y < g.h; ++y) {
+      if (y % 2) std::cerr << " ";
+      for (int x = 0; x < g.w; ++x) {
+        char z = board[Cell(x, y).Lin(g.w)] ? '#' : '.';
+        std::cerr << z << " ";
+      }
+      std::cerr << std::endl;
+    }
+  }
 };
