@@ -47,10 +47,6 @@ void EventLoopAI(const Game& game, const std::string& commands) {
     /* 1秒間に60回Updateされるようにする */
     // cout << game_state << endl;
     if (SDL_GetTicks() >= next_frame) {
-      // if (!game_state.IsGameOver()) {
-        // if (manual) {
-          // routine.StepFrame(game_state, ais, wait);
-        // } else {
           const Uint8* keys = SDL_GetKeyboardState(NULL);
           int z = keys[SDL_GetScancodeFromKey(SDLK_z)];
           int x = keys[SDL_GetScancodeFromKey(SDLK_x)];
