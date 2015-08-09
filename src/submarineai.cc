@@ -145,7 +145,8 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
   if (height < 3) { return initial_answer; }
 
   string commands = initial_answer;
-  double energy = CalcEnergy(game, CalcLastState(game, initial_state, initial_answer));
+  State initial_last_state = CalcLastState(game, initial_state, initial_answer);
+  double energy = CalcEnergy(game, initial_last_state);
   pair<double, string> best_answer = make_pair(energy, initial_answer);
   int counter = 0;
   long long start_time = getTime();
@@ -157,6 +158,8 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     double rest_time = (double)(end_time - current_time) / (double)(end_time - start_time) + 1e-8;
     string next_commands = ChangePath(game, initial_state, commands, loop_count, rest_time);
     State next_last_state = CalcLastState(game, initial_state, next_commands);
+    assert(next_last_state.pivot == initial_last_state.pivot);
+    assert(next_last_state.rot == initial_last_state.rot);
     double next_energy = CalcEnergy(game, next_last_state);
     double probability = CalcProbability(energy, next_energy,  rest_time + 1e-8);
     double r = random.next(0.0, 1.0);
@@ -200,7 +203,9 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     string ret = "";
     if (start_pos == 0) {
       start_state = temp_state;
-      temp_state.Command(game, commands[0]);
+      if (mid_pos != 0) {
+        temp_state.Command(game, commands[0]);
+      }
     } else {
       for (int i = 0; i <= start_pos; i++) {
         temp_state.Command(game, commands[i]);
@@ -225,6 +230,7 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     if (mid1.size() == 0) { goto fail; }
     ret += mid1;
     mid_state = CalcLastState(game, initial_state, ret);
+    assert(mid_state.pivot == mid_point && mid_state.rot == mid_rot);
     bool success = false;
     char cs[2] = { 'a', 'l' };
     for (int i = 0; i < 2; i++) {
@@ -242,6 +248,8 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     string mid2 = FindPath(game, mid_state, loop_count, end_point, end_rot);
     if (mid2.size() == 0) { goto fail; }
     ret += mid2;
+    temp_state = CalcLastState(game, initial_state, ret);
+    assert(temp_state.pivot == end_point && temp_state.rot == end_rot);
     ret += commands.substr(end_pos, commands.size() - end_pos);
     return ret;
   }
@@ -340,6 +348,9 @@ string SubmarineAI::Run(const Game& game) {
 
 State SubmarineAI::CalcLastState(const Game& game, const State& state, const std::string& commands) const {
   State last_state = state;
-  for (char c : commands) { last_state.Command(game, c); }
+  for (int i = 0; i < (int)commands.size(); i++) {
+    CommandResult result = last_state.Command(game, commands[i]);
+    assert(i == (int)commands.size() - 1 || result == MOVE);
+  }
   return last_state;
 }
