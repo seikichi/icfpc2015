@@ -129,6 +129,8 @@ struct State {
   int rot;
   int source_idx;
   int score;
+  int score_move;  // move_score + line_score
+  int score_power; // score by power-of-phrase
   int ls_old;  // the number of lines cleared with the previous unit
   bool gameover;
   util::Node* pma_node;  // for power-of-phrase check

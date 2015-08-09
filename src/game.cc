@@ -198,6 +198,8 @@ void State::Init(const Game& g) {
   rot = 0;
   source_idx = 0;
   score = 0;
+  score_move = 0;
+  score_power = 0;
   ls_old = 0;
   gameover = 0;
 
@@ -353,17 +355,18 @@ void State::UpdatePowerPMA(const Game& g, char c) {
   auto accept_index = g.power_pma.UpdateNode(c, pma_node);
 
   // Update score
-  int power_score = 0;
+  int now_power = 0;
   for (int i = 0; i < (int)accept_index.size(); ++i) {
     if (accept_index[i]) {
       if (!used_power[i]) {
-        power_score += 300;  // Bonus
+        now_power += 300;  // Bonus
         used_power[i] = 1;
       }
-      power_score += 2 * g.power_len[i];
+      now_power += 2 * g.power_len[i];
     }
   }
-  score += power_score;
+  score += now_power;
+  score_power = now_power;
 }
 
 void State::Lock(const Game& g) {
@@ -384,6 +387,7 @@ void State::Lock(const Game& g) {
   int points = size + 100 * (1 + ls) * ls / 2;
   int line_bonus = (ls_old > 1) ? (ls_old - 1) * points / 10 : 0;
   score += points + line_bonus;
+  score_move += points + line_bonus;
 
   ls_old = ls;
 
