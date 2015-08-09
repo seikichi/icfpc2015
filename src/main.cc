@@ -104,6 +104,8 @@ int main(int argc, char** argv) {
                                    solution));
       }
 
+      cerr << "best_score: " << best.first << endl;
+
       auto solution = best.second;
       ss << "{";
       ss << "\"problemId\": " << game.problem_id << ", ";
