@@ -8,12 +8,22 @@
 
 typedef std::vector<bool> Board;
 
+namespace {
+
+// (Auxiliary function)
+// Return floor(a / b) (assuming that b > 0)
+inline int DivFloor(int a, int b) {
+  return (a >= 0) ? (a / b) : -((-a + b - 1) / b);
+}
+
+}  // namespace
+
 struct Cell {
   int x, y;
   Cell() : x(0), y(0) {};
   Cell(int x, int y) : x(x), y(y) {}
 
-  int Lin(int w) { return y * w + x; }
+  inline int Lin(int w) { return y * w + x; }
 
   bool operator<(const Cell& rhs) const {
     return std::make_pair(x, y) < std::make_pair(rhs.x, rhs.y);
@@ -27,11 +37,30 @@ struct Cell {
 
   // Return coordinate after translation s.t. (0, 0) is moved to o.
   // (Coordinate must be specified in zigzag-coordinate(?))
-  Cell TranslateAdd(Cell o) const;
-  // Return coordinate after translation s.t. o is moved to (0, 0).
-  Cell TranslateSub(Cell o) const;
+  inline Cell TranslateAdd(Cell o) const {
+    Cell res(x - DivFloor(y, 2), y);
+    o.x += -DivFloor(o.y, 2);
 
-  Cell GetCurrentPos(int rot, const Cell &pivot) const {
+    res.x += o.x;
+    res.y += o.y;
+
+    res.x += DivFloor(res.y, 2);
+    return res;
+  }
+
+  // Return coordinate after translation s.t. o is moved to (0, 0).
+  inline Cell TranslateSub(Cell o) const {
+    Cell res(x - DivFloor(y, 2), y);
+    o.x += -DivFloor(o.y, 2);
+
+    res.x -= o.x;
+    res.y -= o.y;
+
+    res.x += DivFloor(res.y, 2);
+    return res;
+  }
+
+  inline Cell GetCurrentPos(int rot, const Cell &pivot) const {
     return Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
   }
 };
