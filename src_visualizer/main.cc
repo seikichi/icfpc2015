@@ -6,6 +6,7 @@
 #include "manual_player.h"
 #include "replay.h"
 #include "echo_ai.h"
+#include "util.h"
 
 #include <cstdio>
 #include <unistd.h>
@@ -172,6 +173,7 @@ end:
 }
 
 int main(int argc, char** argv) {
+  util::Init();
   // input
   vector<string> problem_files;
   int time_limit_seconds = 300;

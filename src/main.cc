@@ -2,6 +2,7 @@
 #include "chickai.h"
 #include "echo_ai.h"
 #include "game.h"
+#include "util.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -36,6 +37,7 @@ int Evaluate(const Game& g, const string commands) {
 }  // namespace
 
 int main(int argc, char** argv) {
+  util::Init();
   // input
   vector<string> problem_files;
   int time_limit_seconds = 300;
