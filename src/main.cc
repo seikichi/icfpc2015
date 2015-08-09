@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 
         int eval = Evaluate(game, solution);
         best = max(best, make_pair(eval, solution));
-        cerr << "Annotated score: " << eval << endl;
+        cerr << "# Annotated score: " << eval << endl;
       }
 
       // Then, execute specified AI
