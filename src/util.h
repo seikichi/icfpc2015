@@ -11,7 +11,8 @@ struct Node {
   Node* to[128];
   AcceptIndex ac;
   Node* failure;
-  Node() : failure(NULL) { memset(to, 0, sizeof(to)); }
+  int pos;
+  Node(int pos) : failure(NULL), pos(pos) { memset(to, 0, sizeof(to)); }
 };
 
 struct PMA {

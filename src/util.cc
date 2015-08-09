@@ -6,14 +6,14 @@ using namespace std;
 namespace util {
 
 void PMA::Build(std::vector<std::string> &words) {
-  root = new Node();
+  root = new Node(0);
 
   // make trie
   for (int i = 0; i < (int)words.size(); ++i) {
     Node* node = root;
     for (auto& ct : words[i]) {
       int k = (int)ct;
-      if (node->to[k] == NULL) node->to[k] = new Node();
+      if (node->to[k] == NULL) node->to[k] = new Node(i + 1);
       node = node->to[k];
     }
     node->ac.set(i, 1);
