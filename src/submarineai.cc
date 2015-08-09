@@ -205,14 +205,14 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
       start_state = temp_state;
       ret += commands.substr(0, start_pos + 1);
     }
-    for (int i = start_pos + 1; i <= mid_pos; i++) {
+    for (int i = start_pos + 1; i < mid_pos; i++) {
       temp_state.Command(game, commands[i]);
     }
     State mid_state = temp_state;
     Cell mid_point = mid_state.pivot;
     mid_point.x += random.next(-5, 5);
     int mid_rot = mid_state.rot;
-    for (int i = mid_pos + 1; i < end_pos; i++) {
+    for (int i = mid_pos; i < end_pos; i++) {
       temp_state.Command(game, commands[i]);
     }
     Cell end_point = temp_state.pivot;
@@ -221,20 +221,21 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     string mid1 = FindPath(game, start_state, loop_count, mid_point, mid_rot);
     if (mid1.size() == 0) { goto fail; }
     ret += mid1;
+    mid_state = CalcLastState(game, initial_state, ret);
     bool success = false;
     char cs[2] = { 'a', 'l' };
     for (int i = 0; i < 2; i++) {
       char c = cs[i];
-      CommandResult command_result = mid_state.Command(game, c);
+      State temp_state2 = mid_state;
+      CommandResult command_result = temp_state2.Command(game, c);
       if (command_result == MOVE) {
+        mid_state = temp_state2;
         ret.push_back(c);
         success = true;
         break;
       }
     }
     if (!success) { goto fail; }
-    mid_state.pivot = mid_point;
-    game.power_pma.UpdateNode('@', mid_state.pma_node);
     string mid2 = FindPath(game, mid_state, loop_count, end_point, end_rot);
     if (mid2.size() == 0) { goto fail; }
     ret += mid2;
