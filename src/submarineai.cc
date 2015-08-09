@@ -59,7 +59,7 @@ long long getTime() {
 };
 
 
-TleState SubmarineAI::ShouldExitLoop(long long unit_start_time) const {
+TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_limit_per_unit) const {
   long long now = getTime();
   if (now - unit_start_time >= time_limit_per_unit)
     return TleState::Yellow;
@@ -87,7 +87,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
 
   long long start_time = getTime();
   while (!Q.empty()) {
-    TleState tle_state = ShouldExitLoop(start_time);
+    TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_initial_search);
     if (tle_state == TleState::Yellow && max_score != -1)
       break;
     else if (tle_state == TleState::Red)
@@ -150,13 +150,13 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
   pair<double, string> best_answer = make_pair(energy, initial_answer);
   int counter = 0;
   long long start_time = getTime();
-  long long end_time = time_limit_per_unit + start_time;
+  long long end_time = time_limit_per_unit_for_annealing + start_time;
   while (true) {
-    TleState tle_state = ShouldExitLoop(start_time);
+    TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_annealing);
     if (tle_state == TleState::Yellow || tle_state == TleState::Red) { break; }
     long long current_time = getTime();
     double rest_time = (double)(end_time - current_time) / (double)(end_time - start_time) + 1e-8;
-    string next_commands = ChangePath(game, initial_state, commands, loop_count, rest_time);
+    string next_commands = ChangePath(game, initial_state, commands, loop_count, rest_time, start_time);
     State next_last_state = CalcLastState(game, initial_state, next_commands);
     assert(next_last_state.pivot == initial_last_state.pivot);
     assert(next_last_state.rot == initial_last_state.rot);
@@ -176,7 +176,7 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
   return best_answer.second;
 }
 
-string SubmarineAI::ChangePath(const Game &game, const State& initial_state, const string& commands, int loop_count, double probability) const {
+string SubmarineAI::ChangePath(const Game &game, const State& initial_state, const string& commands, int loop_count, double temperature, long long start_time) const {
   vector<int> down_poss = { 0 };
   for (int i = 0; i < (int)commands.size(); i++) {
     util::Command c = util::GetCommand(commands[i]);
@@ -185,17 +185,17 @@ string SubmarineAI::ChangePath(const Game &game, const State& initial_state, con
     }
   }
   int height = down_poss.size();
-  int range = min((int)(8 * probability + 2), height - 2);
+  int range = min((int)(8 * temperature + 2), height - 2);
   int start = random.next(0, max(0, height - range - 1));
   int end = start + range;
   int mid = random.next(start + 1, end - 1);
   assert(0 <= start);
   assert(start < mid && mid < end);
   assert(end < (int)down_poss.size());
-  return ChangeNode(game, initial_state, commands, loop_count, down_poss[start], down_poss[mid], down_poss[end]);
+  return ChangeNode(game, initial_state, commands, loop_count, down_poss[start], down_poss[mid], down_poss[end], start_time);
 }
 
-string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, const string& commands, int loop_count, int start_pos, int mid_pos, int end_pos) const {
+string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, const string& commands, int loop_count, int start_pos, int mid_pos, int end_pos, long long start_time) const {
   assert(commands.size() > 0);
   {
     State temp_state = initial_state;
@@ -226,7 +226,7 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     Cell end_point = temp_state.pivot;
     int end_rot = temp_state.rot;
 
-    string mid1 = FindPath(game, start_state, loop_count, mid_point, mid_rot);
+    string mid1 = FindPath(game, start_state, loop_count, mid_point, mid_rot, start_time);
     if (mid1.size() == 0) { goto fail; }
     ret += mid1;
     mid_state = CalcLastState(game, initial_state, ret);
@@ -245,7 +245,7 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
       }
     }
     if (!success) { goto fail; }
-    string mid2 = FindPath(game, mid_state, loop_count, end_point, end_rot);
+    string mid2 = FindPath(game, mid_state, loop_count, end_point, end_rot, start_time);
     if (mid2.size() == 0) { goto fail; }
     ret += mid2;
     temp_state = CalcLastState(game, initial_state, ret);
@@ -257,7 +257,7 @@ fail:
   return commands;
 }
 
-std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, int loop_count, Cell end_point, int end_rot) const {
+std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, int loop_count, Cell end_point, int end_rot, long long start_time) const {
   int base_score = initial_state.score;
   priority_queue<ItemAnnealing> Q;
   Q.push(ItemAnnealing(game, initial_state, "", base_score, end_point));
@@ -267,13 +267,10 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
   const int visited_h = 3 * game.h;
   const int visited_offset_y = game.h;
   vector<bool> visited(visited_h * visited_w * 6, false);
-  // long long start_time = getTime();
   while (!Q.empty()) {
-    // TleState tle_state = ShouldExitLoop(start_time);
-    // if (tle_state == TleState::Yellow && max_score != -1)
-    //   break;
-    // else if (tle_state == TleState::Red)
-    //   return make_pair(-1, "");
+    TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_annealing);
+    if (tle_state != TleState::Green)
+      return "";
 
     const ItemAnnealing item = Q.top(); Q.pop();
 
@@ -315,6 +312,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
 double SubmarineAI::CalcEnergy(const Game& game, const State& last_state) const {
   return -last_state.score;
 }
+
 double SubmarineAI::CalcProbability(double energy, double next_energy, double temperature) const {
   if (next_energy < energy) { return 1; }
   return exp((energy - next_energy) / 2.0) * temperature;
@@ -328,7 +326,9 @@ string SubmarineAI::Run(const Game& game) {
   cerr << "AI: submarine" << endl;
 
   time_limit = (long long)time_limit_seconds * 1000000;
-  time_limit_per_unit = time_limit / (2 * game.num_source_seeds * game.source_seq.size());
+  long long time_limit_per_unit = 4 * time_limit / (5 * game.num_source_seeds * game.source_seq.size());
+  time_limit_per_unit_for_initial_search = time_limit_per_unit * 0.5;
+  time_limit_per_unit_for_annealing = time_limit_per_unit * 0.5;
   game_start_time = getTime();
 
   for (int loop_count = 0; ; ++loop_count) {
