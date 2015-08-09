@@ -202,6 +202,7 @@ void State::Init(const Game& g) {
   gameover = 0;
 
   pma_node = g.power_pma.GetInitialNode();
+  used_power = util::AcceptIndex();
 
   // Spawn the first unit
   Reset(g);
