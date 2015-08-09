@@ -232,7 +232,6 @@ string RonricoAI::Run(const Game& game) {
       visited[visited_index] = true;
 
       const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
-      //const vector<char> commands = {'!', 'e', 'i', 'l', 'd', 'k'};
       for (auto c : commands) {
         State next_state = item.state;
         const CommandResult result = next_state.Command(game, c);
