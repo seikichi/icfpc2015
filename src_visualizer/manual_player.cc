@@ -15,7 +15,7 @@ CommandResult ManualPlayer::Move(const Game& game, char c) {
   CommandResult ret = MOVE;
   if (c == ' ') {
     Rollback();
-  } else {
+  } else if (mp.count(c)) {
     ret = state.Command(game, mp[c]);
     if (ret == MOVE || ret == LOCK) {
       commands += mp[c];

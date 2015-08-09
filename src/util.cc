@@ -53,4 +53,23 @@ Node* PMA::Go(Node* n, int k) const {
   return NULL;
 }
 
+std::vector<std::vector<char> > command_map;
+std::unordered_map<char, Command> rev_command_map;
+  void Init() {
+    if (rev_command_map.size() != 0) { return; }
+    command_map =  {
+      { 'p', '\'', '!', '.', '0', '3', },
+      { 'b', 'c', 'e', 'f', 'y', '2', },
+      { 'a', 'g', 'h', 'i', 'j', '4', },
+      { 'l', 'm', 'n', 'o', ' ', '5', },
+      { 'd', 'q', 'r', 'v', 'z', '1', },
+      { 'k', 's', 't', 'u', 'w', 'x', },
+      { '\t', '\n', '\r', },
+    };
+    for (int i = 0; i < (int)Command::SIZE; i++) {
+      for (char c : command_map[i]) {
+        rev_command_map[c] = (Command)i;
+      }
+    }
+  }
 }  // namespace util

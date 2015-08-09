@@ -133,6 +133,7 @@ struct State {
   bool gameover;
   util::Node* pma_node;  // for power-of-phrase check
   util::AcceptIndex used_power;  // set of used power
+  std::vector<char> fill_count;  // count of filled cell for each line
 
  // private:
   // return true if the move is valid
@@ -145,6 +146,11 @@ struct State {
   // return the number of lines cleared with the current unit
   int LineDelete(const Game& g);
   std::vector<Cell> GetCurrentUnitCells(const Game& gaem) const;
+
+  void SetCell(const Game& g, Cell c, int val) {
+    board[c.Lin(g.w)] = val;
+    fill_count[c.y] += val;
+  }
 
   // For debug use
   void PrintBoard(const Game& g) const {

@@ -187,7 +187,7 @@ TEST(StateTest, LineDelete) {
 
   for (int x = 0; x < w; ++x)
   for (int y = 0; y < h; ++y) {
-    s.board[Cell(x, y).Lin(w)] = (f[y][x] == '1') ? 1 : 0;
+    s.SetCell(g, Cell(x, y), (f[y][x] == '1') ? 1 : 0);
   }
   int ls = s.LineDelete(g);
 
