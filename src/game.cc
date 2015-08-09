@@ -84,14 +84,29 @@ Cell Cell::TranslateSub(Cell o) const {
   return res;
 }
 
-Unit::Boundary Unit::GetBoundary() const {
-  Unit::Boundary ret{9999, -9999, 9999};
-  for (const auto& cell : cells) {
-    ret.xmin = min(ret.xmin, cell.x);
-    ret.xmax = max(ret.xmax, cell.x);
-    ret.ymin = min(ret.ymin, cell.y);
+
+Cell Unit::GetSpawnPos(int w) const {
+  int ymin = 9999999;
+  for (const auto& cell : cells) ymin = min(ymin, cell.y);
+
+  // TODO: Maybe a little slow
+  for (int px = -w; px <= w; ++px) {
+    int l_len = 99999, r_len = 99999;
+    Cell mov(px, -ymin);
+    for (const auto& cell : cells) {
+      l_len = min(l_len, cell.TranslateAdd(mov).x);
+      r_len = min(r_len, w - 1 - cell.TranslateAdd(mov).x);
+    }
+
+    if (l_len == r_len || (l_len + 1 == r_len)) {
+      return Cell(px, -ymin);
+    }
   }
-  return ret;
+
+  // Error
+  cerr << "Unit::GetSpawnPos failed... ('_`)" << endl;
+  exit(1);
+  return Cell(-66666666, -6666666);
 }
 
 bool Game::Init(std::string json, int source_seed_idx) {
@@ -356,12 +371,7 @@ void State::Reset(const Game& g) {
     return;
   }
   const auto& unit = g.CurrentUnit(source_idx);
-  auto b = unit.GetBoundary();
-  int bw = b.xmax - b.xmin + 1;
-  Cell top_left_u(b.xmin, b.ymin);
-  Cell top_left_o((g.w - bw) / 2, 0);
-
-  pivot = top_left_o.TranslateSub(top_left_u);
+  pivot = unit.GetSpawnPos(g.w);
 
   // Check game over
   for (const auto& cell : unit.cells) {
