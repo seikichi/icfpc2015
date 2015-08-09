@@ -40,10 +40,7 @@ struct Unit {
   // NOTE: This variable is set to (0, 0). Do not use this variable!!
   Cell pivot;
 
-  struct Boundary {
-    int xmin, xmax, ymin;
-  };
-  Boundary GetBoundary() const;
+  Cell GetSpawnPos(int w) const;
 };
 
 struct Game {

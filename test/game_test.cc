@@ -103,6 +103,19 @@ TEST(GameTest, Init) {
   EXPECT_EQ(100, (int)g.source_seq.size());
 }
 
+TEST(UnitTest, GetSpawnPos) {
+  auto json = ReadAll("test/game_test/get_spawn_pos.json");
+
+  Game g;
+  g.Init(json, 0);
+  Unit unit = g.units[0];
+  int w = 10;
+  auto spawn_pos = unit.GetSpawnPos(w);
+
+  EXPECT_EQ(5, spawn_pos.x);
+  EXPECT_EQ(1, spawn_pos.y);
+}
+
 TEST(GameTest, GenerateSourceSequense) {
   Game g;
   g.GenerateSourceSequense(17, 10, 100000);
