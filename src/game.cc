@@ -15,14 +15,9 @@ Cell ReadCell(object& o) {
               (int)o["y"].get<double>());
 }
 
-// return floor(a / b) (assuming that b > 0)
-int DivFloor(int a, int b) {
-  return (a >= 0) ? (a / b) : -((-a + b - 1) / b);
-}
-
 }  // namespace
 
-Cell Cell::Rotate(const Cell& pivot, int t) const {
+inline Cell Cell::Rotate(const Cell& pivot, int t) const {
   // Normalize pivot to (0, 0)
   Cell res(x - pivot.x, y - pivot.y);
 
@@ -61,29 +56,6 @@ Cell Cell::Rotate(const Cell& pivot, int t) const {
 
   return res;
 }
-
-Cell Cell::TranslateAdd(Cell o) const {
-  Cell res(x - DivFloor(y, 2), y);
-  o.x += -DivFloor(o.y, 2);
-
-  res.x += o.x;
-  res.y += o.y;
-
-  res.x += DivFloor(res.y, 2);
-  return res;
-}
-
-Cell Cell::TranslateSub(Cell o) const {
-  Cell res(x - DivFloor(y, 2), y);
-  o.x += -DivFloor(o.y, 2);
-
-  res.x -= o.x;
-  res.y -= o.y;
-
-  res.x += DivFloor(res.y, 2);
-  return res;
-}
-
 
 Cell Unit::GetSpawnPos(int w) const {
   int ymin = 9999999;
