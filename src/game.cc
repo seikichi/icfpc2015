@@ -203,6 +203,12 @@ void State::Init(const Game& g) {
 
   pma_node = g.power_pma.GetInitialNode();
   used_power = util::AcceptIndex();
+  fill_count.assign(g.h, 0);
+  for (int y = 0; y < g.h; ++y) {
+    for (int x = 0; x < g.w; ++x) {
+      fill_count[y] += g.initial[Cell(x, y).Lin(g.w)] ? 1 :0;
+    }
+  }
 
   // Spawn the first unit
   Reset(g);
@@ -364,8 +370,10 @@ void State::Lock(const Game& g) {
   const auto& unit = g.CurrentUnit(source_idx);
   for (const auto& cell : unit.cells) {
     Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
-    assert(board[c.Lin(g.w)] == 0);
-    board[c.Lin(g.w)] = 1;
+    const int idx = c.Lin(g.w);
+    assert(board[idx] == 0);
+    board[idx] = 1;
+    fill_count[c.y]++;
   }
 
   // Line deletion
@@ -408,6 +416,16 @@ void State::Reset(const Game& g) {
 }
 
 int State::LineDelete(const Game& g) {
+  // pruning
+  bool exist = 0;
+  for (int y = 0; y < g.h; ++y) {
+    if (fill_count[y] == g.w) {
+      exist = 1;
+      break;
+    }
+  }
+  if (!exist) return 0;
+
   int ls = 0;
   int ty = g.h - 1;
   for (int y = g.h - 1; y >= 0; --y) {
@@ -415,9 +433,11 @@ int State::LineDelete(const Game& g) {
     for (int x = 0; x < g.w; ++x) del &= board[Cell(x, y).Lin(g.w)];
     if (!del) {
       if (ty != y) {
+        // info(ty) <- info(y)
         for (int x = 0; x < g.w; ++x) {
           board[Cell(x, ty).Lin(g.w)] = board[Cell(x, y).Lin(g.w)];
         }
+        fill_count[ty] = fill_count[y];
       }
       ty--;
     } else {
@@ -428,6 +448,7 @@ int State::LineDelete(const Game& g) {
   // zero-fill
   for (int y = ty; y >= 0; --y) {
     for (int x = 0; x < g.w; ++x) board[Cell(x, y).Lin(g.w)] = 0;
+    fill_count[ty] = 0;
   }
   return ls;
 }
