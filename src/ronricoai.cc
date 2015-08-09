@@ -31,8 +31,17 @@ struct Item {
 // int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
 //   return state.pivot.y;
 // }
+int calculateDistanceFromCenter(const Game& game, const vector<Cell>& current_cells) {
+  // units should go to both sides (distance from center)
+  int average_x = 0;
+  for (const auto& cell : current_cells) {
+    average_x += cell.x;
+  }
+  return fabs((game.w / 2) - (int)(average_x / current_cells.size()));
+}
 
-int evaluateScore(const Game& game,  const State& state, const State& next_state) {
+int calculateNeighbors(const Game& game,  const State& state, const vector<Cell>& current_cells) {
+  // units should go to the place which has many neighbors (number_of_neighbors)
   vector< vector<pair<int, int> > > directions = {
     {
       make_pair(-1,-1), make_pair( 0,-1), make_pair(-1, 0),
@@ -43,12 +52,6 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
     }
   };
   
-  const Unit& unit = game.CurrentUnit(state.source_idx);
-  vector<Cell> current_cells;
-  for (const auto& cell : unit.cells) {
-    current_cells.push_back(cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot));
-  }
-
   vector<pair<int, int> > filled_neighbors;
   for (const auto& cell : current_cells) {
     for (const auto& direction : directions[cell.y % 2]) {
@@ -64,7 +67,20 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
   }
   sort(filled_neighbors.begin(), filled_neighbors.end());
   auto it = unique(filled_neighbors.begin(), filled_neighbors.end());
-  return state.pivot.y + next_state.score + distance(filled_neighbors.begin(), it);
+  return distance(filled_neighbors.begin(), it);
+}
+
+int evaluateScore(const Game& game,  const State& state, const State& next_state) {
+
+  const Unit& unit = game.CurrentUnit(state.source_idx);
+  vector<Cell> current_cells;
+  for (const auto& cell : unit.cells) {
+    current_cells.push_back(cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot));
+  }
+  
+  int number_of_neighbors = calculateNeighbors(game, state, current_cells);
+  int distance_from_center = calculateDistanceFromCenter(game, current_cells) * 0;
+  return state.pivot.y + next_state.score + number_of_neighbors + distance_from_center;
 }
 
 long long getTime() {
