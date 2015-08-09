@@ -193,7 +193,7 @@ int evaluateScore(const Game& game, const State& initial_state, const SmallState
   double filled_neighbors_ratio = calculateFilledNeighbors(game, initial_state, neighbors) / (double) neighbors.size();
   double distance_from_center = 1; //calculateDistanceFromCenter(game, current_cell_positions);
   double hole_penalty = 1; //avoidHole(game, initial_state, current_cell_positions, neighbors, directions, hole_penalty_base, 1, hole_size_threshold);
-  double point_up_ratio = (next_sstate.score + 1) / (double) (sstate.score + 1);
+  double point_up_ratio = (next_sstate.score_move + 1) / (double) (sstate.score_move + 1);
   return (int)(base * point_up_ratio * ave_y_ratio * filled_neighbors_ratio * distance_from_center * hole_penalty);
 }
 };
