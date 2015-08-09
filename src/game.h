@@ -135,7 +135,7 @@ struct State {
   bool gameover;
   util::Node* pma_node;  // for power-of-phrase check
   util::AcceptIndex used_power;  // set of used power
-  std::vector<char> fill_count;  // count of filled cell for each line
+  std::vector<short> fill_count;  // count of filled cell for each line
 
  // private:
   // return true if the move is valid
