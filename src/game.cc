@@ -134,6 +134,7 @@ bool Game::Init(std::string json, int source_seed_idx) {
       unit.cells.push_back(normalized_cell);
     }
     unit.pivot = Cell(0, 0);  // NOTE: Do not use this
+    unit.spawn_pos[w] = unit.GetSpawnPos(w); // memoize spown pos
     units.push_back(unit);
   }
 
@@ -372,7 +373,7 @@ void State::Reset(const Game& g) {
     return;
   }
   const auto& unit = g.CurrentUnit(source_idx);
-  pivot = unit.GetSpawnPos(g.w);
+  pivot = unit.spawn_pos.find(g.w)->second;
 
   // Check game over
   for (const auto& cell : unit.cells) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -39,6 +40,7 @@ struct Unit {
   std::vector<Cell> cells;
   // NOTE: This variable is set to (0, 0). Do not use this variable!!
   Cell pivot;
+  std::map<int, Cell> spawn_pos; // [w] => spawn pos
 
   Cell GetSpawnPos(int w) const;
 };
