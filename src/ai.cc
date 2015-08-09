@@ -12,7 +12,9 @@
 
 using namespace std;
 
-void AI::Init() {}
+void AI::Init(int time_limit_seconds_) {
+    time_limit_seconds = time_limit_seconds_;
+}
 
 shared_ptr<AI> AI::CreateAI() {
   string name = "";

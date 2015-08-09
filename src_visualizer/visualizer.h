@@ -14,7 +14,7 @@ struct Visualizer {
   SDL_Renderer *ren = nullptr;
   SDL_Texture *tex = nullptr;
   SDL_Texture *letters_image = nullptr;
-  int TILE_SIZE = 32;
+  int tile_size = 32;
   const int TEXT_TILE_SIZE = 20;
 
   bool Init(const Game& game) {
@@ -32,12 +32,13 @@ struct Visualizer {
   int CellY(const Cell& cell);
   void BeginDraw();
   void DrawGameState(const Game& game, const State& state);
+  void DrawNext(const Game& game, const State& state);
   void DrawCommandResult(const Game& game, const CommandResult result);
   void EndDraw();
   int GetBoardWidth(const Game& game) {
-    return game.w * TILE_SIZE;
+    return game.w * tile_size;
   }
   int GetBoardHeight(const Game& game) {
-    return game.h * (TILE_SIZE - 4);
+    return game.h * tile_size * 7 / 8;
   }
 };

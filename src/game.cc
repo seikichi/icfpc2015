@@ -149,6 +149,7 @@ bool Game::Init(std::string json, int source_seed_idx) {
   for (auto& v_source_seed : a_source_seeds) {
     source_seeds.push_back((int)v_source_seed.get<double>());
   }
+  num_source_seeds = (int)source_seeds.size();
 
   // Generate source_seq
   if (source_seed_idx >= (int)source_seeds.size()) {

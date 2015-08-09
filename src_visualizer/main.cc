@@ -5,6 +5,7 @@
 #include "key_input.h"
 #include "manual_player.h"
 #include "replay.h"
+#include "echo_ai.h"
 
 #include <cstdio>
 #include <unistd.h>
@@ -20,9 +21,30 @@
 #include "picojson/picojson.h"
 using namespace std;
 
+void OutputScores(const Game &game, const std::string& commands) {
+  Replay replay;
+  replay.Init(game, commands);
+  printf("{\"score\":[");
+  bool first = true;
+  while (replay.OneCommandStep(game)) {
+    if (!first) { printf(","); }
+    printf("%d", replay.GetCurrentState().score);
+    first = false;
+  }
+  printf("]}\n");
+}
+
+int CalcScore(const Game &game, const std::string& commands) {
+  Replay replay;
+  replay.Init(game, commands);
+  while (replay.OneCommandStep(game)) {;}
+  return replay.GetCurrentState().score;
+}
+
 void EventLoopAI(const Game& game, const std::string& commands) {
   SDL_Event event;
   double next_frame = SDL_GetTicks();
+  int speed = 1;
   double wait = 1000.0 / 60;
   KeyInput keys;
   keys.Init();
@@ -44,11 +66,29 @@ void EventLoopAI(const Game& game, const std::string& commands) {
     /* 1秒間に60回Updateされるようにする */
     if (SDL_GetTicks() >= next_frame) {
       keys.Update();
-      if (!replay.KeyInput(game)) { goto end; }
+      if (keys.Pushed('x')) {
+        speed++;
+      } else if (keys.Pushed('z')) {
+        speed--;
+      } else if (keys.Pushed('d')) {
+        speed += 10;
+      } else if (keys.Pushed('a')) {
+        speed -= 10;
+      } else if (keys.Pushed(' ')) {
+        replay.Init(game, commands);
+      }
+      speed = max(speed, 0);
+      bool end = false;
+      int s = speed + (keys.Pushed('c') ? 1 : 0);
+      for (int i = 0; i < s; i++)  {
+        end = !replay.OneCommandStep(game);
+        if (end) { speed = 0; break; }
+      }
 
       visualizer.BeginDraw();
       visualizer.DrawGameState(game, replay.GetCurrentState());
       visualizer.DrawCommandResult(game, command_result);
+      visualizer.DrawText(196, visualizer.GetBoardHeight(game) + 8, "Speed x %d", speed);
       visualizer.EndDraw();
       next_frame += wait;
       // SDL_Delay(1);
@@ -105,30 +145,45 @@ void EventLoopManual(const Game& game) {
     SDL_Delay(5);
   }
 end:
-  stringstream ss;
-  ss << "[";
-  ss << "{";
-  ss << "\"problemId\": " << game.problem_id << ", ";
-  ss << "\"seed\": " << game.source_seed << ", ";
-  ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
-  ss << "\"solution\": " << "\"" << player.GetCommands() << "\"";
-  ss << "}";
-  ss << "]";
-  cout << ss.str() << endl;
+  EchoAI ai;
+  string commands = ai.Run(game);
+  int prev_score = CalcScore(game, commands);
+  int score = player.GetCurrentState().score;
+  if (score > prev_score) {
+    char filename[1000];
+    snprintf(filename, 999, "./solutions/%d.txt", game.problem_id);
+    stringstream ss;
+    ss << game.problem_id << " " << game.source_seed << endl << player.GetCommands() << endl;
+    FILE *fp = fopen(filename, "w");
+    if (fp == nullptr) { return; }
+    fprintf(fp, "%s", ss.str().c_str());
+    fclose(fp);
+  }
+  cout << prev_score << " " << score << endl;
+  // ss << "[";
+  // ss << "{";
+  // ss << "\"problemId\": " << game.problem_id << ", ";
+  // ss << "\"seed\": " << game.source_seed << ", ";
+  // ss << "\"tag\": " << "\"kyoto ni modoritai\"" << ", ";
+  // ss << "\"solution\": " << "\"" << player.GetCommands() << "\"";
+  // ss << "}";
+  // ss << "]";
+  // cout << ss.str() << endl;
 }
 
 int main(int argc, char** argv) {
   // input
   vector<string> problem_files;
-  int time_limit_seconds;
+  int time_limit_seconds = 300;
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
-  string replay_file;
+  string replay_filename;
   bool manual_play = false;
+  bool print_score = true;
 
   int result;
-  while ((result = getopt(argc, argv, "f:t:m:c:p:r:i")) != -1) {
+  while ((result = getopt(argc, argv, "f:t:m:c:p:r:is")) != -1) {
     switch (result) {
       case 'f':
         problem_files.push_back(optarg);
@@ -145,10 +200,13 @@ int main(int argc, char** argv) {
         phrases_of_power.push_back(optarg);
         break;
       case 'r':
-        replay_file = optarg;
+        replay_filename = optarg;
         break;
       case 'i':
         manual_play = true;
+        break;
+      case 's':
+        print_score = true;
         break;
       default:
         break;
@@ -163,13 +221,26 @@ int main(int argc, char** argv) {
     ifstream ifs(problem_file.c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
-      if (!manual_play) {
-        auto ai = AI::CreateAI();
-        ai->Init();
-        string commands = ai->Run(game);
-        EventLoopAI(game, commands);
-      } else {
+      if (manual_play) {
         EventLoopManual(game);
+      } else {
+        string commands;
+        if (replay_filename == "") {
+          auto ai = AI::CreateAI();
+          ai->Init(time_limit_seconds);
+          commands = ai->Run(game);
+        } else {
+          std::ifstream ifs(replay_filename);
+          if (!ifs.is_open()) {
+            fprintf(stderr, "No such file: %s\n", replay_filename.c_str());
+            exit(1);
+          }
+          getline(ifs, commands);
+        }
+        if (print_score) {
+          OutputScores(game, commands);
+        }
+        EventLoopAI(game, commands);
       }
 
 

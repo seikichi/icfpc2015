@@ -13,6 +13,7 @@ void KeyInput::Init() {
     { 'd', SDLK_d },
     { 'j', SDLK_j },
     { 'k', SDLK_k },
+    { 'c', SDLK_c },
     { ' ', SDLK_SPACE },
   };
 }

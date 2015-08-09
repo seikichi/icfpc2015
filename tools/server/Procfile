@@ -1,0 +1,3 @@
+mongo: --dbpath data
+server: python server.py
+polling: python polling.py

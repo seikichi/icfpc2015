@@ -38,7 +38,7 @@ int Evaluate(const Game& g, const string commands) {
 int main(int argc, char** argv) {
   // input
   vector<string> problem_files;
-  int time_limit_seconds;
+  int time_limit_seconds = 300;
   int memory_limit;
   int cores;
   vector<string> phrases_of_power;
@@ -84,7 +84,7 @@ int main(int argc, char** argv) {
       // Fetch result of annotated solution
       {
         auto echo_ai = make_shared<EchoAI>();
-        echo_ai->Init();
+        echo_ai->Init(time_limit_seconds);
         string solution = echo_ai->Run(game);
 
         int eval = Evaluate(game, solution);
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
       // Then, execute specified AI
       {
         auto ai = AI::CreateAI();
-        ai->Init();
+        ai->Init(time_limit_seconds);
         auto solution = ai->Run(game);
 
         best = max(best, make_pair(Evaluate(game, solution),
