@@ -1,0 +1,2064 @@
+# Annotated score: 3
+- seed: 0
+  logs:
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 6
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 7
+      rot: 0
+      source_idx: 0
+      score: 0
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 6
+      rot: 0
+      source_idx: 1
+      score: 1
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 2
+      score: 2
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 3
+      score: 3
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 4
+      score: 4
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 5
+      score: 5
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 4
+        y: 1
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 5
+        y: 1
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 6
+        y: 1
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 7
+        y: 1
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 8
+        y: 1
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 9
+        y: 2
+      rot: 0
+      source_idx: 6
+      score: 6
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 1
+        y: 2
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 3
+      rot: 0
+      source_idx: 7
+      score: 107
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 8
+      score: 108
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 8
+      score: 108
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 8
+      score: 108
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 2
+        y: 2
+      rot: 0
+      source_idx: 8
+      score: 108
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 2
+        y: 3
+      rot: 0
+      source_idx: 8
+      score: 108
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 1
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 3
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 4
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 5
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 6
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 7
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 8
+        y: 3
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 9
+        y: 4
+      rot: 0
+      source_idx: 9
+      score: 209
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 4
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 5
+      rot: 0
+      source_idx: 10
+      score: 310
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 4
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 4
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 2
+        y: 5
+      rot: 0
+      source_idx: 11
+      score: 311
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 1
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 3
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 4
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 5
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 6
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 7
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 8
+        y: 5
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 9
+        y: 6
+      rot: 0
+      source_idx: 12
+      score: 412
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 7
+      rot: 0
+      source_idx: 13
+      score: 513
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 6
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 2
+        y: 7
+      rot: 0
+      source_idx: 14
+      score: 514
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 6
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 7
+      rot: 0
+      source_idx: 15
+      score: 615
+      ls_old: 1
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 7
+      rot: 0
+      source_idx: 16
+      score: 616
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 6
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 2
+        y: 7
+      rot: 0
+      source_idx: 17
+      score: 617
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 6
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 3
+        y: 6
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 3
+        y: 7
+      rot: 0
+      source_idx: 18
+      score: 618
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 0
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 3
+        y: 1
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 2
+        y: 1
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 1
+        y: 1
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 0
+        y: 1
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 2
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 3
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: a
+    state:
+      pivot:
+        x: 0
+        y: 4
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 0
+        y: 5
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 1
+        y: 6
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 2
+        y: 6
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 3
+        y: 6
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: b
+    state:
+      pivot:
+        x: 4
+        y: 6
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: l
+    state:
+      pivot:
+        x: 4
+        y: 7
+      rot: 0
+      source_idx: 19
+      score: 619
+      ls_old: 0
+      gameover: 0
+  - command: p
+    state:
+      pivot:
+        x: 4
+        y: 7
+      rot: 0
+      source_idx: 20
+      score: 620
+      ls_old: 0
+      gameover: 0
+  solution: "apppalalalpapppalalapapppalalpapppalapapppalpapppaplbbbblpappalpapalpapppalbbbbbbbblpapppalllpapppallblpapppalalbbbbbbbblpapppalalllpapppalallblpapppalalalpapppalalllpapppalallblpapppalallbblpapppalallbbblp"

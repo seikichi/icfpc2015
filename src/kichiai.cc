@@ -40,6 +40,8 @@ string KichiAI::Run(const Game& game) {
   string solution;
   State state;
   state.Init(game);
+  cerr << "- seed: " << game.source_seed << endl;
+  cerr << "  logs:"  << endl;
 
   while (true) {
     // 1ユニットごとにループ
@@ -100,20 +102,20 @@ string KichiAI::Run(const Game& game) {
     for (char c : best_commands) {
       state.Command(game, c);
 
-      cerr << "- command: " << c << endl;
-      cerr << "  state:" << endl;
-      cerr << "    pivot: " << endl;
-      cerr << "      x: " << state.pivot.x << endl;
-      cerr << "      y: " << state.pivot.y << endl;
-      cerr << "    rot: " << state.rot << endl;
-      cerr << "    source_idx: " << state.source_idx << endl;
-      cerr << "    score: " << state.score << endl;
-      cerr << "    ls_old: " << state.ls_old << endl;
-      cerr << "    gameover: " << state.gameover << endl;
+      cerr << "  - command: " << c << endl;
+      cerr << "    state:" << endl;
+      cerr << "      pivot:" << endl;
+      cerr << "        x: " << state.pivot.x << endl;
+      cerr << "        y: " << state.pivot.y << endl;
+      cerr << "      rot: " << state.rot << endl;
+      cerr << "      source_idx: " << state.source_idx << endl;
+      cerr << "      score: " << state.score << endl;
+      cerr << "      ls_old: " << state.ls_old << endl;
+      cerr << "      gameover: " << state.gameover << endl;
     }
     solution += best_commands;
   }
 
-  cerr << "solution: " << "\"" << solution << "\"" << endl;
+  cerr << "  solution: " << "\"" << solution << "\"" << endl;
   return solution;
 }
