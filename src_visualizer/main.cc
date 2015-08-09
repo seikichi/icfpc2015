@@ -66,7 +66,8 @@ void EventLoopAI(const Game& game, const std::string& commands) {
       }
       speed = max(speed, 0);
       bool end = false;
-      for (int i = 0; i < speed; i++)  {
+      int s = speed + (keys.Pushed('c') ? 1 : 0);
+      for (int i = 0; i < s; i++)  {
         end = !replay.OneCommandStep(game);
         if (end) { speed = 0; break; }
       }
