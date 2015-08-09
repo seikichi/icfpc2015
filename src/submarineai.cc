@@ -182,10 +182,13 @@ string SubmarineAI::ChangePath(const Game &game, const State& initial_state, con
     }
   }
   int height = down_poss.size();
-  int range = 8 * probability + 2;
+  int range = min((int)(8 * probability + 2), height - 2);
   int start = random.next(0, max(0, height - range - 1));
   int end = start + range;
   int mid = random.next(start + 1, end - 1);
+  assert(0 <= start);
+  assert(start < mid && mid < end);
+  assert(end < (int)down_poss.size());
   return ChangeNode(game, initial_state, commands, loop_count, down_poss[start], down_poss[mid], down_poss[end]);
 }
 
