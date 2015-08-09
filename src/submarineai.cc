@@ -173,6 +173,7 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     }
     counter++;
   }
+  cerr << "Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << endl;
   return best_answer.second;
 }
 
