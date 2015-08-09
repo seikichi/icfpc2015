@@ -28,7 +28,6 @@ while True:
         print('done', file=sys.stderr)
         data = json.loads(re.sub(r'^var\s*data\s*=\s*', r'', text))
         for i, setting in enumerate(data['data']['settings']):
-            print(i, file=sys.stderr)
             for d in setting['rankings']:
                 if d['teamId'] != int(TEAM_ID) or len(d['tags']) != 1:
                     continue
@@ -36,7 +35,8 @@ while True:
                 print("update {0}".format(tag), file=sys.stderr)
                 output = {'data': d, 'date': datetime.datetime.utcnow()}
                 db.submits.update({'input.new_tag': tag}, {'$set': {'output': output}}, upsert=False)
-        time.sleep(20 * 1000)
+        print('sleeping ...', file=sys.stderr)
+        time.sleep(20)
     except:
         print("Unexpected error:", sys.exc_info()[0], file=sys.stderr)
-        time.sleep(20 * 1000)
+        time.sleep(20)

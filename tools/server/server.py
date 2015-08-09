@@ -64,7 +64,7 @@ def create_submit():
     }
     db.submits.insert_one({'input': input})
     response.content_type = 'application/json'
-    return {}
+    return json_util.dumps({'input': input})
 
 @get('/api/submits')
 @auth_basic(check_pass)
