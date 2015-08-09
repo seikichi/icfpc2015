@@ -52,9 +52,9 @@ def test(problem_id, seed, solution):
         data = json.loads(re.sub(r'^var\s*data\s*=\s*', r'', response.read().decode('utf8')))
         for setting in data['data']['settings']:
             for d in setting['rankings']:
-                if d['teamId'] != TEAM_ID or d['tags'] != [tag]:
+                if d['teamId'] != int(TEAM_ID) or d['tags'] != [tag]:
                     continue
-                return d['score'] != 0
+                return d['score']
             time.sleep(10)
 
 solution = data[0]['solution']
@@ -66,11 +66,12 @@ left, right = 0, len(solution)
 while right - left > 1:
     mid = (left + right) // 2
     print("try solution[:{0}]...".format(mid))
-    if test(data[0]['problemId'], data[0]['seed'], solution[:mid]):
-        print("=> valid")
+    score = test(data[0]['problemId'], data[0]['seed'], solution[:mid])
+    if score != 0:
+        print("=> valid (score = {0})".format(score))
         left = mid
     else:
-        print("=> invalid")
+        print("=> invalid (score = {0})".format(score))
         right = mid
 
 print(solution[:right])

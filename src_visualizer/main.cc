@@ -21,6 +21,19 @@
 #include "picojson/picojson.h"
 using namespace std;
 
+void OutputScores(const Game &game, const std::string& commands) {
+  Replay replay;
+  replay.Init(game, commands);
+  printf("{\"score\":[");
+  bool first = true;
+  while (replay.OneCommandStep(game)) {
+    if (!first) { printf(","); }
+    printf("%d", replay.GetCurrentState().score);
+    first = false;
+  }
+  printf("]}\n");
+}
+
 int CalcScore(const Game &game, const std::string& commands) {
   Replay replay;
   replay.Init(game, commands);
@@ -167,9 +180,10 @@ int main(int argc, char** argv) {
   vector<string> phrases_of_power;
   string replay_filename;
   bool manual_play = false;
+  bool print_score = true;
 
   int result;
-  while ((result = getopt(argc, argv, "f:t:m:c:p:r:i")) != -1) {
+  while ((result = getopt(argc, argv, "f:t:m:c:p:r:is")) != -1) {
     switch (result) {
       case 'f':
         problem_files.push_back(optarg);
@@ -191,6 +205,9 @@ int main(int argc, char** argv) {
       case 'i':
         manual_play = true;
         break;
+      case 's':
+        print_score = true;
+        break;
       default:
         break;
     }
@@ -204,7 +221,9 @@ int main(int argc, char** argv) {
     ifstream ifs(problem_file.c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
     while (game.Init(problem, source_seed_idx++)) {
-      if (!manual_play) {
+      if (manual_play) {
+        EventLoopManual(game);
+      } else {
         string commands;
         if (replay_filename == "") {
           auto ai = AI::CreateAI();
@@ -218,9 +237,10 @@ int main(int argc, char** argv) {
           }
           getline(ifs, commands);
         }
+        if (print_score) {
+          OutputScores(game, commands);
+        }
         EventLoopAI(game, commands);
-      } else {
-        EventLoopManual(game);
       }
 
 
