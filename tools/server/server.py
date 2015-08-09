@@ -10,7 +10,7 @@ import warnings
 import requests
 
 from bson import json_util
-from bottle import get, post, run, request, response, auth_basic
+from bottle import get, post, run, request, response, auth_basic, HTTPResponse
 from pymongo import MongoClient
 
 client = MongoClient(os.environ.get('MONGO_HOST', 'localhost'),
@@ -24,14 +24,20 @@ if not TEAM_ID or not API_TOKEN:
     warnings.warn('please set TEAM_ID and API_TOKEN in environment variable.')
     exit(-1)
 
+def error_response(message, status):
+    return HTTPResponse({'message': message}, status=status)
 
 def check_pass(username, password):
     return username == 'kmc' and password == 'reikai'
 
-@post('/submits')
+@post('/api/submits')
 @auth_basic(check_pass)
 def create_submit():
-    data = json.loads(request.body.read().decode('utf8'))
+    try:
+        data = json.loads(request.body.read().decode('utf8'))
+    except:
+        return error_response('invalid submit data.', 400)
+
     original_tags = []
     for d in data:
         original_tags.append(d['tag'])
@@ -51,10 +57,31 @@ def create_submit():
                 'response': text,
             }})
 
-@get('/submits')
+@get('/api/submits')
 @auth_basic(check_pass)
 def get_submit_list():
+    offset = request.query.offset or '0'
+    if not offset.isdigit():
+        return error_response('The offset parameter must be a signed integer.', 400)
+
+    cursor = db.submits.find({})
+
+    limit = request.query.limit or str(cursor.count())
+    if not limit.isdigit():
+        return error_response('The limit parameter must be a signed integer.', 400)
+
+    offset, limit = int(offset), int(limit)
+    cursor = cursor.skip(offset).limit(limit)
+    submits = list(cursor)
+
     response.content_type = 'application/json'
-    return json_util.dumps(list(db.submits.find({})));
+    return json_util.dumps({
+        'submits': submits,
+        'metadata': {
+            'count': len(submits),
+            'offset': offset,
+            'limit': limit
+        }
+    })
 
 run(host=os.environ.get('HOST', 'localhost'), port=8080)

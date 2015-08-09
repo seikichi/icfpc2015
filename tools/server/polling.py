@@ -27,4 +27,5 @@ while True:
                 db.submits.update({'input.data.tag': tag}, {'$set': {'output': d}}, upsert=False)
         time.sleep(60 * 1000)
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error:", sys.exc_info()[0])
+        time.sleep(60 * 1000)
