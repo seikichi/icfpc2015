@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import datetime
 import uuid
 import json
@@ -69,11 +70,18 @@ def create_submit():
 @get('/api/submits')
 @auth_basic(check_pass)
 def get_submit_list():
+    queries = [q for q in (request.query.q or '').split('+') if q]
+    keys = ['input.new_tag', 'input.original_tags']
+
+    find_query = {}
+    if queries:
+        find_query = {'$and': [{'$or': [{key: re.compile('.*' + q + '.*')} for key in keys]} for q in queries]}
+    print(queries, find_query)
     offset = request.query.offset or '0'
     if not offset.isdigit():
         return error_response('The offset parameter must be a signed integer.', 400)
 
-    cursor = db.submits.find({})
+    cursor = db.submits.find(find_query)
 
     limit = request.query.limit or str(cursor.count())
     if not limit.isdigit():
