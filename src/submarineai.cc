@@ -291,7 +291,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       return item.commands;
     }
 
-    const vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
+    const string commands = { "p'!.03bcefy2aghij4lmno 5dqrvz1kstuwx" };
     for (auto c : commands) {
       State next_state = item.state;
       const CommandResult result = next_state.Command(game, c);
