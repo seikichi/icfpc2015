@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game.h"
+#include <iostream>
 #include <string>
 
 struct Replay {
@@ -17,7 +18,11 @@ struct Replay {
   bool OneCommandStep(const Game& game) {
     if (turn == (int)commands_.size()) { return false; }
     char c = commands_[turn++];
-    state.Command(game, c);
+    auto result = state.Command(game, c);
+    if (result == ERROR) {
+      std::cerr << "AHOKA: The given command caused error." << std::endl;
+      exit(1);
+    }
     return true;
   }
 };
