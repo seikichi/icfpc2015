@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import datetime
 import uuid
 import json
@@ -36,35 +37,51 @@ def create_submit():
     try:
         data = json.loads(request.body.read().decode('utf8'))
     except:
-        return error_response('invalid submit data.', 400)
+        return error_response('invalid submit data, data must be a valid json', 400)
+
+    if not isinstance(data, list):
+        return error_response('invalid submit data, data must be an array.', 400)
+
+    if len(set(d['problemId'] for d in data)) != 1:
+        return error_response('invalid submit data, data must contains only one problemId.', 400)
 
     original_tags = []
+    tag = str(uuid.uuid1())
     for d in data:
         original_tags.append(d['tag'])
-        d['tag'] = str(uuid.uuid1())
+        d['tag'] = tag
 
     url = "https://davar.icfpcontest.org/teams/{0}/solutions".format(TEAM_ID)
     headers = {'Content-Type': 'application/json'}
     resp = requests.post(url, data=json.dumps(data), headers=headers, auth=('', API_TOKEN))
     text = resp.text
 
-    for i in range(len(data)):
-        db.submits.insert_one({
-            'input': {
-                'data': data[i],
-                'original_tag': original_tags[i],
-                'date': datetime.datetime.utcnow(),
-                'response': text,
-            }})
+    input = {
+        'data': data,
+        'original_tags': original_tags,
+        'new_tag': tag,
+        'date': datetime.datetime.utcnow(),
+        'response': text,
+    }
+    db.submits.insert_one({'input': input})
+    response.content_type = 'application/json'
+    return json_util.dumps({'input': input})
 
 @get('/api/submits')
 @auth_basic(check_pass)
 def get_submit_list():
+    queries = [q for q in (request.query.q or '').split('+') if q]
+    keys = ['input.new_tag', 'input.original_tags']
+
+    find_query = {}
+    if queries:
+        find_query = {'$and': [{'$or': [{key: re.compile('.*' + q + '.*')} for key in keys]} for q in queries]}
+    print(queries, find_query)
     offset = request.query.offset or '0'
     if not offset.isdigit():
         return error_response('The offset parameter must be a signed integer.', 400)
 
-    cursor = db.submits.find({})
+    cursor = db.submits.find(find_query)
 
     limit = request.query.limit or str(cursor.count())
     if not limit.isdigit():
