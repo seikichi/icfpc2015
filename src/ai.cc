@@ -10,6 +10,7 @@
 #include "kichiai.h"
 #include "echo_ai.h"
 #include "submarineai.h"
+#include "ronricoai.h"
 
 using namespace std;
 
@@ -32,6 +33,8 @@ shared_ptr<AI> AI::CreateAI() {
     result = make_shared<EchoAI>();
   } else if (name == "submarineai") {
     result = make_shared<SubmarineAI>();
+  } else if (name == "ronricoai") {
+    result = make_shared<RonricoAI>();
   } else {
     cerr << "Invalid AI name: " << name << endl;
     exit(1);
