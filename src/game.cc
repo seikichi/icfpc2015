@@ -242,47 +242,44 @@ CommandResult State::Command(const Game& g, char c) {
     "kstuwx",
     "\t\n\r",
   };
-  const string command_list[] = {
-    "W", "E", "SW", "SE", "RCW", "RCCW", "I",
-  };
 
-  string command;
-  for (int i = 0; i < 7; ++i) {
+  util::Command command = util::Command::SIZE;
+  for (int i = 0; i < (int)util::Command::SIZE; ++i) {
     if (command_chars[i].find(c) != string::npos) {
-      command = command_list[i];
+      command = (util::Command)i;
     }
   }
 
-  if (command.empty()) {
+  if (command == util::Command::SIZE) {
     cerr << "AHOKA:Invalid command c=" << c << endl;
     exit(1);
   }
 
-  if (command == "W") {
+  if (command == util::Command::WEST) {
     return UpdateVisitedAndLock(g, Cell(-1, 0), c);
   }
 
-  if (command == "E") {
+  if (command == util::Command::EAST) {
     return UpdateVisitedAndLock(g, Cell(+1, 0), c);
   }
 
-  if (command == "SW") {
+  if (command == util::Command::SOUTH_WEST) {
     return UpdateVisitedAndLock(g, Cell(-1, 1), c);
   }
 
-  if (command == "SE") {
+  if (command == util::Command::SOUTH_EAST) {
     return UpdateVisitedAndLock(g, Cell(0, 1), c);
   }
 
-  if (command == "RCW") {
+  if (command == util::Command::CLOCKWISE) {
     return UpdateRotAndLock(g, -1, c);
   }
 
-  if (command == "RCCW") {
+  if (command == util::Command::COUNTER_CLOCKSISE) {
     return UpdateRotAndLock(g, +1, c);
   }
 
-  if (command == "I") {
+  if (command == util::Command::IGNORE) {
     // just ignore
     return MOVE;
   }
