@@ -345,3 +345,35 @@ TEST(StateTest, Error) {
   auto res2 = s.Command(g, mp["W"]);
   EXPECT_EQ(LOCK, res2);
 }
+
+TEST(StateTest, PowerEi) {
+  auto json = ReadAll("test/game_test/state_power.json");
+
+  Game g;
+  g.Init(json, 0);
+
+  State s;
+  s.Init(g);
+
+  {
+    string commands("ei! ei!");
+
+    for (int i = 0; i < 3; ++i) {
+      EXPECT_EQ(0, s.source_idx);
+      EXPECT_EQ(0, s.score);
+
+      auto res = s.Command(g, commands[i]);
+      EXPECT_EQ(MOVE, res);
+    }
+    EXPECT_EQ(300 + 6, s.score);
+
+    for (int i = 3; i < 7; ++i) {
+      EXPECT_EQ(0, s.source_idx);
+      EXPECT_EQ(300 + 6, s.score);
+
+      auto res = s.Command(g, commands[i]);
+      EXPECT_EQ(MOVE, res);
+    }
+    EXPECT_EQ(300 + 6 + 6, s.score);
+  }
+}

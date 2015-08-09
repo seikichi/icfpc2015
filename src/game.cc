@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <fstream>
 #include "picojson/picojson.h"
 
 #include "game.h"
@@ -138,6 +139,9 @@ bool Game::Init(std::string json, int source_seed_idx) {
   // Compute period of each unit
   ComputePeriod();
 
+  // Init power PMA and power length
+  SetPowerInfo();
+
   return true;
 }
 
@@ -173,6 +177,22 @@ void Game::ComputePeriod() {
   }
 }
 
+void Game::SetPowerInfo() {
+  ifstream ifs("ini/power.txt");
+  string line;
+
+  vector<string> powers;
+  while (getline(ifs, line)) {
+    if (line == "") continue;
+    // NOTE: Convert the given characters to lowercase
+    transform(line.begin(), line.end(), line.begin(), ::tolower);
+    powers.push_back(line);
+    power_len.push_back((int)line.size());
+  }
+
+  power_pma.Build(powers);
+}
+
 void State::Init(const Game& g) {
   board = g.initial;
   rot = 0;
@@ -181,6 +201,9 @@ void State::Init(const Game& g) {
   ls_old = 0;
   gameover = 0;
 
+  pma_node = g.power_pma.GetInitialNode();
+
+  // Spawn the first unit
   Reset(g);
 }
 
@@ -227,27 +250,27 @@ CommandResult State::Command(const Game& g, char c) {
   }
 
   if (command == "W") {
-    return UpdateVisitedAndLock(g, Cell(-1, 0));
+    return UpdateVisitedAndLock(g, Cell(-1, 0), c);
   }
 
   if (command == "E") {
-    return UpdateVisitedAndLock(g, Cell(+1, 0));
+    return UpdateVisitedAndLock(g, Cell(+1, 0), c);
   }
 
   if (command == "SW") {
-    return UpdateVisitedAndLock(g, Cell(-1, 1));
+    return UpdateVisitedAndLock(g, Cell(-1, 1), c);
   }
 
   if (command == "SE") {
-    return UpdateVisitedAndLock(g, Cell(0, 1));
+    return UpdateVisitedAndLock(g, Cell(0, 1), c);
   }
 
   if (command == "RCW") {
-    return UpdateRotAndLock(g, -1);
+    return UpdateRotAndLock(g, -1, c);
   }
 
   if (command == "RCCW") {
-    return UpdateRotAndLock(g, +1);
+    return UpdateRotAndLock(g, +1, c);
   }
 
   if (command == "I") {
@@ -260,7 +283,7 @@ CommandResult State::Command(const Game& g, char c) {
   return ERROR;
 }
 
-CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move) {
+CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move, char c) {
   assert(move.y >= 0);
   // Check visited
   pivot = pivot.TranslateAdd(move);
@@ -275,6 +298,7 @@ CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move) {
     return ERROR;
   }
   visited[pivot.x + g.w] |= 1 << rot;
+  UpdatePowerPMA(g, c);
 
   // Check Lock
   const auto& unit = g.CurrentUnit(source_idx);
@@ -291,7 +315,7 @@ CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move) {
   return MOVE;
 }
 
-CommandResult State::UpdateRotAndLock(const Game& g, int dir) {
+CommandResult State::UpdateRotAndLock(const Game& g, int dir, char c) {
   int p = g.CurrentPeriod(source_idx);
   rot = (rot + dir + p) % p;
 
@@ -301,6 +325,7 @@ CommandResult State::UpdateRotAndLock(const Game& g, int dir) {
     return ERROR;
   }
   visited[pivot.x + g.w] |= 1 << rot;
+  UpdatePowerPMA(g, c);
 
   // NOTE: Copy & Paste is good
   const auto& unit = g.CurrentUnit(source_idx);
@@ -317,6 +342,23 @@ CommandResult State::UpdateRotAndLock(const Game& g, int dir) {
   return MOVE;
 }
 
+void State::UpdatePowerPMA(const Game& g, char c) {
+  auto accept_index = g.power_pma.UpdateNode(c, pma_node);
+
+  // Update score
+  int power_score = 0;
+  for (int i = 0; i < (int)accept_index.size(); ++i) {
+    if (accept_index[i]) {
+      if (!used_power[i]) {
+        power_score += 300;  // Bonus
+        used_power[i] = 1;
+      }
+      power_score += 2 * g.power_len[i];
+    }
+  }
+  score += power_score;
+}
+
 void State::Lock(const Game& g) {
   const auto& unit = g.CurrentUnit(source_idx);
   for (const auto& cell : unit.cells) {
@@ -328,8 +370,6 @@ void State::Lock(const Game& g) {
   // Line deletion
   int ls = LineDelete(g);
 
-  source_idx++;
-  rot = 0;
   // Compute and update score
   int size = (int)unit.cells.size();
   int points = size + 100 * (1 + ls) * ls / 2;
@@ -337,6 +377,10 @@ void State::Lock(const Game& g) {
   score += points + line_bonus;
 
   ls_old = ls;
+
+  // Spawn the next unit
+  source_idx++;
+  rot = 0;
   Reset(g);
 }
 

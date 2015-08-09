@@ -5,6 +5,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <bitset>
+
+#include "util.h"
 
 typedef std::vector<bool> Board;
 
@@ -83,11 +86,15 @@ struct Game {
   std::vector<int> period;
   std::vector<int> source_seq;
   int num_source_seeds;
+  util::PMA power_pma;
+  std::vector<int> power_len;
+
   // return true if source_seed_idx < num of source seeds.
   bool Init(std::string json, int source_seed_idx);
 
   void GenerateSourceSequense(int seed, int length, int mod);
   void ComputePeriod();
+  void SetPowerInfo();
 
   Unit& CurrentUnit(int source_idx) {
     return units[source_seq[source_idx]];
@@ -98,6 +105,7 @@ struct Game {
   int CurrentPeriod(int source_idx) const {
     return period[source_seq[source_idx]];
   }
+
 };
 
 enum CommandResult {
@@ -111,7 +119,6 @@ enum CommandResult {
 struct State {
   void Init(const Game& g);
   // return true if the given command is valid
-  // TODO(ir5): Is it better that the return value is enum instead of bool?
   CommandResult Command(const Game& g, char c);
   bool IsGameOver(const Game& g) const;
   bool IsClear(const Game& g) const;
@@ -124,11 +131,15 @@ struct State {
   int score;
   int ls_old;  // the number of lines cleared with the previous unit
   bool gameover;
+  util::Node* pma_node;  // for power-of-phrase check
+  util::AcceptIndex used_power;  // set of used power
 
  // private:
   // return true if the move is valid
-  CommandResult UpdateVisitedAndLock(const Game& g, Cell move);
-  CommandResult UpdateRotAndLock(const Game& g, int dir);
+  // TODO
+  CommandResult UpdateVisitedAndLock(const Game& g, Cell move, char c);
+  CommandResult UpdateRotAndLock(const Game& g, int dir, char c);
+  void UpdatePowerPMA(const Game& g, char c);
   void Lock(const Game& g);
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
