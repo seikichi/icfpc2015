@@ -4,6 +4,7 @@
 #include <queue>
 #include <cassert>
 #include <cmath>
+#include <utility>
 #include <sys/time.h>
 using namespace std;
 
@@ -31,9 +32,39 @@ struct Item {
 //   return state.pivot.y;
 // }
 
-int evaluateScore(const Game&, const State& state, const State& next_state) {
-  return state.pivot.y + next_state.score;
-  // return state.pivot.y;
+int evaluateScore(const Game& game,  const State& state, const State& next_state) {
+  vector< vector<pair<int, int> > > directions = {
+    {
+      make_pair(-1,-1), make_pair( 0,-1), make_pair(-1, 0),
+      make_pair( 1, 0), make_pair(-1, 1), make_pair( 0, 1)
+    }, {
+      make_pair( 0,-1), make_pair( 1,-1), make_pair(-1, 0),
+      make_pair( 1, 0), make_pair( 0, 1), make_pair( 1, 1)
+    }
+  };
+  
+  const Unit& unit = game.CurrentUnit(state.source_idx);
+  vector<Cell> current_cells;
+  for (const auto& cell : unit.cells) {
+    current_cells.push_back(cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot));
+  }
+
+  vector<pair<int, int> > filled_neighbors;
+  for (const auto& cell : current_cells) {
+    for (const auto& direction : directions[cell.y % 2]) {
+      pair<int, int> neighbor(cell.x + direction.first, cell.y + direction.second);
+      if (neighbor.second < 0) {
+        continue;
+      } else if (neighbor.first < 0 || neighbor.first >= game.w || neighbor.second >= game.h){
+        filled_neighbors.push_back(neighbor);
+      } else if (state.board[Cell(neighbor.first, neighbor.second).Lin(game.w)]) {
+        filled_neighbors.push_back(neighbor);
+      }
+    }
+  }
+  sort(filled_neighbors.begin(), filled_neighbors.end());
+  auto it = unique(filled_neighbors.begin(), filled_neighbors.end());
+  return state.pivot.y + next_state.score + distance(filled_neighbors.begin(), it);
 }
 
 long long getTime() {
@@ -89,7 +120,8 @@ string RonricoAI::Run(const Game& game) {
       if (visited[visited_index]) { continue; }
       visited[visited_index] = true;
 
-      const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
+      //const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
+      const vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
       for (auto c : commands) {
         State next_state = item.state;
         const CommandResult result = next_state.Command(game, c);
