@@ -6,6 +6,7 @@
 #include <cmath>
 #include <utility>
 #include <algorithm>
+#include <set>
 #include <sys/time.h>
 using namespace std;
 
@@ -32,16 +33,95 @@ struct Item {
 // int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
 //   return state.pivot.y;
 // }
-int calculateDistanceFromCenter(const Game& game, const vector<Cell>& current_cells) {
+int calculateDistanceFromCenter(const Game& game, const vector<pair<int,int> >& current_cell_positions) {
   // units should go to both sides (distance from center)
   int average_x = 0;
-  for (const auto& cell : current_cells) {
-    average_x += cell.x;
+  for (const auto& position : current_cell_positions) {
+    average_x += position.first;
   }
-  return fabs((game.w / 2) - (int)(average_x / current_cells.size()));
+  return fabs((game.w / 2) - (int)(average_x / current_cell_positions.size()));
 }
 
-int calculateNeighbors(const Game& game,  const State& state, const vector<Cell>& current_cells) {
+
+bool isWallOrFilled(const Game& game, const State& state, const pair<int,int>& position) {
+  if (position.first < 0 || position.first >= game.w || position.second < 0 || position.second >= game.h){
+    return true;
+  } else if (state.board[Cell(position.first, position.second).Lin(game.w)]){ 
+    return true;
+  }
+  return false;
+}
+
+int isInUnit(const vector<pair<int,int> >& current_cell_positions, pair<int,int> position) {
+  for (auto& cell_position : current_cell_positions) {
+    if (position == cell_position) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// if the result makes hole whose size is within "threshold", get the score "penalty"
+int avoidHole(const Game& game, 
+              const State& state,
+              const vector<pair<int,int> >& current_cell_positions,
+              const vector<pair<int,int> >& neighbors,
+              const vector<vector<pair<int,int> > > directions,
+              int penalty,
+              int threshold) {
+  // how many cells from neighbor? (bfs)
+  for (const auto& neighbor : neighbors) {
+    set<pair<int,int> > not_filled_cell_positions;
+    queue<pair<int,int> > que;
+
+    if (isInUnit(current_cell_positions, neighbor) || isWallOrFilled(game, state, neighbor)) {
+      continue;
+    }
+    que.push(neighbor);
+
+    while (!que.empty() && (int)not_filled_cell_positions.size() <= threshold) {
+      auto& target = que.front(); que.pop();
+      not_filled_cell_positions.insert(target);
+
+      for(const auto& direction : directions[target.second % 2]) {
+        pair<int, int> next(target.first + direction.first, target.second + direction.second);
+        if (not_filled_cell_positions.count(next) == 1) {
+          continue;
+        }
+        if (!isInUnit(current_cell_positions, next) && !isWallOrFilled(game, state, next)) {
+          que.push(next);
+        }
+      }
+    }
+    if ((int)not_filled_cell_positions.size() <= threshold) {
+      return penalty;
+    }
+  }
+  return 0;
+}
+
+
+int calculateFilledNeighbors(const Game& game, const State& state, const vector<pair<int,int> >& neighbors) {
+  int filled_neighbor = 0;
+  for(const auto& neighbor : neighbors) {
+      if (neighbor.first < 0 || neighbor.first >= game.w || neighbor.second >= game.h){
+        ++filled_neighbor;
+      } else if (state.board[Cell(neighbor.first, neighbor.second).Lin(game.w)]) {
+        ++filled_neighbor;
+      }
+  }
+  return filled_neighbor;
+}
+
+int calcSumCellPositionY(const vector<pair<int,int> > current_cell_positions) {
+  int total = 0;
+  for(auto& position : current_cell_positions) {
+    total += position.second;
+  }
+  return total;
+}
+
+int evaluateScore(const Game& game,  const State& state, const State& next_state) {
   // units should go to the place which has many neighbors (number_of_neighbors)
   vector< vector<pair<int, int> > > directions = {
     {
@@ -52,36 +132,40 @@ int calculateNeighbors(const Game& game,  const State& state, const vector<Cell>
       make_pair( 1, 0), make_pair( 0, 1), make_pair( 1, 1)
     }
   };
-  
-  vector<pair<int, int> > filled_neighbors;
-  for (const auto& cell : current_cells) {
-    for (const auto& direction : directions[cell.y % 2]) {
-      pair<int, int> neighbor(cell.x + direction.first, cell.y + direction.second);
+
+  // get current status
+  const Unit& unit = game.CurrentUnit(state.source_idx);
+  vector<pair<int,int> > current_cell_positions;
+  for (const auto& cell : unit.cells) {
+    Cell current_cell = cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot);
+    current_cell_positions.push_back(make_pair(current_cell.x, current_cell.y));
+  }
+
+  // calculate neighbor cells
+  vector<pair<int,int> > neighbors;
+  for (const auto& position : current_cell_positions) {
+    for (const auto& direction : directions[position.second % 2]) {   
+      pair<int, int> neighbor(position.first + direction.first, position.second + direction.second);
       if (neighbor.second < 0) {
         continue;
-      } else if (neighbor.first < 0 || neighbor.first >= game.w || neighbor.second >= game.h){
-        filled_neighbors.push_back(neighbor);
-      } else if (state.board[Cell(neighbor.first, neighbor.second).Lin(game.w)]) {
-        filled_neighbors.push_back(neighbor);
+      } else {
+        neighbors.push_back(neighbor);
       }
     }
   }
-  sort(filled_neighbors.begin(), filled_neighbors.end());
-  auto it = unique(filled_neighbors.begin(), filled_neighbors.end());
-  return distance(filled_neighbors.begin(), it);
-}
-
-int evaluateScore(const Game& game,  const State& state, const State& next_state) {
-
-  const Unit& unit = game.CurrentUnit(state.source_idx);
-  vector<Cell> current_cells;
-  for (const auto& cell : unit.cells) {
-    current_cells.push_back(cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot));
-  }
+  sort(neighbors.begin(), neighbors.end());
+  auto it = unique(neighbors.begin(), neighbors.end());
+  neighbors.erase(it, neighbors.end());
   
-  int number_of_neighbors = calculateNeighbors(game, state, current_cells);
-  int distance_from_center = calculateDistanceFromCenter(game, current_cells) * 0;
-  return state.pivot.y + next_state.score + number_of_neighbors + distance_from_center;
+  int hole_penalty_base = -10;
+  int hole_size_threshold = 1;
+  
+  int sum_y = calcSumCellPositionY(current_cell_positions);
+  int number_of_neighbors = calculateFilledNeighbors(game, state, neighbors);
+  int distance_from_center = calculateDistanceFromCenter(game, current_cell_positions) * 0;
+  int hole_penalty = avoidHole(game, state, current_cell_positions,
+      neighbors, directions, hole_penalty_base, hole_size_threshold);
+  return sum_y + next_state.score + number_of_neighbors + distance_from_center + hole_penalty;
 }
 
 long long getTime() {
