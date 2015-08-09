@@ -3,6 +3,7 @@
 #include <sstream>
 #include <queue>
 #include <cassert>
+#include <cmath>
 #include <sys/time.h>
 using namespace std;
 
@@ -16,7 +17,8 @@ struct Item {
     : state(state), commands(commands), priority(0) {
     const Unit& unit = game.CurrentUnit(state.source_idx);
     for (const auto& cell : unit.cells) {
-      priority = max(priority, cell.Rotate(Cell(0, 0), state.rot).TranslateAdd(state.pivot).y);
+        Cell c = cell.Rotate(Cell(0, 0), state.rot).TranslateAdd(state.pivot);
+        priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
     }
   }
 
