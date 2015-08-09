@@ -12,14 +12,14 @@ using namespace std;
 namespace {
 
 struct Item {
-  State state;
+  SmallState sstate;
   string commands;
   int priority;
-  Item(const Game& game, const State& state, const string& commands)
-    : state(state), commands(commands), priority(0) {
-    const Unit& unit = game.CurrentUnit(state.source_idx);
+  Item(const Game& game, const State& initial_state, const SmallState& sstate, const string& commands)
+    : sstate(sstate), commands(commands), priority(0) {
+    const Unit& unit = game.CurrentUnit(initial_state.source_idx);
     for (const auto& cell : unit.cells) {
-        Cell c = cell.Rotate(Cell(0, 0), state.rot).TranslateAdd(state.pivot);
+        Cell c = cell.Rotate(Cell(0, 0), sstate.rot).TranslateAdd(sstate.pivot);
         priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
     }
   }
@@ -30,13 +30,13 @@ struct Item {
 };
 
 struct ItemAnnealing {
-  State state;
+  SmallState sstate;
   string commands;
   int priority;
-  ItemAnnealing(const Game& game, const State& state, const string& commands, int base_score, const Cell& target_cell)
-    : state(state), commands(commands), priority(0) {
-      int dist = abs(target_cell.x - state.pivot.x) + abs(target_cell.y - state.pivot.y);
-      priority = (state.score - base_score) * 100 + state.pma_node->pos * 10 - dist;
+  ItemAnnealing(const Game& , const State& , const SmallState& sstate, const string& commands, int base_score, const Cell& target_cell)
+    : sstate(sstate), commands(commands), priority(0) {
+      int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
+      priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 10 - dist;
   }
   bool operator<(const ItemAnnealing& rhs) const {
     return priority < rhs.priority;
@@ -62,10 +62,10 @@ int calculateDistanceFromCenter(const Game& game, const vector<pair<int,int> >& 
   return fabs((game.w / 2) - (int)(average_x / current_cell_positions.size()));
 }
 
-bool isWallOrFilled(const Game& game, const State& state, const pair<int,int>& position) {
+bool isWallOrFilled(const Game& game, const State& initial_state, const pair<int,int>& position) {
   if (position.first < 0 || position.first >= game.w || position.second < 0 || position.second >= game.h){
     return true;
-  } else if (state.board[Cell(position.first, position.second).Lin(game.w)]){ 
+  } else if (initial_state.board[Cell(position.first, position.second).Lin(game.w)]){ 
     return true;
   }
   return false;
@@ -82,7 +82,7 @@ int isInUnit(const vector<pair<int,int> >& current_cell_positions, const pair<in
 
 // if the result makes hole whose size is within "threshold", get the score "penalty"
 double avoidHole(const Game& game, 
-              const State& state,
+              const State& initial_state,
               const vector<pair<int,int> >& current_cell_positions,
               const vector<pair<int,int> >& neighbors,
               const vector<vector<pair<int,int> > >& directions,
@@ -94,7 +94,7 @@ double avoidHole(const Game& game,
     set<pair<int,int> > not_filled_cell_positions;
     queue<pair<int,int> > que;
 
-    if (isInUnit(current_cell_positions, neighbor) || isWallOrFilled(game, state, neighbor)) {
+    if (isInUnit(current_cell_positions, neighbor) || isWallOrFilled(game, initial_state, neighbor)) {
       continue;
     }
     que.push(neighbor);
@@ -108,7 +108,7 @@ double avoidHole(const Game& game,
         if (not_filled_cell_positions.count(next) == 1) {
           continue;
         }
-        if (!isInUnit(current_cell_positions, next) && !isWallOrFilled(game, state, next)) {
+        if (!isInUnit(current_cell_positions, next) && !isWallOrFilled(game, initial_state, next)) {
           que.push(next);
         }
       }
@@ -121,12 +121,12 @@ double avoidHole(const Game& game,
 }
 
 
-int calculateFilledNeighbors(const Game& game, const State& state, const vector<pair<int,int> >& neighbors) {
+int calculateFilledNeighbors(const Game& game, const State& initial_state, const vector<pair<int,int> >& neighbors) {
   int filled_neighbor = 0;
   for(const auto& neighbor : neighbors) {
       if (neighbor.first < 0 || neighbor.first >= game.w || neighbor.second >= game.h){
         ++filled_neighbor;
-      } else if (state.board[Cell(neighbor.first, neighbor.second).Lin(game.w)]) {
+      } else if (initial_state.board[Cell(neighbor.first, neighbor.second).Lin(game.w)]) {
         ++filled_neighbor;
       }
   }
@@ -141,7 +141,7 @@ int calcSumCellPositionY(const vector<pair<int,int> >& current_cell_positions) {
   return total;
 }
 
-int evaluateScore(const Game& game, const State& state, const State& next_state) {
+int evaluateScore(const Game& game, const State& initial_state, const SmallState& sstate, const SmallState& next_sstate) {
   // units should go to the place which has many neighbors (number_of_neighbors)
   vector< vector<pair<int, int> > > directions = {
     {
@@ -154,10 +154,10 @@ int evaluateScore(const Game& game, const State& state, const State& next_state)
   };
 
   // get current status
-  const Unit& unit = game.CurrentUnit(state.source_idx);
+  const Unit& unit = game.CurrentUnit(initial_state.source_idx);
   vector<pair<int,int> > current_cell_positions;
   for (const auto& cell : unit.cells) {
-    Cell current_cell = cell.Rotate(Cell(0,0), state.rot).TranslateAdd(state.pivot);
+    Cell current_cell = cell.Rotate(Cell(0,0), sstate.rot).TranslateAdd(sstate.pivot);
     current_cell_positions.push_back(make_pair(current_cell.x, current_cell.y));
   }
 
@@ -177,23 +177,23 @@ int evaluateScore(const Game& game, const State& state, const State& next_state)
   auto it = unique(neighbors.begin(), neighbors.end());
   neighbors.erase(it, neighbors.end());
   
-  double hole_penalty_base = 1.0;
-  int hole_size_threshold = 1;
+  // double hole_penalty_base = 1.0;
+  // int hole_size_threshold = 1;
   
   /*
   int ave_y = calcSumCellPositionY(current_cell_positions) / current_cell_positions.size();
-  int number_of_neighbors = calculateFilledNeighbors(game, state, neighbors);
+  int number_of_neighbors = calculateFilledNeighbors(game, initial_state, neighbors);
   int distance_from_center = 0; //calculateDistanceFromCenter(game, current_cell_positions);
-  int hole_penalty = 0; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, 0, hole_size_threshold);
-  return ave_y + next_state.score + number_of_neighbors + distance_from_center + hole_penalty;
+  int hole_penalty = 0; //avoidHole(game, initial_state, current_cell_positions, neighbors, directions, hole_penalty_base, 0, hole_size_threshold);
+  return ave_y + next_sstate.score + number_of_neighbors + distance_from_center + hole_penalty;
   */
   
   int base = 1000000000;
   double ave_y_ratio = 1.1 * calcSumCellPositionY(current_cell_positions) / (double)(current_cell_positions.size() * game.h);
-  double filled_neighbors_ratio = calculateFilledNeighbors(game, state, neighbors) / (double) neighbors.size();
+  double filled_neighbors_ratio = calculateFilledNeighbors(game, initial_state, neighbors) / (double) neighbors.size();
   double distance_from_center = 1; //calculateDistanceFromCenter(game, current_cell_positions);
-  double hole_penalty = 1; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, 1, hole_size_threshold);
-  double point_up_ratio = (next_state.score + 1) / (double) (state.score + 1);
+  double hole_penalty = 1; //avoidHole(game, initial_state, current_cell_positions, neighbors, directions, hole_penalty_base, 1, hole_size_threshold);
+  double point_up_ratio = (next_sstate.score + 1) / (double) (sstate.score + 1);
   return (int)(base * point_up_ratio * ave_y_ratio * filled_neighbors_ratio * distance_from_center * hole_penalty);
 }
 };
@@ -223,7 +223,9 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
   int max_score = -1;
   string best_commands = "";
   priority_queue<Item> Q;
-  Q.push(Item(game, initial_state, ""));
+  SmallState initial_sstate;
+  initial_sstate.Init(initial_state);
+  Q.push(Item(game, initial_state, initial_sstate, ""));
 
   long long start_time = getTime();
   while (!Q.empty()) {
@@ -235,34 +237,34 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
 
     const Item item = Q.top(); Q.pop();
 
-    assert(0 <= item.state.pivot.x + visited_offset_x);
-    assert(item.state.pivot.x + visited_offset_x < visited_w);
-    assert(0 <= item.state.pivot.y + visited_offset_y);
-    assert(item.state.pivot.y + visited_offset_y < visited_h);
+    assert(0 <= item.sstate.pivot.x + visited_offset_x);
+    assert(item.sstate.pivot.x + visited_offset_x < visited_w);
+    assert(0 <= item.sstate.pivot.y + visited_offset_y);
+    assert(item.sstate.pivot.y + visited_offset_y < visited_h);
     const int visited_index =
-      visited_w * 6 * (item.state.pivot.y + visited_offset_y) +
-      6 * (item.state.pivot.x + visited_offset_x) + item.state.rot;
+      visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
+      6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
 
     if (visited[visited_index]) { continue; }
     visited[visited_index] = true;
 
     const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
     for (auto c : commands) {
-      State next_state = item.state;
-      const CommandResult result = next_state.Command(game, c);
+      SmallState next_sstate = item.sstate;
+      const CommandResult result = next_sstate.Command(game, initial_state, c);
       const string next_commands = item.commands + string(1, c);
 
       assert(result != GAMEOVER && result != CLEAR);
       if (result == ERROR) {
         continue;
       } else if (result == LOCK) {
-        const int score = evaluateScore(game, item.state, next_state);
+        const int score = evaluateScore(game, initial_state, item.sstate, next_sstate);
         if (score > max_score) {
           max_score = score;
           best_commands = next_commands;
         }
       } else if (result == MOVE) {
-        Q.push(Item(game, next_state, next_commands));
+        Q.push(Item(game, initial_state, next_sstate, next_commands));
       } else {
         assert(false);
       }
@@ -285,8 +287,10 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
   if (height < 3) { return initial_answer; }
 
   string commands = initial_answer;
-  State initial_last_state = CalcLastState(game, initial_state, initial_answer);
-  double energy = CalcEnergy(game, initial_last_state);
+  SmallState initial_sstate;
+  initial_sstate.Init(initial_state);
+  SmallState initial_last_sstate = CalcLastState(game, initial_state, initial_sstate, initial_answer);
+  double energy = CalcEnergy(game, initial_last_sstate);
   pair<double, string> best_answer = make_pair(energy, initial_answer);
   int counter = 0;
   long long start_time = getTime();
@@ -297,10 +301,10 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     long long current_time = getTime();
     double rest_time = (double)(end_time - current_time) / (double)(end_time - start_time) + 1e-8;
     string next_commands = ChangePath(game, initial_state, commands, loop_count, rest_time, start_time);
-    State next_last_state = CalcLastState(game, initial_state, next_commands);
-    assert(next_last_state.pivot == initial_last_state.pivot);
-    assert(next_last_state.rot == initial_last_state.rot);
-    double next_energy = CalcEnergy(game, next_last_state);
+    SmallState next_last_sstate = CalcLastState(game, initial_state, initial_sstate, next_commands);
+    assert(next_last_sstate.pivot == initial_last_sstate.pivot);
+    assert(next_last_sstate.rot == initial_last_sstate.rot);
+    double next_energy = CalcEnergy(game, next_last_sstate);
     double probability = CalcProbability(energy, next_energy,  rest_time + 1e-8);
     double r = random.next(0.0, 1.0);
     if (r < probability) {
@@ -339,58 +343,60 @@ string SubmarineAI::ChangePath(const Game &game, const State& initial_state, con
 string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, const string& commands, int loop_count, int start_pos, int mid_pos, int end_pos, long long start_time) const {
   assert(commands.size() > 0);
   {
-    State temp_state = initial_state;
-    State start_state;
+    SmallState initial_sstate;
+    initial_sstate.Init(initial_state);
+    SmallState temp_sstate = initial_sstate;
+    SmallState start_sstate;
     string ret = "";
     if (start_pos == 0) {
-      start_state = temp_state;
+      start_sstate = temp_sstate;
       if (mid_pos != 0) {
-        temp_state.Command(game, commands[0]);
+        temp_sstate.Command(game, initial_state, commands[0]);
       }
     } else {
       for (int i = 0; i <= start_pos; i++) {
-        temp_state.Command(game, commands[i]);
+        temp_sstate.Command(game, initial_state, commands[i]);
       }
-      start_state = temp_state;
+      start_sstate = temp_sstate;
       ret += commands.substr(0, start_pos + 1);
     }
     for (int i = start_pos + 1; i < mid_pos; i++) {
-      temp_state.Command(game, commands[i]);
+      temp_sstate.Command(game, initial_state, commands[i]);
     }
-    State mid_state = temp_state;
-    Cell mid_point = mid_state.pivot;
+    SmallState mid_sstate = temp_sstate;
+    Cell mid_point = mid_sstate.pivot;
     mid_point.x += random.next(-5, 5);
-    int mid_rot = mid_state.rot;
+    int mid_rot = mid_sstate.rot;
     for (int i = mid_pos; i < end_pos; i++) {
-      temp_state.Command(game, commands[i]);
+      temp_sstate.Command(game, initial_state, commands[i]);
     }
-    Cell end_point = temp_state.pivot;
-    int end_rot = temp_state.rot;
+    Cell end_point = temp_sstate.pivot;
+    int end_rot = temp_sstate.rot;
 
-    string mid1 = FindPath(game, start_state, loop_count, mid_point, mid_rot, start_time);
+    string mid1 = FindPath(game, initial_state, start_sstate, loop_count, mid_point, mid_rot, start_time);
     if (mid1.size() == 0) { goto fail; }
     ret += mid1;
-    mid_state = CalcLastState(game, initial_state, ret);
-    assert(mid_state.pivot == mid_point && mid_state.rot == mid_rot);
+    mid_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
+    assert(mid_sstate.pivot == mid_point && mid_sstate.rot == mid_rot);
     bool success = false;
     char cs[2] = { 'a', 'l' };
     for (int i = 0; i < 2; i++) {
       char c = cs[i];
-      State temp_state2 = mid_state;
-      CommandResult command_result = temp_state2.Command(game, c);
+      SmallState temp_sstate2 = mid_sstate;
+      CommandResult command_result = temp_sstate2.Command(game, initial_state, c);
       if (command_result == MOVE) {
-        mid_state = temp_state2;
+        mid_sstate = temp_sstate2;
         ret.push_back(c);
         success = true;
         break;
       }
     }
     if (!success) { goto fail; }
-    string mid2 = FindPath(game, mid_state, loop_count, end_point, end_rot, start_time);
+    string mid2 = FindPath(game, initial_state, mid_sstate, loop_count, end_point, end_rot, start_time);
     if (mid2.size() == 0) { goto fail; }
     ret += mid2;
-    temp_state = CalcLastState(game, initial_state, ret);
-    assert(temp_state.pivot == end_point && temp_state.rot == end_rot);
+    temp_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
+    assert(temp_sstate.pivot == end_point && temp_sstate.rot == end_rot);
     ret += commands.substr(end_pos, commands.size() - end_pos);
     return ret;
   }
@@ -398,10 +404,10 @@ fail:
   return commands;
 }
 
-std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, int loop_count, Cell end_point, int end_rot, long long start_time) const {
-  int base_score = initial_state.score;
+std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int , Cell end_point, int end_rot, long long start_time) const {
+  int base_score = initial_sstate.score;
   priority_queue<ItemAnnealing> Q;
-  Q.push(ItemAnnealing(game, initial_state, "", base_score, end_point));
+  Q.push(ItemAnnealing(game, initial_state, initial_sstate, "", base_score, end_point));
 
   const int visited_w = 3 * game.w;
   const int visited_offset_x = game.w;
@@ -415,33 +421,33 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
 
     const ItemAnnealing item = Q.top(); Q.pop();
 
-    assert(0 <= item.state.pivot.x + visited_offset_x);
-    assert(item.state.pivot.x + visited_offset_x < visited_w);
-    assert(0 <= item.state.pivot.y + visited_offset_y);
-    assert(item.state.pivot.y + visited_offset_y < visited_h);
+    assert(0 <= item.sstate.pivot.x + visited_offset_x);
+    assert(item.sstate.pivot.x + visited_offset_x < visited_w);
+    assert(0 <= item.sstate.pivot.y + visited_offset_y);
+    assert(item.sstate.pivot.y + visited_offset_y < visited_h);
     const int visited_index =
-      visited_w * 6 * (item.state.pivot.y + visited_offset_y) +
-      6 * (item.state.pivot.x + visited_offset_x) + item.state.rot;
+      visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
+      6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
 
     if (visited[visited_index]) { continue; }
     visited[visited_index] = true;
-    if (end_point == item.state.pivot && end_rot == item.state.rot) {
+    if (end_point == item.sstate.pivot && end_rot == item.sstate.rot) {
       return item.commands;
     }
 
     const string commands = { "p'!.03bcefy2aghij4lmno 5dqrvz1kstuwx" };
     for (auto c : commands) {
-      State next_state = item.state;
-      const CommandResult result = next_state.Command(game, c);
+      SmallState next_sstate = item.sstate;
+      const CommandResult result = next_sstate.Command(game, initial_state, c);
       const string next_commands = item.commands + string(1, c);
 
       assert(result != GAMEOVER && result != CLEAR);
-      if (end_point.y < next_state.pivot.y) {
+      if (end_point.y < next_sstate.pivot.y) {
         continue;
       } if (result == ERROR || result == LOCK) {
         continue;
       } else if (result == MOVE) {
-        Q.push(ItemAnnealing(game, next_state, next_commands, base_score, end_point));
+        Q.push(ItemAnnealing(game, initial_state, next_sstate, next_commands, base_score, end_point));
       } else {
         assert(false);
       }
@@ -450,8 +456,8 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
   return "";
 }
 
-double SubmarineAI::CalcEnergy(const Game& game, const State& last_state) const {
-  return -last_state.score;
+double SubmarineAI::CalcEnergy(const Game& , const SmallState& last_sstate) const {
+  return -last_sstate.score;
 }
 
 double SubmarineAI::CalcProbability(double energy, double next_energy, double temperature) const {
@@ -479,7 +485,11 @@ string SubmarineAI::Run(const Game& game) {
     // modify solution by using best_commands
     if (max_score == -1) { break; }
     const string best_commands = Annealing(game, state, p.second, loop_count);
-    state = CalcLastState(game, state, best_commands);
+
+    for (int i = 0; i < (int)best_commands.size(); i++) {
+      CommandResult result = state.Command(game, best_commands[i]);
+      assert(i == (int)best_commands.size() - 1 || result == MOVE);
+    }
     solution += best_commands;
   }
 
@@ -487,11 +497,11 @@ string SubmarineAI::Run(const Game& game) {
   return solution;
 }
 
-State SubmarineAI::CalcLastState(const Game& game, const State& state, const std::string& commands) const {
-  State last_state = state;
+SmallState SubmarineAI::CalcLastState(const Game& game, const State& initial_state, const SmallState& sstate, const std::string& commands) const {
+  SmallState last_sstate = sstate;
   for (int i = 0; i < (int)commands.size(); i++) {
-    CommandResult result = last_state.Command(game, commands[i]);
+    CommandResult result = last_sstate.Command(game, initial_state, commands[i]);
     assert(i == (int)commands.size() - 1 || result == MOVE);
   }
-  return last_state;
+  return last_sstate;
 }

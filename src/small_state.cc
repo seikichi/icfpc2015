@@ -6,6 +6,16 @@
 
 using namespace std;
 
+void SmallState::Init(const State &state) {
+  pivot = state.pivot;
+  rot = state.rot;
+  score = state.score;
+  score_move = state.score_move;
+  score_power = state.score_power;
+  pma_node = state.pma_node;
+  used_power = state.used_power;
+}
+
 CommandResult SmallState::Command(const Game& g, const State& state, char c) {
   assert(!state.IsClear(g));
   assert(!state.IsGameOver(g));
@@ -106,7 +116,7 @@ CommandResult SmallState::UpdateRotAndLock(const Game& g, const State& state, in
   return MOVE;
 }
 
-void SmallState::UpdatePowerPMA(const Game& g, const State &state, char c) {
+void SmallState::UpdatePowerPMA(const Game& g, const State& , char c) {
   auto accept_index = g.power_pma.UpdateNode(c, pma_node);
 
   // Update score
