@@ -42,13 +42,17 @@ def create_submit():
     if not isinstance(data, list):
         return error_response('invalid submit data, data must be an array.', 400)
 
+    for d in data:
+        if 'problemId' not in d:
+            return error_response('invalid submit data, each data must contain problemId field.', 400)
+
     if len(set(d['problemId'] for d in data)) != 1:
         return error_response('invalid submit data, data must contains only one problemId.', 400)
 
     original_tags = []
     tag = str(uuid.uuid1())
     for d in data:
-        original_tags.append(d['tag'])
+        original_tags.append(d.get('tag', None))
         d['tag'] = tag
 
     url = "https://davar.icfpcontest.org/teams/{0}/solutions".format(TEAM_ID)
