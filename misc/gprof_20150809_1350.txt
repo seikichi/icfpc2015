@@ -1,0 +1,447 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 46.55     13.00    13.00  2057272     0.01     0.01  State::LineDelete(Game const&)
+ 15.61     17.36     4.36 1371373392     0.00     0.00  Cell::TranslateAdd(Cell) const
+ 12.68     20.90     3.54                             LightningAI::Run(Game const&)
+  8.52     23.28     2.38  2057275     0.00     0.00  Unit::GetSpawnPos(int) const
+  5.76     24.89     1.61  8955166     0.00     0.00  State::Command(Game const&, char)
+  3.74     25.94     1.05 45571053     0.00     0.00  Cell::Rotate(Cell const&, int) const
+  2.94     26.76     0.82 10303304     0.00     0.00  (anonymous namespace)::Item::~Item()
+  2.83     27.55     0.79  5039896     0.00     0.00  void std::vector<(anonymous namespace)::Item, std::allocator<(anonymous namespace)::Item> >::_M_emplace_back_aux<(anonymous namespace)::Item>((anonymous namespace)::Item&&)
+  0.39     27.66     0.11  6035306     0.00     0.00  State::UpdateVisitedAndLock(Game const&, Cell)
+  0.32     27.75     0.09  2980762     0.00     0.00  State::UpdateRotAndLock(Game const&, int)
+  0.21     27.81     0.06  2057273     0.00     0.00  State::Reset(Game const&)
+  0.14     27.85     0.04  2057272     0.00     0.01  State::Lock(Game const&)
+  0.11     27.88     0.03  5066831     0.00     0.00  std::vector<char, std::allocator<char> >::_M_fill_assign(unsigned long, char const&)
+  0.07     27.90     0.02  9016825     0.00     0.00  State::IsGameOver(Game const&) const
+  0.04     27.91     0.01  9016825     0.00     0.00  State::IsClear(Game const&) const
+  0.04     27.92     0.01  2057230     0.00     0.00  Cell::TranslateSub(Cell) const
+  0.04     27.93     0.01        7     1.43     1.43  void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>(int const&)
+  0.02     27.93     0.01     3828     0.00     0.00  ChickAI::~ChickAI()
+  0.00     27.93     0.00     3478     0.00     0.00  std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*)
+  0.00     27.93     0.00     3346     0.00     0.00  std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*)
+  0.00     27.93     0.00     2136     0.00     0.00  bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&)
+  0.00     27.93     0.00     2134     0.00     0.00  bool picojson::_parse_string<std::string, __gnu_cxx::__normal_iterator<char const*, std::string> >(std::string&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&)
+  0.00     27.93     0.00     2134     0.00     0.00  std::_Rb_tree_iterator<std::pair<std::string const, picojson::value> > std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<std::string const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<std::string const, picojson::value> >, std::piecewise_construct_t const&, std::tuple<std::string const&>&&, std::tuple<>&&)
+  0.00     27.93     0.00     1914     0.00     0.00  picojson::default_parse_context::set_number(double)
+  0.00     27.93     0.00     1704     0.00     0.00  picojson::value::~value()
+  0.00     27.93     0.00     1062     0.00     0.00  bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&)
+  0.00     27.93     0.00     1062     0.00     0.00  std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_get_insert_unique_pos(std::string const&)
+  0.00     27.93     0.00      952     0.00     0.00  (anonymous namespace)::ReadCell(std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >&)
+  0.00     27.93     0.00      454     0.00     0.00  std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&)
+  0.00     27.93     0.00      373     0.00     0.00  void std::__insertion_sort<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > > >(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >)
+  0.00     27.93     0.00      373     0.00     0.00  void std::__introsort_loop<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long>(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long)
+  0.00     27.93     0.00      266     0.00     0.00  void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&)
+  0.00     27.93     0.00      230     0.00     0.00  void std::vector<Cell, std::allocator<Cell> >::_M_emplace_back_aux<Cell const&>(Cell const&)
+  0.00     27.93     0.00      228     0.00     0.00  picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >::expect(int)
+  0.00     27.93     0.00       54     0.00     0.00  std::vector<Cell, std::allocator<Cell> >::operator=(std::vector<Cell, std::allocator<Cell> > const&)
+  0.00     27.93     0.00        8     0.00     0.00  void std::vector<Unit, std::allocator<Unit> >::_M_emplace_back_aux<Unit const&>(Unit const&)
+  0.00     27.93     0.00        5     0.00     0.00  _init
+  0.00     27.93     0.00        2     0.00     0.00  std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool)
+  0.00     27.93     0.00        2     0.00     0.00  void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int>(int&&)
+  0.00     27.93     0.00        1     0.00    10.02  Game::ComputePeriod()
+  0.00     27.93     0.00        1     0.00     0.00  Game::GenerateSourceSequense(int, int, int)
+  0.00     27.93     0.00        1     0.00     0.00  State::Init(Game const&)
+  0.00     27.93     0.00        1     0.00     0.00  std::_Sp_counted_ptr_inplace<LightningAI, std::allocator<LightningAI>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)
+  0.00     27.93     0.00        1     0.00     0.00  std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::operator[](std::string&&)
+  0.00     27.93     0.00        1     0.00     0.00  std::vector<int, std::allocator<int> >::_M_default_append(unsigned long)
+  0.00     27.93     0.00        1     0.00     0.00  main
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.04% of 27.93 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.9    3.54   24.38                 LightningAI::Run(Game const&) [1]
+                1.61   20.73 8955166/8955166     State::Command(Game const&, char) [2]
+                0.79    0.40 5039896/5039896     void std::vector<(anonymous namespace)::Item, std::allocator<(anonymous namespace)::Item> >::_M_emplace_back_aux<(anonymous namespace)::Item>((anonymous namespace)::Item&&) [10]
+                0.42    0.00 5270894/10303304     (anonymous namespace)::Item::~Item() [12]
+                0.38    0.00 16515037/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.05    0.00 16515037/1371373392     Cell::TranslateAdd(Cell) const [9]
+                0.00    0.00       1/2057273     State::Reset(Game const&) [7]
+                0.00    0.00     757/9016825     State::IsGameOver(Game const&) const [14]
+                0.00    0.00     757/9016825     State::IsClear(Game const&) const [17]
+                0.00    0.00       1/1           State::Init(Game const&) [52]
+-----------------------------------------------
+                1.61   20.73 8955166/8955166     LightningAI::Run(Game const&) [1]
+[2]     80.0    1.61   20.73 8955166         State::Command(Game const&, char) [2]
+                0.11   11.67 6035306/6035306     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+                0.09    8.82 2980762/2980762     State::UpdateRotAndLock(Game const&, int) [6]
+                0.02    0.00 9016068/9016825     State::IsGameOver(Game const&) const [14]
+                0.01    0.00 9016068/9016825     State::IsClear(Game const&) const [17]
+-----------------------------------------------
+                0.02    8.66  895531/2057272     State::UpdateRotAndLock(Game const&, int) [6]
+                0.02   11.23 1161741/2057272     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+[3]     71.3    0.04   19.89 2057272         State::Lock(Game const&) [3]
+               13.00    0.00 2057272/2057272     State::LineDelete(Game const&) [4]
+                0.06    6.70 2057272/2057273     State::Reset(Game const&) [7]
+                0.11    0.00 4800942/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.02    0.00 4800942/1371373392     Cell::TranslateAdd(Cell) const [9]
+-----------------------------------------------
+               13.00    0.00 2057272/2057272     State::Lock(Game const&) [3]
+[4]     46.5   13.00    0.00 2057272         State::LineDelete(Game const&) [4]
+-----------------------------------------------
+                0.11   11.67 6035306/6035306     State::Command(Game const&, char) [2]
+[5]     42.2    0.11   11.67 6035306         State::UpdateVisitedAndLock(Game const&, Cell) [5]
+                0.02   11.23 1161741/2057272     State::Lock(Game const&) [3]
+                0.33    0.00 14298775/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.06    0.00 20334081/1371373392     Cell::TranslateAdd(Cell) const [9]
+                0.02    0.00 3011306/5066831     std::vector<char, std::allocator<char> >::_M_fill_assign(unsigned long, char const&) [13]
+                0.01    0.00 2056910/2057230     Cell::TranslateSub(Cell) const [18]
+-----------------------------------------------
+                0.09    8.82 2980762/2980762     State::Command(Game const&, char) [2]
+[6]     31.9    0.09    8.82 2980762         State::UpdateRotAndLock(Game const&, int) [6]
+                0.02    8.66  895531/2057272     State::Lock(Game const&) [3]
+                0.13    0.00 5641221/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.02    0.00 5641221/1371373392     Cell::TranslateAdd(Cell) const [9]
+-----------------------------------------------
+                0.00    0.00       1/2057273     LightningAI::Run(Game const&) [1]
+                0.06    6.70 2057272/2057273     State::Lock(Game const&) [3]
+[7]     24.2    0.06    6.70 2057273         State::Reset(Game const&) [7]
+                2.38    4.20 2057275/2057275     Unit::GetSpawnPos(int) const [8]
+                0.10    0.00 4314183/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.01    0.00 4314183/1371373392     Cell::TranslateAdd(Cell) const [9]
+                0.01    0.00 2055525/5066831     std::vector<char, std::allocator<char> >::_M_fill_assign(unsigned long, char const&) [13]
+-----------------------------------------------
+                2.38    4.20 2057275/2057275     State::Reset(Game const&) [7]
+[8]     23.5    2.38    4.20 2057275         Unit::GetSpawnPos(int) const [8]
+                4.20    0.00 1319767928/1371373392     Cell::TranslateAdd(Cell) const [9]
+-----------------------------------------------
+                0.01    0.00 4314183/1371373392     State::Reset(Game const&) [7]
+                0.02    0.00 4800942/1371373392     State::Lock(Game const&) [3]
+                0.02    0.00 5641221/1371373392     State::UpdateRotAndLock(Game const&, int) [6]
+                0.05    0.00 16515037/1371373392     LightningAI::Run(Game const&) [1]
+                0.06    0.00 20334081/1371373392     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+                4.20    0.00 1319767928/1371373392     Unit::GetSpawnPos(int) const [8]
+[9]     15.6    4.36    0.00 1371373392         Cell::TranslateAdd(Cell) const [9]
+-----------------------------------------------
+                0.79    0.40 5039896/5039896     LightningAI::Run(Game const&) [1]
+[10]     4.3    0.79    0.40 5039896         void std::vector<(anonymous namespace)::Item, std::allocator<(anonymous namespace)::Item> >::_M_emplace_back_aux<(anonymous namespace)::Item>((anonymous namespace)::Item&&) [10]
+                0.40    0.00 5032410/10303304     (anonymous namespace)::Item::~Item() [12]
+-----------------------------------------------
+                0.00    0.00     895/45571053     Game::ComputePeriod() [16]
+                0.10    0.00 4314183/45571053     State::Reset(Game const&) [7]
+                0.11    0.00 4800942/45571053     State::Lock(Game const&) [3]
+                0.13    0.00 5641221/45571053     State::UpdateRotAndLock(Game const&, int) [6]
+                0.33    0.00 14298775/45571053     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+                0.38    0.00 16515037/45571053     LightningAI::Run(Game const&) [1]
+[11]     3.7    1.05    0.00 45571053         Cell::Rotate(Cell const&, int) const [11]
+-----------------------------------------------
+                0.40    0.00 5032410/10303304     void std::vector<(anonymous namespace)::Item, std::allocator<(anonymous namespace)::Item> >::_M_emplace_back_aux<(anonymous namespace)::Item>((anonymous namespace)::Item&&) [10]
+                0.42    0.00 5270894/10303304     LightningAI::Run(Game const&) [1]
+[12]     2.9    0.82    0.00 10303304         (anonymous namespace)::Item::~Item() [12]
+-----------------------------------------------
+                0.01    0.00 2055525/5066831     State::Reset(Game const&) [7]
+                0.02    0.00 3011306/5066831     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+[13]     0.1    0.03    0.00 5066831         std::vector<char, std::allocator<char> >::_M_fill_assign(unsigned long, char const&) [13]
+-----------------------------------------------
+                0.00    0.00     757/9016825     LightningAI::Run(Game const&) [1]
+                0.02    0.00 9016068/9016825     State::Command(Game const&, char) [2]
+[14]     0.1    0.02    0.00 9016825         State::IsGameOver(Game const&) const [14]
+-----------------------------------------------
+                                                 <spontaneous>
+[15]     0.1    0.00    0.02                 Game::Init(std::string, int) [15]
+                0.00    0.01       1/1           Game::ComputePeriod() [16]
+                0.00    0.01       2/2           bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+                0.00    0.00     320/2057230     Cell::TranslateSub(Cell) const [18]
+                0.00    0.00     952/952         (anonymous namespace)::ReadCell(std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >&) [39]
+                0.00    0.00     634/2204        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                0.00    0.00     528/1704        picojson::value::~value() [36]
+                0.00    0.00     430/3478        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+                0.00    0.00     230/230         void std::vector<Cell, std::allocator<Cell> >::_M_emplace_back_aux<Cell const&>(Cell const&) [44]
+                0.00    0.00     110/2204        std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&) <cycle 1> [40]
+                0.00    0.00       8/8           void std::vector<Unit, std::allocator<Unit> >::_M_emplace_back_aux<Unit const&>(Unit const&) [47]
+                0.00    0.00       2/2           void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int>(int&&) [50]
+                0.00    0.00       2/2           std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool) [49]
+                0.00    0.00       1/1           std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::operator[](std::string&&) [54]
+                0.00    0.00       1/1           Game::GenerateSourceSequense(int, int, int) [51]
+-----------------------------------------------
+                0.00    0.01       1/1           Game::Init(std::string, int) [15]
+[16]     0.0    0.00    0.01       1         Game::ComputePeriod() [16]
+                0.01    0.00       7/7           void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>(int const&) [19]
+                0.00    0.00     895/45571053     Cell::Rotate(Cell const&, int) const [11]
+                0.00    0.00     373/373         void std::__introsort_loop<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long>(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long) [42]
+                0.00    0.00     373/373         void std::__insertion_sort<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > > >(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >) [41]
+                0.00    0.00      54/54          std::vector<Cell, std::allocator<Cell> >::operator=(std::vector<Cell, std::allocator<Cell> > const&) [46]
+-----------------------------------------------
+                0.00    0.00     757/9016825     LightningAI::Run(Game const&) [1]
+                0.01    0.00 9016068/9016825     State::Command(Game const&, char) [2]
+[17]     0.0    0.01    0.00 9016825         State::IsClear(Game const&) const [17]
+-----------------------------------------------
+                0.00    0.00     320/2057230     Game::Init(std::string, int) [15]
+                0.01    0.00 2056910/2057230     State::UpdateVisitedAndLock(Game const&, Cell) [5]
+[18]     0.0    0.01    0.00 2057230         Cell::TranslateSub(Cell) const [18]
+-----------------------------------------------
+                0.01    0.00       7/7           Game::ComputePeriod() [16]
+[19]     0.0    0.01    0.00       7         void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>(int const&) [19]
+-----------------------------------------------
+[20]     0.0    0.00    0.01       2+3196    <cycle 2 as a whole> [20]
+                0.00    0.01    2136+954         bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+                0.00    0.00    1062             bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+-----------------------------------------------
+                0.01    0.00    3828/3828        bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+[21]     0.0    0.01    0.00    3828         ChickAI::~ChickAI() [21]
+-----------------------------------------------
+                                 954             bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+                                2134             bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+                0.00    0.01       2/2           Game::Init(std::string, int) [15]
+[22]     0.0    0.00    0.01    2136+954     bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+                0.01    0.00    3828/3828        ChickAI::~ChickAI() [21]
+                0.00    0.00    1914/1914        picojson::default_parse_context::set_number(double) [35]
+                0.00    0.00     266/266         void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&) [43]
+                0.00    0.00     228/228         picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >::expect(int) [45]
+                0.00    0.00     114/1704        picojson::value::~value() [36]
+                                1062             bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+                                 954             bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+-----------------------------------------------
+[23]     0.0    0.00    0.00    2204+1596    <cycle 1 as a whole> [23]
+                0.00    0.00    3346+5298        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                0.00    0.00     454             std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&) <cycle 1> [40]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [118]
+[24]     0.0    0.00    0.00       1         main [24]
+-----------------------------------------------
+                               13750             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+                0.00    0.00     430/3478        Game::Init(std::string, int) [15]
+                0.00    0.00     526/3478        picojson::value::~value() [36]
+                0.00    0.00    1062/3478        bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+                0.00    0.00    1460/3478        void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&) [43]
+[31]     0.0    0.00    0.00    3478+13750   std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+                               13750             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+-----------------------------------------------
+                                5298             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                                1252             std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&) <cycle 1> [40]
+                0.00    0.00     634/2204        Game::Init(std::string, int) [15]
+                0.00    0.00    1460/2204        void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&) [43]
+[32]     0.0    0.00    0.00    3346+5298    std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                                 344             std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&) <cycle 1> [40]
+                                5298             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+-----------------------------------------------
+                0.00    0.00    2134/2134        bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+[33]     0.0    0.00    0.00    2134         bool picojson::_parse_string<std::string, __gnu_cxx::__normal_iterator<char const*, std::string> >(std::string&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) [33]
+-----------------------------------------------
+                0.00    0.00    2134/2134        bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+[34]     0.0    0.00    0.00    2134         std::_Rb_tree_iterator<std::pair<std::string const, picojson::value> > std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<std::string const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<std::string const, picojson::value> >, std::piecewise_construct_t const&, std::tuple<std::string const&>&&, std::tuple<>&&) [34]
+                0.00    0.00    1062/1062        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_get_insert_unique_pos(std::string const&) [38]
+-----------------------------------------------
+                0.00    0.00    1914/1914        bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+[35]     0.0    0.00    0.00    1914         picojson::default_parse_context::set_number(double) [35]
+-----------------------------------------------
+                0.00    0.00     114/1704        bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+                0.00    0.00     528/1704        Game::Init(std::string, int) [15]
+                0.00    0.00    1062/1704        bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+[36]     0.0    0.00    0.00    1704         picojson::value::~value() [36]
+                0.00    0.00     526/3478        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+-----------------------------------------------
+                                1062             bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+[37]     0.0    0.00    0.00    1062         bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [37]
+                0.00    0.00    2134/2134        bool picojson::_parse_string<std::string, __gnu_cxx::__normal_iterator<char const*, std::string> >(std::string&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) [33]
+                0.00    0.00    2134/2134        std::_Rb_tree_iterator<std::pair<std::string const, picojson::value> > std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<std::string const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<std::string const, picojson::value> >, std::piecewise_construct_t const&, std::tuple<std::string const&>&&, std::tuple<>&&) [34]
+                0.00    0.00    1062/1704        picojson::value::~value() [36]
+                0.00    0.00    1062/3478        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+                                2134             bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+-----------------------------------------------
+                0.00    0.00    1062/1062        std::_Rb_tree_iterator<std::pair<std::string const, picojson::value> > std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<std::string const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<std::string const, picojson::value> >, std::piecewise_construct_t const&, std::tuple<std::string const&>&&, std::tuple<>&&) [34]
+[38]     0.0    0.00    0.00    1062         std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_get_insert_unique_pos(std::string const&) [38]
+-----------------------------------------------
+                0.00    0.00     952/952         Game::Init(std::string, int) [15]
+[39]     0.0    0.00    0.00     952         (anonymous namespace)::ReadCell(std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >&) [39]
+-----------------------------------------------
+                                 344             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                0.00    0.00     110/2204        Game::Init(std::string, int) [15]
+[40]     0.0    0.00    0.00     454         std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&) <cycle 1> [40]
+                                1252             std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+-----------------------------------------------
+                0.00    0.00     373/373         Game::ComputePeriod() [16]
+[41]     0.0    0.00    0.00     373         void std::__insertion_sort<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > > >(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >) [41]
+-----------------------------------------------
+                0.00    0.00     373/373         Game::ComputePeriod() [16]
+[42]     0.0    0.00    0.00     373         void std::__introsort_loop<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long>(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long) [42]
+-----------------------------------------------
+                0.00    0.00     266/266         bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+[43]     0.0    0.00    0.00     266         void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&) [43]
+                0.00    0.00    1460/2204        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) <cycle 1> [32]
+                0.00    0.00    1460/3478        std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*) [31]
+-----------------------------------------------
+                0.00    0.00     230/230         Game::Init(std::string, int) [15]
+[44]     0.0    0.00    0.00     230         void std::vector<Cell, std::allocator<Cell> >::_M_emplace_back_aux<Cell const&>(Cell const&) [44]
+-----------------------------------------------
+                0.00    0.00     228/228         bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) <cycle 2> [22]
+[45]     0.0    0.00    0.00     228         picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >::expect(int) [45]
+-----------------------------------------------
+                0.00    0.00      54/54          Game::ComputePeriod() [16]
+[46]     0.0    0.00    0.00      54         std::vector<Cell, std::allocator<Cell> >::operator=(std::vector<Cell, std::allocator<Cell> > const&) [46]
+-----------------------------------------------
+                0.00    0.00       8/8           Game::Init(std::string, int) [15]
+[47]     0.0    0.00    0.00       8         void std::vector<Unit, std::allocator<Unit> >::_M_emplace_back_aux<Unit const&>(Unit const&) [47]
+-----------------------------------------------
+                0.00    0.00       5/5           __libc_csu_init [118]
+[48]     0.0    0.00    0.00       5         _init [48]
+-----------------------------------------------
+                0.00    0.00       2/2           Game::Init(std::string, int) [15]
+[49]     0.0    0.00    0.00       2         std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool) [49]
+-----------------------------------------------
+                0.00    0.00       2/2           Game::Init(std::string, int) [15]
+[50]     0.0    0.00    0.00       2         void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int>(int&&) [50]
+-----------------------------------------------
+                0.00    0.00       1/1           Game::Init(std::string, int) [15]
+[51]     0.0    0.00    0.00       1         Game::GenerateSourceSequense(int, int, int) [51]
+                0.00    0.00       1/1           std::vector<int, std::allocator<int> >::_M_default_append(unsigned long) [55]
+-----------------------------------------------
+                0.00    0.00       1/1           LightningAI::Run(Game const&) [1]
+[52]     0.0    0.00    0.00       1         State::Init(Game const&) [52]
+-----------------------------------------------
+                0.00    0.00       1/1           AI::CreateAI() [60]
+[53]     0.0    0.00    0.00       1         std::_Sp_counted_ptr_inplace<LightningAI, std::allocator<LightningAI>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&) [53]
+-----------------------------------------------
+                0.00    0.00       1/1           Game::Init(std::string, int) [15]
+[54]     0.0    0.00    0.00       1         std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::operator[](std::string&&) [54]
+-----------------------------------------------
+                0.00    0.00       1/1           Game::GenerateSourceSequense(int, int, int) [51]
+[55]     0.0    0.00    0.00       1         std::vector<int, std::allocator<int> >::_M_default_append(unsigned long) [55]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [1] LightningAI::Run(Game const&) [45] picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >::expect(int) [40] std::vector<picojson::value, std::allocator<picojson::value> >::vector(std::vector<picojson::value, std::allocator<picojson::value> > const&)
+  [12] (anonymous namespace)::Item::~Item() (lightningai.cc) [36] picojson::value::~value() [49] std::vector<bool, std::allocator<bool> >::_M_fill_insert(std::_Bit_iterator, unsigned long, bool)
+  [39] (anonymous namespace)::ReadCell(std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >&) (game.cc) [22] bool picojson::_parse<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) [13] std::vector<char, std::allocator<char> >::_M_fill_assign(unsigned long, char const&)
+  [16] Game::ComputePeriod()   [9] Cell::TranslateAdd(Cell) const [55] std::vector<int, std::allocator<int> >::_M_default_append(unsigned long)
+  [51] Game::GenerateSourceSequense(int, int, int) [18] Cell::TranslateSub(Cell) const [19] void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>(int const&)
+   [4] State::LineDelete(Game const&) [11] Cell::Rotate(Cell const&, int) const [50] void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int>(int&&)
+   [6] State::UpdateRotAndLock(Game const&, int) [8] Unit::GetSpawnPos(int) const [34] std::_Rb_tree_iterator<std::pair<std::string const, picojson::value> > std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<std::string const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<std::string const, picojson::value> >, std::piecewise_construct_t const&, std::tuple<std::string const&>&&, std::tuple<>&&)
+   [5] State::UpdateVisitedAndLock(Game const&, Cell) [14] State::IsGameOver(Game const&) const [38] std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_get_insert_unique_pos(std::string const&)
+  [52] State::Init(Game const&) [17] State::IsClear(Game const&) const [32] std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_copy(std::_Rb_tree_node<std::pair<std::string const, picojson::value> > const*, std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*)
+   [3] State::Lock(Game const&) [53] std::_Sp_counted_ptr_inplace<LightningAI, std::allocator<LightningAI>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&) [31] std::_Rb_tree<std::string, std::pair<std::string const, picojson::value>, std::_Select1st<std::pair<std::string const, picojson::value> >, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::_M_erase(std::_Rb_tree_node<std::pair<std::string const, picojson::value> >*)
+   [7] State::Reset(Game const&) [54] std::map<std::string, picojson::value, std::less<std::string>, std::allocator<std::pair<std::string const, picojson::value> > >::operator[](std::string&&) [41] void std::__insertion_sort<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > > >(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >)
+   [2] State::Command(Game const&, char) [44] void std::vector<Cell, std::allocator<Cell> >::_M_emplace_back_aux<Cell const&>(Cell const&) [42] void std::__introsort_loop<__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long>(__gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, __gnu_cxx::__normal_iterator<Cell*, std::vector<Cell, std::allocator<Cell> > >, long)
+  [21] ChickAI::~ChickAI()    [46] std::vector<Cell, std::allocator<Cell> >::operator=(std::vector<Cell, std::allocator<Cell> > const&) [48] _init
+  [37] bool picojson::_parse_object<picojson::default_parse_context, __gnu_cxx::__normal_iterator<char const*, std::string> >(picojson::default_parse_context&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) [47] void std::vector<Unit, std::allocator<Unit> >::_M_emplace_back_aux<Unit const&>(Unit const&) [24] main
+  [33] bool picojson::_parse_string<std::string, __gnu_cxx::__normal_iterator<char const*, std::string> >(std::string&, picojson::input<__gnu_cxx::__normal_iterator<char const*, std::string> >&) [10] void std::vector<(anonymous namespace)::Item, std::allocator<(anonymous namespace)::Item> >::_M_emplace_back_aux<(anonymous namespace)::Item>((anonymous namespace)::Item&&) (vector.tcc) [23] <cycle 1>
+  [35] picojson::default_parse_context::set_number(double) [43] void std::vector<picojson::value, std::allocator<picojson::value> >::_M_emplace_back_aux<picojson::value>(picojson::value&&) [20] <cycle 2>
