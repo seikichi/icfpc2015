@@ -62,12 +62,13 @@ int isInUnit(const vector<pair<int,int> >& current_cell_positions, const pair<in
 }
 
 // if the result makes hole whose size is within "threshold", get the score "penalty"
-int avoidHole(const Game& game, 
+double avoidHole(const Game& game, 
               const State& state,
               const vector<pair<int,int> >& current_cell_positions,
               const vector<pair<int,int> >& neighbors,
               const vector<vector<pair<int,int> > >& directions,
-              const int penalty,
+              const double penalty,
+              const double normal,
               const int threshold) {
   // how many cells from neighbor? (bfs)
   for (const auto& neighbor : neighbors) {
@@ -97,7 +98,7 @@ int avoidHole(const Game& game,
       return penalty;
     }
   }
-  return 0;
+  return normal;
 }
 
 
@@ -157,14 +158,24 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
   auto it = unique(neighbors.begin(), neighbors.end());
   neighbors.erase(it, neighbors.end());
   
-  int hole_penalty_base = 0;
+  double hole_penalty_base = 1.0;
   int hole_size_threshold = 1;
   
+  /*
   int ave_y = calcSumCellPositionY(current_cell_positions) / current_cell_positions.size();
   int number_of_neighbors = calculateFilledNeighbors(game, state, neighbors);
   int distance_from_center = 0; //calculateDistanceFromCenter(game, current_cell_positions);
-  int hole_penalty = 0; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, hole_size_threshold);
+  int hole_penalty = 0; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, 0, hole_size_threshold);
   return ave_y + next_state.score + number_of_neighbors + distance_from_center + hole_penalty;
+  */
+  
+  int base = 1000000000;
+  double ave_y_ratio = calcSumCellPositionY(current_cell_positions) / (double)(current_cell_positions.size() * game.h);
+  double filled_neighbors_ratio = calculateFilledNeighbors(game, state, neighbors) / (double) neighbors.size();
+  double distance_from_center = 1; //calculateDistanceFromCenter(game, current_cell_positions);
+  double hole_penalty = 1; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, 1, hole_size_threshold);
+  double point_up_ratio = (next_state.score + 1) / (double) (state.score + 1);
+  return (int)(base * point_up_ratio * ave_y_ratio * filled_neighbors_ratio * distance_from_center * hole_penalty);
 }
 
 long long getTime() {
@@ -220,8 +231,7 @@ string RonricoAI::Run(const Game& game) {
       if (visited[visited_index]) { continue; }
       visited[visited_index] = true;
 
-      //const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
-      const vector<char> commands = {'!', 'e', 'i', 'l', 'd', 'k'};
+      const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
       for (auto c : commands) {
         State next_state = item.state;
         const CommandResult result = next_state.Command(game, c);
