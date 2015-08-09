@@ -170,7 +170,7 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
   */
   
   int base = 1000000000;
-  double ave_y_ratio = calcSumCellPositionY(current_cell_positions) / (double)(current_cell_positions.size() * game.h);
+  double ave_y_ratio = 1.1 * calcSumCellPositionY(current_cell_positions) / (double)(current_cell_positions.size() * game.h);
   double filled_neighbors_ratio = calculateFilledNeighbors(game, state, neighbors) / (double) neighbors.size();
   double distance_from_center = 1; //calculateDistanceFromCenter(game, current_cell_positions);
   double hole_penalty = 1; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, 1, hole_size_threshold);
