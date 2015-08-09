@@ -52,7 +52,7 @@ bool isWallOrFilled(const Game& game, const State& state, const pair<int,int>& p
   return false;
 }
 
-int isInUnit(const vector<pair<int,int> >& current_cell_positions, pair<int,int> position) {
+int isInUnit(const vector<pair<int,int> >& current_cell_positions, const pair<int,int>& position) {
   for (auto& cell_position : current_cell_positions) {
     if (position == cell_position) {
       return true;
@@ -66,9 +66,9 @@ int avoidHole(const Game& game,
               const State& state,
               const vector<pair<int,int> >& current_cell_positions,
               const vector<pair<int,int> >& neighbors,
-              const vector<vector<pair<int,int> > > directions,
-              int penalty,
-              int threshold) {
+              const vector<vector<pair<int,int> > >& directions,
+              const int penalty,
+              const int threshold) {
   // how many cells from neighbor? (bfs)
   for (const auto& neighbor : neighbors) {
     set<pair<int,int> > not_filled_cell_positions;
@@ -113,7 +113,7 @@ int calculateFilledNeighbors(const Game& game, const State& state, const vector<
   return filled_neighbor;
 }
 
-int calcSumCellPositionY(const vector<pair<int,int> > current_cell_positions) {
+int calcSumCellPositionY(const vector<pair<int,int> >& current_cell_positions) {
   int total = 0;
   for(auto& position : current_cell_positions) {
     total += position.second;
@@ -221,7 +221,7 @@ string RonricoAI::Run(const Game& game) {
       visited[visited_index] = true;
 
       //const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
-      const vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
+      const vector<char> commands = {'!', 'e', 'i', 'l', 'd', 'k'};
       for (auto c : commands) {
         State next_state = item.state;
         const CommandResult result = next_state.Command(game, c);
