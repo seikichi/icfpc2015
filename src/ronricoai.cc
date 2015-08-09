@@ -157,7 +157,7 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
   auto it = unique(neighbors.begin(), neighbors.end());
   neighbors.erase(it, neighbors.end());
   
-  int hole_penalty_base = -10;
+  int hole_penalty_base = 0;
   int hole_size_threshold = 1;
   
   int sum_y = calcSumCellPositionY(current_cell_positions);
