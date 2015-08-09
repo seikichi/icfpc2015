@@ -1,4 +1,5 @@
 TARGET = play_icfp2015
+PROFILE = profile
 VISUALIZER = visualizer
 
 CXX = g++
@@ -6,7 +7,7 @@ CXX = g++
 OVERALL_OPTIONS = -pipe
 LANGUAGE_OPTIONS = -std=c++11
 WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual #-Werror #-fcolor-diagnostics
-OPTIMIZATION_OPTIONS = #-O3 -fno-omit-frame-pointer -march=native -mtune=native
+OPTIMIZATION_OPTIONS = -O3 -fno-omit-frame-pointer -march=native -mtune=native
 CODE_GENERATION_OPTIONS = -fPIC
 PREPROCESSOR_OPTIONS = -MMD -MP
 DEBUGGING_OPTIONS = -gdwarf-3 # -fsanitize=address
@@ -20,6 +21,9 @@ LIBS = -lm -lpthread
 SOURCES = $(wildcard src/*.cc)
 OBJECTS = $(patsubst src/%.cc, obj/main/%.o, $(SOURCES))
 DEPENDS = $(patsubst %.o, %.d, $(OBJECTS))
+
+PROFILE_OBJECTS = $(patsubst src/%.cc, obj/profile/%.o, $(SOURCES))
+PROFILE_DEPENDS = $(patsubst %.o, %.d, $(PROFILE_OBJECTS))
 
 TEST_SOURCES = $(wildcard test/*.cc)
 TEST_OBJECTS = $(patsubst test/%.cc, obj/test/%.o, $(TEST_SOURCES))
@@ -52,6 +56,20 @@ obj/main/%.o: src/%.cc
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 -include $(DEPENDS)
+
+#==============================================================================
+# Build rules for POFILE
+#==============================================================================
+
+$(PROFILE): $(PROFILE_OBJECTS)
+	$(CXX) $(LDFLAGS) -pg -o $@ $^ $(LIBS)
+
+obj/profile/%.o: src/%.cc
+	@mkdir -p obj/profile
+	$(CXX) $(CXXFLAGS) -pg -o $@ -c $<
+
+-include $(PROFILE_DEPENDS)
+
 
 #==============================================================================
 # Build rules for VISUALIZER
@@ -107,7 +125,7 @@ $(GTEST_OBJ_DIR)/gtest_main.a: $(GTEST_OBJ_DIR)/gtest-all.o $(GTEST_OBJ_DIR)/gte
 #==============================================================================
 
 clean:
-	rm -rf obj/ $(TARGET) $(VISUALIZER)
+	rm -rf obj/ $(TARGET) $(PROFILE) $(VISUALIZER)
 
 .PHONY: clean test
 
