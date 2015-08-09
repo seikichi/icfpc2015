@@ -3,7 +3,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 // Pattern Matching Automaton
 namespace util {
@@ -70,8 +69,8 @@ namespace util {
     SIZE,
   };
   extern std::vector<std::vector<char> > command_map;
-  extern std::unordered_map<char, Command> rev_command_map;
-  inline Command GetCommand(char c) { return rev_command_map[c]; }
+  extern Command rev_command_map[256];
+  inline Command GetCommand(char c) { return rev_command_map[(int)c]; }
   inline std::vector<char> GetCommandStr(Command c) {
     return command_map[(int)c];
   }

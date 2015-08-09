@@ -20,7 +20,7 @@ struct SubmarineAI : public AI {
   std::string Annealing(const Game &game, const State& initial_state, std::string& initial_answer, int loop_count) const;
   std::string ChangePath(const Game &game, const State& initial_state, const std::string& commands, int loop_count, double temperature, long long start_time) const;
   std::string ChangeNode(const Game &game, const State& initial_state, const std::string& commands, int loop_count, int start_pos, int mid_point, int end_pos, long long start_time) const;
-  std::string FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int loop_count, Cell end_point, int end_rot, long long start_time) const;
+  std::string FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int loop_count, Cell mid_point, Cell end_point, int end_rot, long long start_time) const;
 
   double CalcEnergy(const Game& game, const SmallState& last_state) const;
   double CalcProbability(double energy, double next_energy, double temperature) const;
