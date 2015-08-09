@@ -24,7 +24,7 @@ while True:
                 if d['teamId'] != int(TEAM_ID) or len(d['tags']) != 1:
                     continue
                 tag = d['tags'][0]
-                output = {'data' d, 'date': datetime.datetime.utcnow()}
+                output = {'data': d, 'date': datetime.datetime.utcnow()}
                 db.submits.update({'input.data.tag': tag}, {'$set': {'output': output}}, upsert=False)
         time.sleep(60 * 1000)
     except:
