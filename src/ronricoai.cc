@@ -160,12 +160,11 @@ int evaluateScore(const Game& game,  const State& state, const State& next_state
   int hole_penalty_base = 0;
   int hole_size_threshold = 1;
   
-  int sum_y = calcSumCellPositionY(current_cell_positions);
+  int ave_y = calcSumCellPositionY(current_cell_positions) / current_cell_positions.size();
   int number_of_neighbors = calculateFilledNeighbors(game, state, neighbors);
-  int distance_from_center = calculateDistanceFromCenter(game, current_cell_positions) * 0;
-  int hole_penalty = avoidHole(game, state, current_cell_positions,
-      neighbors, directions, hole_penalty_base, hole_size_threshold);
-  return sum_y + next_state.score + number_of_neighbors + distance_from_center + hole_penalty;
+  int distance_from_center = 0; //calculateDistanceFromCenter(game, current_cell_positions);
+  int hole_penalty = 0; //avoidHole(game, state, current_cell_positions, neighbors, directions, hole_penalty_base, hole_size_threshold);
+  return ave_y + next_state.score + number_of_neighbors + distance_from_center + hole_penalty;
 }
 
 long long getTime() {
