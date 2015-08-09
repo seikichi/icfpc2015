@@ -24,7 +24,7 @@ if not API_TOKEN or not TEAM_ID:
 while True:
     try:
         print('downloading ...', file=sys.stderr)
-        text = requests.get('https://davar.icfpcontest.org/rankings.js').text
+        text = requests.get('https://davar.icfpcontest.org/rankings.js').content.decode('utf-8')
         print('done', file=sys.stderr)
         data = json.loads(re.sub(r'^var\s*data\s*=\s*', r'', text))
         for i, setting in enumerate(data['data']['settings']):
