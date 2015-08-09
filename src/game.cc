@@ -17,7 +17,7 @@ Cell ReadCell(object& o) {
 
 }  // namespace
 
-inline Cell Cell::Rotate(const Cell& pivot, int t) const {
+Cell Cell::Rotate(const Cell& pivot, int t) const {
   // Normalize pivot to (0, 0)
   Cell res(x - pivot.x, y - pivot.y);
 
