@@ -12,13 +12,9 @@ struct Item {
   State state;
   string commands;
   int priority;
-  Item(const Game& game, const State& state, const string& commands)
+  Item(const State& state, const string& commands)
     : state(state), commands(commands), priority(0) {
-    const Unit& unit = game.CurrentUnit(state.source_idx, state.rot);
-    for (const auto& cell : unit.cells) {
-        Cell c = cell.TranslateAdd(state.pivot);
-        priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
-    }
+    priority = state.pivot.y;
   }
 
   bool operator<(const Item& rhs) const {
@@ -56,7 +52,7 @@ string KichiAI::Run(const Game& game) {
     int max_score = -1;
     string best_commands = "";
     priority_queue<Item> Q;
-    Q.push(Item(game, state, ""));
+    Q.push(Item(state, ""));
 
     while (!Q.empty()) {
       const Item item = Q.top(); Q.pop();
@@ -72,7 +68,7 @@ string KichiAI::Run(const Game& game) {
       if (visited[visited_index]) { continue; }
       visited[visited_index] = true;
 
-      const vector<char> commands = {'p', 'b', 'a', 'l', 'd', 'k'};
+      const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
       for (auto c : commands) {
         State next_state = item.state;
         const CommandResult result = next_state.Command(game, c);
@@ -88,7 +84,7 @@ string KichiAI::Run(const Game& game) {
             best_commands = next_commands;
           }
         } else if (result == MOVE) {
-          Q.push(Item(game, next_state, next_commands));
+          Q.push(Item(next_state, next_commands));
         } else {
           assert(false);
         }
