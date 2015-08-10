@@ -66,15 +66,11 @@ CommandResult SmallState::UpdateVisitedAndLock(const Game& g, const State& state
   UpdatePowerPMA(g, state, c);
 
   // Check Lock
-  const auto& unit = g.CurrentUnit(state.source_idx, rot);
-  for (const auto& cell : unit.cells) {
-    Cell c = cell.TranslateAdd(pivot);
-    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || state.board[c.Lin(g.w)]) {
-      // The unit must be locked, revert the pivot and terminate
-      pivot = pivot.TranslateSub(move);
-      Lock(g, state);
-      return LOCK;
-    }
+  if (IsLock(g, state)) {
+    // The unit must be locked, revert the pivot and terminate
+    pivot = pivot.TranslateSub(move);
+    Lock(g, state);
+    return LOCK;
   }
 
   return MOVE;
@@ -85,16 +81,11 @@ CommandResult SmallState::UpdateRotAndLock(const Game& g, const State& state, in
   rot = (rot + dir + p) % p;
   UpdatePowerPMA(g, state, c);
 
-  // NOTE: Copy & Paste is good
-  const auto& unit = g.CurrentUnit(state.source_idx, rot);
-  for (const auto& cell : unit.cells) {
-    Cell c = cell.TranslateAdd(pivot);
-    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || state.board[c.Lin(g.w)]) {
-      // Revert and lock
-      rot = (rot - dir + p) % p;
-      Lock(g, state);
-      return LOCK;
-    }
+  if (IsLock(g, state)) {
+    // Revert and lock
+    rot = (rot - dir + p) % p;
+    Lock(g, state);
+    return LOCK;
   }
 
   return MOVE;
@@ -136,4 +127,16 @@ void SmallState::Lock(const Game& g, const State& state) {
   int line_bonus = (state.ls_old > 1) ? (state.ls_old - 1) * points / 10 : 0;
   score += points + line_bonus;
   score_move += points + line_bonus;
+}
+
+
+bool SmallState::IsLock(const Game& g, const State& state) {
+  const auto& unit = g.CurrentUnit(state.source_idx, rot);
+  for (const auto& cell : unit.cells) {
+    Cell c = cell.TranslateAdd(pivot);
+    if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || state.board[c.Lin(g.w)]) {
+      return true;
+    }
+  }
+  return false;
 }
