@@ -29,8 +29,6 @@ struct SubmarineAI : public AI {
 
 private:
   mutable util::Random random;
-  long long game_start_time = 0;
-  long long time_limit = 0;
-  long long time_limit_per_unit_for_initial_search = 0;
-  long long time_limit_per_unit_for_annealing = 0;
+  long long time_limit_per_unit_for_annealing;
+  long long time_limit_per_unit_for_initial_search;
 };
