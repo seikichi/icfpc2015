@@ -1,6 +1,8 @@
 #include <queue>
 #include "util.h"
 
+#include <assert.h>
+
 using namespace std;
 
 namespace util {
@@ -22,6 +24,7 @@ void PMA::Build(std::vector<std::string> &words) {
   // make failure links by bfs
   queue<Node*> q;
   q.push(root);
+  root->failure = root;
   while (!q.empty()) {
     Node *node = q.front(); q.pop();
     for (int k = 0; k < 128; ++k) if (node->to[k]) {
@@ -38,16 +41,32 @@ void PMA::Build(std::vector<std::string> &words) {
       }
     }
   }
+
+  q.push(root);
+  while (!q.empty()) {
+    Node *node = q.front(); q.pop();
+    for (int k = 0; k < 128; ++k) if (node->to[k]) {
+      Node *next = Go(node, k);
+      q.push(next);
+    } else {
+      Node* next = node;
+      while (next != root && Go(node, k) == NULL) { next = next->failure; }
+      next = next->to[k];
+      if (next == NULL) { next = root; }
+      node->to[k] = next;
+    }
+  }
 }
 
 AcceptIndex PMA::UpdateNode(char c, Node*& node) const {
   int k = (int)c;
-  while (Go(node, k) == NULL) node = node->failure;
-  node = Go(node, k);
+  assert(node->to[k] != NULL);
+  node = node->to[k];
   return node->ac;
 }
 
 Node* PMA::Go(Node* n, int k) const {
+  assert(n != NULL);
   if (n->to[k] != NULL) return n->to[k];
   if (n == root) return root;
   return NULL;

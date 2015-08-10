@@ -105,15 +105,9 @@ void SmallState::UpdatePowerPMA(const Game& g, const State& , char c) {
 
   // Update score
   int now_power = 0;
-  for (int i = 0; i < (int)accept_index.size(); ++i) {
-    if (accept_index[i]) {
-      if (!used_power[i]) {
-        now_power += 300;  // Bonus
-        used_power[i] = 1;
-      }
-      now_power += 2 * g.power_len[i];
-    }
-  }
+  now_power += 2 * accept_index.count() * pma_node->pos;
+  now_power += ((accept_index | used_power).count() - used_power.count()) * 300;
+  used_power |= accept_index;
   score += now_power;
   score_power = now_power;
 }
