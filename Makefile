@@ -124,6 +124,8 @@ $(GTEST_OBJ_DIR)/gtest_main.a: $(GTEST_OBJ_DIR)/gtest-all.o $(GTEST_OBJ_DIR)/gte
 # Misc
 #==============================================================================
 
+all: play_icfp2015 visualizer test
+
 clean:
 	rm -rf obj/ $(TARGET) $(PROFILE) $(VISUALIZER)
 
