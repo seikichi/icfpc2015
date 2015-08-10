@@ -154,12 +154,14 @@ void Visualizer::DrawGameState(const Game& game, const State& state) {
       }
     }
   }
-  const auto& unit = game.CurrentUnit(state.source_idx, state.rot);
-  for (const Cell& cell : unit.cells) {
-    Cell c = cell.TranslateAdd(state.pivot);
-    Draw(CellX(c), CellY(c), Image::UNIT);
+  if (state.source_idx < game.num_source_seeds) {
+    const auto& unit = game.CurrentUnit(state.source_idx, state.rot);
+    for (const Cell& cell : unit.cells) {
+      Cell c = cell.TranslateAdd(state.pivot);
+      Draw(CellX(c), CellY(c), Image::UNIT);
+    }
+    Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
   }
-  Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
   DrawText(8, GetBoardHeight(game) + 8, "Score: %d", state.score);
   if (state.gameover) {
     DrawText(8, GetBoardHeight(game) + 8 + 24, "Game Over!");
