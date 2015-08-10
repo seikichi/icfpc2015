@@ -50,7 +50,7 @@ void PMA::Build(std::vector<std::string> &words) {
       q.push(next);
     } else {
       Node* next = node;
-      while (next != root && Go(node, k) == NULL) { next = next->failure; }
+      while (next != root && Go(next, k) == NULL) { next = next->failure; }
       next = next->to[k];
       if (next == NULL) { next = root; }
       node->to[k] = next;
@@ -60,13 +60,13 @@ void PMA::Build(std::vector<std::string> &words) {
 
 AcceptIndex PMA::UpdateNode(char c, Node*& node) const {
   int k = (int)c;
-  assert(node->to[k] != NULL);
+  // assert(node->to[k] != NULL);
   node = node->to[k];
   return node->ac;
 }
 
 Node* PMA::Go(Node* n, int k) const {
-  assert(n != NULL);
+  // assert(n != NULL);
   if (n->to[k] != NULL) return n->to[k];
   if (n == root) return root;
   return NULL;
