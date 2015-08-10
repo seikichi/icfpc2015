@@ -5,6 +5,7 @@
 #include <mutex>
 #include <list>
 #include <thread>
+#include <string>
 
 typedef std::pair<int, int> TaskId;
 
