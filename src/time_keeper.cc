@@ -22,7 +22,7 @@ void TimeKeeper::Init(const vector<string>& problems, long long time_limit_usec)
     ifstream ifs(problems[i]);
     string json(istreambuf_iterator<char>{ifs}, istreambuf_iterator<char>{});
     Game game;
-    bool ok = game.Init(json, 0);
+    bool ok = game.Init(json, 0, {});
     if (!ok)
       continue;
     remaining_seeds[i] = game.num_source_seeds;
