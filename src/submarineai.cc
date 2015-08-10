@@ -445,11 +445,9 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       continue;
     }
 
-    const string commands = { "p'!.03bcefy2aghij4lmno 5dqrvz1kstuwx" };
-    for (auto c : commands) {
+    for (auto commands : util::command_map) {
       SmallState next_sstate = item.sstate;
-      const CommandResult result = next_sstate.Command(game, initial_state, c);
-
+      const CommandResult result = next_sstate.Command(game, initial_state, commands[0]);
       assert(result != GAMEOVER && result != CLEAR);
       if (end_point.y < next_sstate.pivot.y) {
         continue;
@@ -458,15 +456,23 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       } else if (result == MOVE) {
         if (next_sstate.pivot.y == mid_point.y &&
             next_sstate.pivot.x != mid_point.x &&
-            (util::GetCommand(c) == util::Command::SOUTH_WEST ||
-             util::GetCommand(c) == util::Command::SOUTH_EAST)) {
+            (util::GetCommand(commands[0]) == util::Command::SOUTH_WEST ||
+             util::GetCommand(commands[0]) == util::Command::SOUTH_EAST)) {
           continue;
         }
+      } else {
+        assert(false);
+      }
+      int max_pos = -1;
+      for (auto c : commands) {
+        next_sstate.pma_node = item.sstate.pma_node;
+        next_sstate.UpdatePowerPMA(game, initial_state, c);
+        if (next_sstate.pma_node->pos < max_pos) { continue; }
+        max_pos = next_sstate.pma_node->pos;
+
         const string next_commands = item.commands + string(1, c);
         Cell target_point = next_sstate.pivot.y < mid_point.y ? mid_point : end_point;
         Q.push(ItemAnnealing(game, initial_state, next_sstate, next_commands, base_score, target_point));
-      } else {
-        assert(false);
       }
     }
   }

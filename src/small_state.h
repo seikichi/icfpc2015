@@ -12,7 +12,6 @@ struct SmallState {
 
   void Init(const State &state);
   CommandResult Command(const Game& g, const State& state, char c);
-private:
   CommandResult UpdateVisitedAndLock(const Game& g, const State& state, Cell move, char c);
   CommandResult UpdateRotAndLock(const Game& g, const State& state, int dir, char c);
   void Lock(const Game& g, const State& state);
