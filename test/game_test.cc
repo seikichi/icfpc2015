@@ -202,6 +202,7 @@ TEST(StateTest, LineDelete) {
 }
 
 TEST(StateTest, Command) {
+  util::Init();
   auto json = ReadAll("test/game_test/state_command.json");
 
   Game g;
