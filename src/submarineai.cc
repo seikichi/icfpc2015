@@ -13,47 +13,62 @@ using namespace std;
 
 namespace {
 
-struct Item {
-  SmallState sstate;
-  int priority;
-  char c;
-  Item(const Game& game, const State& initial_state, const SmallState& sstate, char c)
-    : sstate(sstate), priority(0), c(c) {
-    const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
-    for (const auto& cell : unit.cells) {
-        Cell c = cell.TranslateAdd(sstate.pivot);
-        priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
+  struct Item {
+    SmallState sstate;
+    int priority;
+    char c;
+    Item(const Game& game, const State& initial_state, const SmallState& sstate, char c)
+      : sstate(sstate), priority(0), c(c) {
+        const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
+        for (const auto& cell : unit.cells) {
+          Cell c = cell.TranslateAdd(sstate.pivot);
+          priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
+        }
+      }
+
+    bool operator<(const Item& rhs) const {
+      return priority < rhs.priority;
     }
+  };
+
+  struct ItemAnnealing {
+    SmallState sstate;
+    int priority;
+    string commands;
+    ItemAnnealing(const Game& , const State& , const SmallState& sstate, const string& commands, int base_score, const Cell& target_cell)
+      : sstate(sstate), priority(0), commands(commands) {
+        int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
+        priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
+      }
+    bool operator<(const ItemAnnealing& rhs) const {
+      return priority < rhs.priority;
+    }
+  };
+
+  // int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
+  //   return state.pivot.y;
+  // }
+
+  long long getTime() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
   }
 
-  bool operator<(const Item& rhs) const {
-    return priority < rhs.priority;
+  int getVisitedIndex(const Game& game, const SmallState& sstate) {
+    const int visited_w = 3 * game.w;
+    const int visited_offset_x = game.w;
+    // const int visited_h = 3 * game.h;
+    const int visited_offset_y = game.h;
+    // assert(0 <= item.sstate.pivot.x + visited_offset_x);
+    // assert(item.sstate.pivot.x + visited_offset_x < visited_w);
+    // assert(0 <= item.sstate.pivot.y + visited_offset_y);
+    // assert(item.sstate.pivot.y + visited_offset_y < visited_h);
+    const int visited_index =
+      visited_w * 6 * (sstate.pivot.y + visited_offset_y) +
+      6 * (sstate.pivot.x + visited_offset_x) + sstate.rot;
+    return visited_index;
   }
-};
-
-struct ItemAnnealing {
-  SmallState sstate;
-  string commands;
-  int priority;
-  ItemAnnealing(const Game& , const State& , const SmallState& sstate, const string& commands, int base_score, const Cell& target_cell)
-    : sstate(sstate), commands(commands), priority(0) {
-      int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
-      priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
-  }
-  bool operator<(const ItemAnnealing& rhs) const {
-    return priority < rhs.priority;
-  }
-};
-
-// int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
-//   return state.pivot.y;
-// }
-
-long long getTime() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
-}
 }
 
 TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_limit_per_unit) const {
@@ -106,9 +121,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
     assert(item.sstate.pivot.x + visited_offset_x < visited_w);
     assert(0 <= item.sstate.pivot.y + visited_offset_y);
     assert(item.sstate.pivot.y + visited_offset_y < visited_h);
-    const int visited_index =
-      visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
-      6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
+    const int visited_index = getVisitedIndex(game, item.sstate);
 
     if (parent_char[visited_index] != 0) { continue; }
     parent_char[visited_index] = item.c;
@@ -118,9 +131,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, c);
       Item next_item = Item(game, initial_state, next_sstate, c);
-      const int next_visited_index =
-        visited_w * 6 * (next_sstate.pivot.y + visited_offset_y) +
-        6 * (next_sstate.pivot.x + visited_offset_x) + next_sstate.rot;
+      const int next_visited_index = getVisitedIndex(game, next_sstate);
 
       assert(result != GAMEOVER && result != CLEAR);
       if (result == ERROR) {
