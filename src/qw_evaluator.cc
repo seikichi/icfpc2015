@@ -77,7 +77,7 @@ double calculateLineFilledRatio(const Game& game, const vector<pair<int,int> >& 
     }
   }
   double filled_ratio =  count / (double)(target_y.size() * game.w);
-  double offset = 0.9;
+  double offset = 1.0;
   return (1 - offset) + filled_ratio * offset;
 }
 }  // namespace
@@ -125,13 +125,13 @@ int QwEvaluator::evaluate(
   
   int base = 1000000000;
   double average_y = calcAverageCellPositionY(current_cell_positions);
-  double ave_y_ratio = 1.0 + fabs(average_y - game.h) * 3.0 / (double)game.h;
+  double ave_y_ratio = 1.0 + fabs(average_y - game.h) * 10 / (double)game.h;
   if (average_y < game.h)
       ave_y_ratio = 1.0 / ave_y_ratio;
   double pivot_members_ratio = 1.0 + fabs(average_y - sstate.pivot.y) / (double)average_y;
   if (average_y > sstate.pivot.y)
       pivot_members_ratio = 1.0 / pivot_members_ratio;
-  double filled_neighbors_ratio = calculateFilledNeighbors(game, initial_state, neighbors) / (double) neighbors.size();
+  double filled_neighbors_ratio = 1.5 * calculateFilledNeighbors(game, initial_state, neighbors) / (double) neighbors.size();
   double distance_from_center_ratio = 1.0 + (calculateDistanceFromCenter(game, current_cell_positions) / (game.w / 2.0));
   double point_up_ratio = (next_sstate.score_move + 1) / (double) (sstate.score_move + 1);
   double line_filled_ratio = calculateLineFilledRatio(game, current_cell_positions, initial_state);
