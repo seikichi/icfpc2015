@@ -9,4 +9,4 @@ curl --user 'kmc:reikai' \
      -X POST \
      -H "Content-Type: application/json" \
      -d "@${1}" \
-    'http://ec2-52-24-7-24.us-west-2.compute.amazonaws.com:8080/api/submits?q=8644'
+     'http://ec2-52-69-136-236.ap-northeast-1.compute.amazonaws.com/ellatino/api/submits'

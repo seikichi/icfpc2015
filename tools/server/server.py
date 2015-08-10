@@ -105,4 +105,4 @@ def get_submit_list():
         }
     })
 
-run(host=os.environ.get('HOST', 'localhost'), port=8080)
+run(host=os.environ.get('HOST', 'localhost'), port=int(os.environ.get('PORT', '8080')))
