@@ -56,7 +56,7 @@ namespace {
     return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
   }
 
-  int getVisitedIndex(const Game& game, const SmallState& sstate) {
+  int getVisitedIndex(const Game& game, const SmallState& sstate, int offset_y) {
     const int visited_w = game.w + game.mergin_width * 2 + 2;
     const int visited_offset_x = game.mergin_width + 1;
     // const int visited_h = 2 * game.h;
@@ -66,7 +66,7 @@ namespace {
     // assert(0 <= item.sstate.pivot.y + visited_offset_y);
     // assert(item.sstate.pivot.y + visited_offset_y < visited_h);
     const int visited_index =
-      visited_w * 6 * (sstate.pivot.y + visited_offset_y) +
+      visited_w * 6 * (sstate.pivot.y - offset_y + visited_offset_y) +
       6 * (sstate.pivot.x + visited_offset_x) + sstate.rot;
     return visited_index;
   }
@@ -115,7 +115,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
 
     const Item item = Q.top(); Q.pop();
 
-    const int visited_index = getVisitedIndex(game, item.sstate);
+    const int visited_index = getVisitedIndex(game, item.sstate, 0);
 
     if (parent_char[visited_index] != 0) { continue; }
     parent_char[visited_index] = item.c;
@@ -125,7 +125,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, c);
       Item next_item = Item(game, initial_state, next_sstate, c);
-      const int next_visited_index = getVisitedIndex(game, next_sstate);
+      const int next_visited_index = getVisitedIndex(game, next_sstate, 0);
 
       assert(result != GAMEOVER && result != CLEAR);
       if (result == ERROR) {
@@ -289,7 +289,8 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
   Q.push(ItemAnnealing(game, initial_state, initial_sstate, 1, base_score, end_point, -1));
 
   const int visited_w = game.w + game.mergin_width * 2 + 2;
-  const int visited_h = game.h + game.mergin_height * 2 + 2;
+  const int visited_h = (end_point.y - initial_sstate.pivot.y) + 1 + game.mergin_height * 2 + 2;
+  // const int visited_h = game.h + game.mergin_height * 2 + 2;
 
   vector<char> parent_char(visited_h * visited_w * 6, 0);
   vector<int> priority(visited_h * visited_w * 6, -1000);
@@ -304,7 +305,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
 
     const ItemAnnealing item = Q.top(); Q.pop();
 
-    const int visited_index = getVisitedIndex(game, item.sstate);
+    const int visited_index = getVisitedIndex(game, item.sstate, initial_sstate.pivot.y);
 
     if (parent_char[visited_index] != 0) { continue; }
     parent_char[visited_index] = item.c;
@@ -332,7 +333,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, commands[0]);
       assert(result != GAMEOVER && result != CLEAR);
-      const int next_visited_index = getVisitedIndex(game, next_sstate);
+      const int next_visited_index = getVisitedIndex(game, next_sstate, initial_sstate.pivot.y);
       if (parent_char[next_visited_index]) { continue; }
 
       if (end_point.y < next_sstate.pivot.y) {
