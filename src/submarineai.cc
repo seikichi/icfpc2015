@@ -356,7 +356,7 @@ string SubmarineAI::Run(const Game& game) {
 
   cerr << "AI: submarine" << endl;
 
-  long long time_limit_per_unit = time_keeper->TimeLimitForTheSeed() / game.source_seq.size();
+  long long time_limit_per_unit = time_keeper->TimeLimitForTheSeed() / (game.source_seq.size() + 1);
   time_limit_per_unit_for_initial_search = time_limit_per_unit * 0.5;
   time_limit_per_unit_for_annealing = time_limit_per_unit * 0.5;
 
