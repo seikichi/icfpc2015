@@ -1,6 +1,7 @@
 #include "evaluator.h"
 
 #include "qwerty_evaluator.h"
+#include "qw_evaluator.h"
 #include "kichi_evaluator.h"
 
 using namespace std;
@@ -14,6 +15,8 @@ shared_ptr<Evaluator> Evaluator::CreateEvaluator() {
     result = make_shared<QwertyEvaluator>();
   } else if (name == "kichi") {
     result = make_shared<KichiEvaluator>();
+  } else if (name == "qw") {
+    result = make_shared<QwEvaluator>();
   } else if (name == "TODO") {
     // TODO
   } else {

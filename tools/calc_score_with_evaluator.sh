@@ -3,7 +3,7 @@
 header=""
 data=""
 
-for e in qwerty kichi; do
+for e in qwerty kichi qw; do
     # 標準エラー出力に best_score を出すので 2>&1
     output=$(EVALUATOR=${e} ./play_icfp2015 -f problems/problem_${ID}.json -t ${TIMEOUT:-60} 2>&1)
     echo "$output" 1>&2
