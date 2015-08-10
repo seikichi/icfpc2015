@@ -154,7 +154,7 @@ void Visualizer::DrawGameState(const Game& game, const State& state) {
       }
     }
   }
-  if (state.source_idx < game.num_source_seeds) {
+  if (state.source_idx < (int)game.source_seq.size()) {
     const auto& unit = game.CurrentUnit(state.source_idx, state.rot);
     for (const Cell& cell : unit.cells) {
       Cell c = cell.TranslateAdd(state.pivot);
