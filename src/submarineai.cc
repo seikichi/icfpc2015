@@ -15,10 +15,10 @@ namespace {
 
 struct Item {
   SmallState sstate;
-  string commands;
   int priority;
-  Item(const Game& game, const State& initial_state, const SmallState& sstate, const string& commands)
-    : sstate(sstate), commands(commands), priority(0) {
+  char c;
+  Item(const Game& game, const State& initial_state, const SmallState& sstate, char c)
+    : sstate(sstate), priority(0), c(c) {
     const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
     for (const auto& cell : unit.cells) {
         Cell c = cell.TranslateAdd(sstate.pivot);
@@ -69,23 +69,28 @@ TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_l
 }
 
 pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state, int loop_count) {
+  if (initial_state.IsClear(game) || initial_state.IsGameOver(game)) {
+    return make_pair(-1, "");
+  }
+
   // 1ユニットごとにループ
   const int visited_w = 3 * game.w;
   const int visited_offset_x = game.w;
   const int visited_h = 3 * game.h;
   const int visited_offset_y = game.h;
-  vector<bool> visited(visited_h * visited_w * 6, false);
 
-  if (initial_state.IsClear(game) || initial_state.IsGameOver(game)) {
-    return make_pair(-1, "");
-  }
+  vector<char> parent_char(visited_h * visited_w * 6, 0);
+  vector<int> priority(visited_h * visited_w * 6, -1000);
+  vector<int> parent_state(visited_h * visited_w * 6, -1);
+  char last_char = 0;
 
   int max_score = -1;
-  string best_commands = "";
+  int best_state = -1;
+  // string best_commands = "";
   priority_queue<Item> Q;
   SmallState initial_sstate;
   initial_sstate.Init(initial_state);
-  Q.push(Item(game, initial_state, initial_sstate, ""));
+  Q.push(Item(game, initial_state, initial_sstate, 1));
 
   long long start_time = getTime();
   while (!Q.empty()) {
@@ -105,14 +110,17 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
       visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
       6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
 
-    if (visited[visited_index]) { continue; }
-    visited[visited_index] = true;
+    if (parent_char[visited_index] != 0) { continue; }
+    parent_char[visited_index] = item.c;
 
     const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
     for (auto c : commands) {
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, c);
-      const string next_commands = item.commands + string(1, c);
+      Item next_item = Item(game, initial_state, next_sstate, c);
+      const int next_visited_index =
+        visited_w * 6 * (next_sstate.pivot.y + visited_offset_y) +
+        6 * (next_sstate.pivot.x + visited_offset_x) + next_sstate.rot;
 
       assert(result != GAMEOVER && result != CLEAR);
       if (result == ERROR) {
@@ -123,15 +131,30 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
             game, initial_state, item.sstate, next_sstate);
         if (score > max_score) {
           max_score = score;
-          best_commands = next_commands;
+          best_state = next_visited_index;
+          last_char = c;
         }
       } else if (result == MOVE) {
-        Q.push(Item(game, initial_state, next_sstate, next_commands));
+        if (parent_char[next_visited_index] != 0 ||
+            next_item.priority <= priority[next_visited_index]) { continue; }
+        priority[next_visited_index] = next_item.priority;
+        parent_state[next_visited_index] = visited_index;
+        Q.push(next_item);
       } else {
         assert(false);
       }
     }
   }
+  if (best_state == -1) { return make_pair(-1, ""); }
+
+  string best_commands(1, last_char);
+  int index = best_state;
+  while (parent_char[index] != 1) {
+    best_commands += parent_char[index];
+    index = parent_state[index];
+    assert(index != -1);
+  }
+  reverse(best_commands.begin(), best_commands.end());
 
   cerr << "[" << std::this_thread::get_id() << "] " << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
 
