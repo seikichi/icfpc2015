@@ -154,6 +154,7 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
   SmallState initial_last_sstate = CalcLastState(game, initial_state, initial_sstate, initial_answer);
   double energy = CalcEnergy(game, initial_last_sstate);
   pair<double, string> best_answer = make_pair(energy, initial_answer);
+  static int total_counter = 0;
   int counter = 0;
   long long start_time = getTime();
   long long end_time = time_limit_per_unit_for_annealing + start_time;
@@ -179,7 +180,8 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     }
     counter++;
   }
-  cerr << "[" << std::this_thread::get_id() << "] Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << endl;
+  total_counter += counter;
+  cerr << "[" << std::this_thread::get_id() << "] Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << " total_count=" << total_counter << endl;
   return best_answer.second;
 }
 
@@ -226,9 +228,15 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
       temp_sstate.Command(game, initial_state, commands[i]);
     }
     SmallState mid_sstate = temp_sstate;
+    mid_sstate.pivot.x += random.next(-5, 5);
     Cell mid_point = mid_sstate.pivot;
-    mid_point.x += random.next(-5, 5);
-    // int mid_rot = mid_sstate.rot;
+    bool ok = false;
+    for (int rot = 0; rot < game.CurrentPeriod(initial_state.source_idx); rot++) {
+      mid_sstate.rot = rot;
+      ok |= !mid_sstate.IsLock(game, initial_state);
+    }
+    if (!ok) { goto fail; }
+
     for (int i = mid_pos; i < end_pos; i++) {
       temp_sstate.Command(game, initial_state, commands[i]);
     }
@@ -236,28 +244,8 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     int end_rot = temp_sstate.rot;
 
     string mid = FindPath(game, initial_state, start_sstate, loop_count, mid_point, end_point, end_rot, start_time);
-    // cout << mid_point.x << " " << mid_point.y << " " << mid << endl;
     if (mid.size() == 0) { goto fail; }
     ret += mid;
-    // mid_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
-    // assert(mid_sstate.pivot == mid_point && mid_sstate.rot == mid_rot);
-    // bool success = false;
-    // char cs[2] = { 'a', 'l' };
-    // for (int i = 0; i < 2; i++) {
-    //   char c = cs[i];
-    //   SmallState temp_sstate2 = mid_sstate;
-    //   CommandResult command_result = temp_sstate2.Command(game, initial_state, c);
-    //   if (command_result == MOVE) {
-    //     mid_sstate = temp_sstate2;
-    //     ret.push_back(c);
-    //     success = true;
-    //     break;
-    //   }
-    // }
-    // if (!success) { goto fail; }
-    // string mid2 = FindPath(game, initial_state, mid_sstate, loop_count, end_point, end_rot, start_time);
-    // if (mid2.size() == 0) { goto fail; }
-    // ret += mid2;
     temp_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
     assert(temp_sstate.pivot == end_point && temp_sstate.rot == end_rot);
     ret += commands.substr(end_pos, commands.size() - end_pos);
