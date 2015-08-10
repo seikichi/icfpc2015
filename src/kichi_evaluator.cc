@@ -10,9 +10,9 @@
 using namespace std;
 
 int KichiEvaluator::evaluate(
-    const Game& game,
-    const State& initial_state,
-    const SmallState& sstate,
+    const Game&,
+    const State&,
+    const SmallState&,
     const SmallState& next_sstate) {
 
   return next_sstate.pivot.y;

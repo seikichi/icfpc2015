@@ -11,72 +11,72 @@ using namespace std;
 
 namespace {
 
-int calculateDistanceFromCenter(const Game& game, const vector<pair<int,int> >& current_cell_positions) {
-  // units should go to both sides (distance from center)
-  int average_x = 0;
-  for (const auto& position : current_cell_positions) {
-    average_x += position.first;
-  }
-  return fabs((game.w / 2) - (int)(average_x / current_cell_positions.size()));
-}
+// int calculateDistanceFromCenter(const Game& game, const vector<pair<int,int> >& current_cell_positions) {
+//   // units should go to both sides (distance from center)
+//   int average_x = 0;
+//   for (const auto& position : current_cell_positions) {
+//     average_x += position.first;
+//   }
+//   return fabs((game.w / 2) - (int)(average_x / current_cell_positions.size()));
+// }
 
-bool isWallOrFilled(const Game& game, const State& initial_state, const pair<int,int>& position) {
-  if (position.first < 0 || position.first >= game.w || position.second < 0 || position.second >= game.h){
-    return true;
-  } else if (initial_state.board[Cell(position.first, position.second).Lin(game.w)]){ 
-    return true;
-  }
-  return false;
-}
+// bool isWallOrFilled(const Game& game, const State& initial_state, const pair<int,int>& position) {
+//   if (position.first < 0 || position.first >= game.w || position.second < 0 || position.second >= game.h){
+//     return true;
+//   } else if (initial_state.board[Cell(position.first, position.second).Lin(game.w)]){ 
+//     return true;
+//   }
+//   return false;
+// }
 
-int isInUnit(const vector<pair<int,int> >& current_cell_positions, const pair<int,int>& position) {
-  for (auto& cell_position : current_cell_positions) {
-    if (position == cell_position) {
-      return true;
-    }
-  }
-  return false;
-}
+// int isInUnit(const vector<pair<int,int> >& current_cell_positions, const pair<int,int>& position) {
+//   for (auto& cell_position : current_cell_positions) {
+//     if (position == cell_position) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
-// if the result makes hole whose size is within "threshold", get the score "penalty"
-double avoidHole(const Game& game, 
-              const State& initial_state,
-              const vector<pair<int,int> >& current_cell_positions,
-              const vector<pair<int,int> >& neighbors,
-              const vector<vector<pair<int,int> > >& directions,
-              const double penalty,
-              const double normal,
-              const int threshold) {
-  // how many cells from neighbor? (bfs)
-  for (const auto& neighbor : neighbors) {
-    set<pair<int,int> > not_filled_cell_positions;
-    queue<pair<int,int> > que;
+// // if the result makes hole whose size is within "threshold", get the score "penalty"
+// double avoidHole(const Game& game, 
+//               const State& initial_state,
+//               const vector<pair<int,int> >& current_cell_positions,
+//               const vector<pair<int,int> >& neighbors,
+//               const vector<vector<pair<int,int> > >& directions,
+//               const double penalty,
+//               const double normal,
+//               const int threshold) {
+//   // how many cells from neighbor? (bfs)
+//   for (const auto& neighbor : neighbors) {
+//     set<pair<int,int> > not_filled_cell_positions;
+//     queue<pair<int,int> > que;
 
-    if (isInUnit(current_cell_positions, neighbor) || isWallOrFilled(game, initial_state, neighbor)) {
-      continue;
-    }
-    que.push(neighbor);
+//     if (isInUnit(current_cell_positions, neighbor) || isWallOrFilled(game, initial_state, neighbor)) {
+//       continue;
+//     }
+//     que.push(neighbor);
 
-    while (!que.empty() && (int)not_filled_cell_positions.size() <= threshold) {
-      auto& target = que.front(); que.pop();
-      not_filled_cell_positions.insert(target);
+//     while (!que.empty() && (int)not_filled_cell_positions.size() <= threshold) {
+//       auto& target = que.front(); que.pop();
+//       not_filled_cell_positions.insert(target);
 
-      for(const auto& direction : directions[target.second % 2]) {
-        pair<int, int> next(target.first + direction.first, target.second + direction.second);
-        if (not_filled_cell_positions.count(next) == 1) {
-          continue;
-        }
-        if (!isInUnit(current_cell_positions, next) && !isWallOrFilled(game, initial_state, next)) {
-          que.push(next);
-        }
-      }
-    }
-    if ((int)not_filled_cell_positions.size() <= threshold) {
-      return penalty;
-    }
-  }
-  return normal;
-}
+//       for(const auto& direction : directions[target.second % 2]) {
+//         pair<int, int> next(target.first + direction.first, target.second + direction.second);
+//         if (not_filled_cell_positions.count(next) == 1) {
+//           continue;
+//         }
+//         if (!isInUnit(current_cell_positions, next) && !isWallOrFilled(game, initial_state, next)) {
+//           que.push(next);
+//         }
+//       }
+//     }
+//     if ((int)not_filled_cell_positions.size() <= threshold) {
+//       return penalty;
+//     }
+//   }
+//   return normal;
+// }
 
 
 int calculateFilledNeighbors(const Game& game, const State& initial_state, const vector<pair<int,int> >& neighbors) {
