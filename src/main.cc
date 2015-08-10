@@ -41,8 +41,8 @@ int main(int argc, char** argv) {
   // input
   vector<string> problem_files;
   int time_limit_seconds = 300;
-  int memory_limit;
-  int cores;
+  int memory_limit = 100;
+  int cores = 2;
   vector<string> phrases_of_power;
 
   int result;
@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
       break;
     case 'c':
       cores = stoi(optarg);
+      break;
     case 'p':
       phrases_of_power.push_back(optarg);
       break;
@@ -67,18 +68,27 @@ int main(int argc, char** argv) {
     }
   }
 
+  TimeKeeper time_keeper;
+  time_keeper.Init(problem_files, (long long)time_limit_seconds * 1000000);
+
   // process
   stringstream ss;
   ss << "[";
   bool first = true;
-  for (const auto& problem_file : problem_files) {
+  for (int problem_id = 0; problem_id < (int)problem_files.size(); ++problem_id) {
     Game game;
-    auto source_seed_idx = 0;
 
-    ifstream ifs(problem_file.c_str());
-    string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
+    ifstream ifs(problem_files[problem_id].c_str());
+    string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
 
-    while (game.Init(problem, source_seed_idx++)) {
+    time_keeper.StartNewProblem(problem_id);
+
+    for (int source_seed_idx = 0; ; ++source_seed_idx) {
+      bool ok = game.Init(problem, source_seed_idx);
+      if (!ok)
+        break;
+      time_keeper.StartNewSeed(source_seed_idx);
+
       if (!first) { ss << ","; }
 
       pair<int, string> best{-1, "???????"};
@@ -86,7 +96,7 @@ int main(int argc, char** argv) {
       // Fetch result of annotated solution
       {
         auto echo_ai = make_shared<EchoAI>();
-        echo_ai->Init(time_limit_seconds);
+        echo_ai->Init(time_keeper);
         string solution = echo_ai->Run(game);
 
         int eval = Evaluate(game, solution);
@@ -97,7 +107,7 @@ int main(int argc, char** argv) {
       // Then, execute specified AI
       {
         auto ai = AI::CreateAI();
-        ai->Init(time_limit_seconds);
+        ai->Init(time_keeper);
         auto solution = ai->Run(game);
 
         best = max(best, make_pair(Evaluate(game, solution),

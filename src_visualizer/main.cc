@@ -215,21 +215,31 @@ int main(int argc, char** argv) {
     }
   }
 
-  // process
-  for (const auto& problem_file : problem_files) {
-    Game game;
-    auto source_seed_idx = 0;
+  TimeKeeper time_keeper;
+  time_keeper.Init(problem_files, (long long)time_limit_seconds * 1000000);
 
-    ifstream ifs(problem_file.c_str());
+  // process
+  for (int problem_id = 0; problem_id < (int)problem_files.size(); ++problem_id) {
+    Game game;
+
+    ifstream ifs(problem_files[problem_id].c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
-    while (game.Init(problem, source_seed_idx++)) {
+
+    time_keeper.StartNewProblem(problem_id);
+
+    for (int source_seed_idx = 0; ; ++source_seed_idx) {
+      bool ok = game.Init(problem, source_seed_idx);
+      if (!ok)
+        break;
+      time_keeper.StartNewSeed(source_seed_idx);
+
       if (manual_play) {
         EventLoopManual(game);
       } else {
         string commands;
         if (replay_filename == "") {
           auto ai = AI::CreateAI();
-          ai->Init(time_limit_seconds);
+          ai->Init(time_keeper);
           commands = ai->Run(game);
         } else {
           std::ifstream ifs(replay_filename);
@@ -244,7 +254,6 @@ int main(int argc, char** argv) {
         }
         EventLoopAI(game, commands);
       }
-
 
       break;
     }

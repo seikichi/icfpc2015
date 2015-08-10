@@ -201,10 +201,13 @@ int evaluateScore(const Game& game, const State& initial_state, const SmallState
 
 TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_limit_per_unit) const {
   long long now = getTime();
-  if (now - unit_start_time >= time_limit_per_unit)
+  if (now - unit_start_time >= time_limit_per_unit) {
     return TleState::Yellow;
-  if (now - game_start_time >= time_limit / 2)
+  }
+  if (time_keeper->RemainingTimeForTheSeed() <= 0) {
+    cerr << "ShouldExitLoop: Red" << endl;
     return TleState::Red;
+  }
   return TleState::Green;
 }
 
@@ -271,7 +274,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
     }
   }
 
-  cerr << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - game_start_time << " usec" << endl;
+  cerr << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
 
   return make_pair(max_score, best_commands);
 }
@@ -299,13 +302,13 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_annealing);
     if (tle_state == TleState::Yellow || tle_state == TleState::Red) { break; }
     long long current_time = getTime();
-    double rest_time = (double)(end_time - current_time) / (double)(end_time - start_time) + 1e-8;
-    string next_commands = ChangePath(game, initial_state, commands, loop_count, rest_time, start_time);
+    double temperature = (double)(end_time - current_time) / (double)(end_time - start_time) + 1e-8;
+    string next_commands = ChangePath(game, initial_state, commands, loop_count, temperature, start_time);
     SmallState next_last_sstate = CalcLastState(game, initial_state, initial_sstate, next_commands);
     assert(next_last_sstate.pivot == initial_last_sstate.pivot);
     assert(next_last_sstate.rot == initial_last_sstate.rot);
     double next_energy = CalcEnergy(game, next_last_sstate);
-    double probability = CalcProbability(energy, next_energy,  rest_time + 1e-8);
+    double probability = CalcProbability(energy, next_energy,  temperature + 1e-8);
     double r = random.next(0.0, 1.0);
     if (r < probability) {
       if (next_energy < energy) {
@@ -489,11 +492,9 @@ string SubmarineAI::Run(const Game& game) {
 
   cerr << "AI: submarine" << endl;
 
-  time_limit = (long long)time_limit_seconds * 1000000;
-  long long time_limit_per_unit = 4 * time_limit / (5 * game.num_source_seeds * game.source_seq.size());
+  long long time_limit_per_unit = time_keeper->TimeLimitForTheSeed() / game.source_seq.size();
   time_limit_per_unit_for_initial_search = time_limit_per_unit * 0.5;
   time_limit_per_unit_for_annealing = time_limit_per_unit * 0.5;
-  game_start_time = getTime();
 
   for (int loop_count = 0; ; ++loop_count) {
     auto p = Step(game, state, loop_count);
