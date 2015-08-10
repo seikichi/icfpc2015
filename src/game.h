@@ -88,6 +88,8 @@ struct Game {
   int num_source_seeds;
   util::PMA power_pma;
   std::vector<int> power_len;
+  int mergin_width;
+  int mergin_height;
 
   // return true if source_seed_idx < num of source seeds.
   bool Init(std::string json, int source_seed_idx, const std::vector<std::string>& phrases);

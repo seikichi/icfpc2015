@@ -95,6 +95,8 @@ bool Game::Init(std::string json, int source_seed_idx, const std::vector<string>
   w = (int)o["width"].get<double>();
   h = (int)o["height"].get<double>();
 
+  mergin_width = 0;
+  mergin_height = 0;
   const auto& a_units = o["units"].get<picojson::array>();
   for (auto& v_unit : a_units) {
     Unit unit;
@@ -113,6 +115,8 @@ bool Game::Init(std::string json, int source_seed_idx, const std::vector<string>
       Unit temp_unit = unit;
       for (auto& cell : temp_unit.cells) {
         cell = cell.Rotate(Cell(0, 0), rot);
+        mergin_width = max(mergin_width, cell.x);
+        mergin_height = max(mergin_height, cell.y);
       }
       us.push_back(temp_unit);
     }

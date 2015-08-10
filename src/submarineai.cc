@@ -57,10 +57,10 @@ namespace {
   }
 
   int getVisitedIndex(const Game& game, const SmallState& sstate) {
-    const int visited_w = 2 * game.w;
-    const int visited_offset_x = game.w / 2;
+    const int visited_w = game.w + game.mergin_width * 2 + 2;
+    const int visited_offset_x = game.mergin_width + 1;
     // const int visited_h = 2 * game.h;
-    const int visited_offset_y = game.h / 2;
+    const int visited_offset_y = game.mergin_height + 1;
     // assert(0 <= item.sstate.pivot.x + visited_offset_x);
     // assert(item.sstate.pivot.x + visited_offset_x < visited_w);
     // assert(0 <= item.sstate.pivot.y + visited_offset_y);
@@ -90,8 +90,8 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
   }
 
   // 1ユニットごとにループ
-  const int visited_w = 3 * game.w;
-  const int visited_h = 3 * game.h;
+  const int visited_w = game.w + game.mergin_width * 2 + 2;
+  const int visited_h = game.h + game.mergin_height * 2 + 2;
 
   vector<char> parent_char(visited_h * visited_w * 6, 0);
   vector<int> priority(visited_h * visited_w * 6, -1000);
@@ -288,8 +288,8 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
   priority_queue<ItemAnnealing> Q;
   Q.push(ItemAnnealing(game, initial_state, initial_sstate, 1, base_score, end_point, -1));
 
-  const int visited_w = 2 * game.w;
-  const int visited_h = 2 * game.h;
+  const int visited_w = game.w + game.mergin_width * 2 + 2;
+  const int visited_h = game.h + game.mergin_height * 2 + 2;
 
   vector<char> parent_char(visited_h * visited_w * 6, 0);
   vector<int> priority(visited_h * visited_w * 6, -1000);
