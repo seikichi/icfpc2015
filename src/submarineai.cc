@@ -36,10 +36,10 @@ namespace {
     int priority;
     char c;
     int parent_index;
-    ItemAnnealing(const Game& , const State& , const SmallState& sstate, char c, int base_score, const Cell& target_cell, int parent_index)
+    ItemAnnealing(const Game& , const State& , const SmallState& sstate, char c, int base_score, const Cell& target_cell, int parent_index, int r)
       : sstate(sstate), priority(0), c(c), parent_index(parent_index) {
         int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
-        priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
+        priority = (sstate.score - base_score) * 1000 + sstate.pma_node->pos * 1000 - dist * 10 + r;
       }
     bool operator<(const ItemAnnealing& rhs) const {
       return priority < rhs.priority;
@@ -286,7 +286,7 @@ fail:
 std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int , Cell mid_point, Cell end_point, int end_rot, long long start_time) const {
   int base_score = initial_sstate.score;
   priority_queue<ItemAnnealing> Q;
-  Q.push(ItemAnnealing(game, initial_state, initial_sstate, 1, base_score, end_point, -1));
+  Q.push(ItemAnnealing(game, initial_state, initial_sstate, 1, base_score, end_point, -1, 0));
 
   const int visited_w = game.w + game.mergin_width * 2 + 2;
   const int visited_h = (end_point.y - initial_sstate.pivot.y) + 1 + game.mergin_height * 2 + 2;
@@ -354,7 +354,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
         next_sstate.pma_node = item.sstate.pma_node;
         next_sstate.UpdatePowerPMA(game, initial_state, c);
         Cell target_point = next_sstate.pivot.y < mid_point.y ? mid_point : end_point;
-        ItemAnnealing next_item = ItemAnnealing(game, initial_state, next_sstate, c, base_score, target_point, visited_index);
+        ItemAnnealing next_item = ItemAnnealing(game, initial_state, next_sstate, c, base_score, target_point, visited_index, random.next(0, 9));
         if (next_item.priority <= priority[next_visited_index]) { continue; }
         priority[next_visited_index] = next_item.priority;
 
