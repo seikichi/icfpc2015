@@ -29,6 +29,7 @@ result = json.loads(response.read().decode('utf8'))
 
 new_tag = result['input']['new_tag']
 print('new tag: {}'.format(new_tag))
+print('http://ec2-52-69-136-236.ap-northeast-1.compute.amazonaws.com/ellatino/api/submits?q={}'.format(new_tag))
 
 if result['input']['response'] != 'created':
     warnings.warn('submit failed ...')
