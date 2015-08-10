@@ -225,13 +225,11 @@ int main(int argc, char** argv) {
     ifstream ifs(problem_files[problem_id].c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());;
 
-    time_keeper.StartNewProblem(problem_id);
-
     for (int source_seed_idx = 0; ; ++source_seed_idx) {
       bool ok = game.Init(problem, source_seed_idx, {});
       if (!ok)
         break;
-      time_keeper.StartNewSeed(source_seed_idx);
+      time_keeper.StartNewSeed(problem_id, source_seed_idx);
 
       if (manual_play) {
         EventLoopManual(game);
