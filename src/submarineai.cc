@@ -13,47 +13,63 @@ using namespace std;
 
 namespace {
 
-struct Item {
-  SmallState sstate;
-  string commands;
-  int priority;
-  Item(const Game& game, const State& initial_state, const SmallState& sstate, const string& commands)
-    : sstate(sstate), commands(commands), priority(0) {
-    const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
-    for (const auto& cell : unit.cells) {
-        Cell c = cell.TranslateAdd(sstate.pivot);
-        priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
+  struct Item {
+    SmallState sstate;
+    int priority;
+    char c;
+    Item(const Game& game, const State& initial_state, const SmallState& sstate, char c)
+      : sstate(sstate), priority(0), c(c) {
+        const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
+        for (const auto& cell : unit.cells) {
+          Cell c = cell.TranslateAdd(sstate.pivot);
+          priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
+        }
+      }
+
+    bool operator<(const Item& rhs) const {
+      return priority < rhs.priority;
     }
+  };
+
+  struct ItemAnnealing {
+    SmallState sstate;
+    int priority;
+    char c;
+    int parent_index;
+    ItemAnnealing(const Game& , const State& , const SmallState& sstate, char c, int base_score, const Cell& target_cell, int parent_index)
+      : sstate(sstate), priority(0), c(c), parent_index(parent_index) {
+        int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
+        priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
+      }
+    bool operator<(const ItemAnnealing& rhs) const {
+      return priority < rhs.priority;
+    }
+  };
+
+  // int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
+  //   return state.pivot.y;
+  // }
+
+  long long getTime() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
   }
 
-  bool operator<(const Item& rhs) const {
-    return priority < rhs.priority;
+  int getVisitedIndex(const Game& game, const SmallState& sstate) {
+    const int visited_w = 2 * game.w;
+    const int visited_offset_x = game.w / 2;
+    // const int visited_h = 2 * game.h;
+    const int visited_offset_y = game.h / 2;
+    // assert(0 <= item.sstate.pivot.x + visited_offset_x);
+    // assert(item.sstate.pivot.x + visited_offset_x < visited_w);
+    // assert(0 <= item.sstate.pivot.y + visited_offset_y);
+    // assert(item.sstate.pivot.y + visited_offset_y < visited_h);
+    const int visited_index =
+      visited_w * 6 * (sstate.pivot.y + visited_offset_y) +
+      6 * (sstate.pivot.x + visited_offset_x) + sstate.rot;
+    return visited_index;
   }
-};
-
-struct ItemAnnealing {
-  SmallState sstate;
-  string commands;
-  int priority;
-  ItemAnnealing(const Game& , const State& , const SmallState& sstate, const string& commands, int base_score, const Cell& target_cell)
-    : sstate(sstate), commands(commands), priority(0) {
-      int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
-      priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
-  }
-  bool operator<(const ItemAnnealing& rhs) const {
-    return priority < rhs.priority;
-  }
-};
-
-// int evaluateScore_0815_1917(const Game&, const State& state, const State&) {
-//   return state.pivot.y;
-// }
-
-long long getTime() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
-}
 }
 
 TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_limit_per_unit) const {
@@ -69,23 +85,25 @@ TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_l
 }
 
 pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state, int loop_count) {
-  // 1ユニットごとにループ
-  const int visited_w = 3 * game.w;
-  const int visited_offset_x = game.w;
-  const int visited_h = 3 * game.h;
-  const int visited_offset_y = game.h;
-  vector<bool> visited(visited_h * visited_w * 6, false);
-
   if (initial_state.IsClear(game) || initial_state.IsGameOver(game)) {
     return make_pair(-1, "");
   }
 
+  // 1ユニットごとにループ
+  const int visited_w = 3 * game.w;
+  const int visited_h = 3 * game.h;
+
+  vector<char> parent_char(visited_h * visited_w * 6, 0);
+  vector<int> priority(visited_h * visited_w * 6, -1000);
+  vector<int> parent_state(visited_h * visited_w * 6, -1);
+  char last_char = 0;
+
   int max_score = -1;
-  string best_commands = "";
+  int best_state = -1;
   priority_queue<Item> Q;
   SmallState initial_sstate;
   initial_sstate.Init(initial_state);
-  Q.push(Item(game, initial_state, initial_sstate, ""));
+  Q.push(Item(game, initial_state, initial_sstate, 1));
 
   long long start_time = getTime();
   while (!Q.empty()) {
@@ -97,22 +115,17 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
 
     const Item item = Q.top(); Q.pop();
 
-    assert(0 <= item.sstate.pivot.x + visited_offset_x);
-    assert(item.sstate.pivot.x + visited_offset_x < visited_w);
-    assert(0 <= item.sstate.pivot.y + visited_offset_y);
-    assert(item.sstate.pivot.y + visited_offset_y < visited_h);
-    const int visited_index =
-      visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
-      6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
+    const int visited_index = getVisitedIndex(game, item.sstate);
 
-    if (visited[visited_index]) { continue; }
-    visited[visited_index] = true;
+    if (parent_char[visited_index] != 0) { continue; }
+    parent_char[visited_index] = item.c;
 
     const vector<char> commands = {'!', 'e', 'i', ' ', 'd', 'k'};
     for (auto c : commands) {
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, c);
-      const string next_commands = item.commands + string(1, c);
+      Item next_item = Item(game, initial_state, next_sstate, c);
+      const int next_visited_index = getVisitedIndex(game, next_sstate);
 
       assert(result != GAMEOVER && result != CLEAR);
       if (result == ERROR) {
@@ -123,15 +136,30 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
             game, initial_state, item.sstate, next_sstate);
         if (score > max_score) {
           max_score = score;
-          best_commands = next_commands;
+          best_state = next_visited_index;
+          last_char = c;
         }
       } else if (result == MOVE) {
-        Q.push(Item(game, initial_state, next_sstate, next_commands));
+        if (parent_char[next_visited_index] != 0 ||
+            next_item.priority <= priority[next_visited_index]) { continue; }
+        priority[next_visited_index] = next_item.priority;
+        parent_state[next_visited_index] = visited_index;
+        Q.push(next_item);
       } else {
         assert(false);
       }
     }
   }
+  if (best_state == -1) { return make_pair(-1, ""); }
+
+  string best_commands(1, last_char);
+  int index = best_state;
+  while (parent_char[index] != 1) {
+    best_commands += parent_char[index];
+    index = parent_state[index];
+    assert(index != -1);
+  }
+  reverse(best_commands.begin(), best_commands.end());
 
   cerr << "[" << std::this_thread::get_id() << "] " << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
 
@@ -258,14 +286,17 @@ fail:
 std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int , Cell mid_point, Cell end_point, int end_rot, long long start_time) const {
   int base_score = initial_sstate.score;
   priority_queue<ItemAnnealing> Q;
-  Q.push(ItemAnnealing(game, initial_state, initial_sstate, "", base_score, end_point));
+  Q.push(ItemAnnealing(game, initial_state, initial_sstate, 1, base_score, end_point, -1));
 
-  const int visited_w = 3 * game.w;
-  const int visited_offset_x = game.w;
-  const int visited_h = 3 * game.h;
-  const int visited_offset_y = game.h;
-  vector<bool> visited(visited_h * visited_w * 6, false);
+  const int visited_w = 2 * game.w;
+  const int visited_h = 2 * game.h;
+
+  vector<char> parent_char(visited_h * visited_w * 6, 0);
+  vector<int> priority(visited_h * visited_w * 6, -1000);
+  vector<int> parent_state(visited_h * visited_w * 6, -1);
+
   int mid_point_visited = 0;
+
   while (!Q.empty()) {
     TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_annealing);
     if (tle_state != TleState::Green)
@@ -273,22 +304,24 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
 
     const ItemAnnealing item = Q.top(); Q.pop();
 
-    assert(0 <= item.sstate.pivot.x + visited_offset_x);
-    assert(item.sstate.pivot.x + visited_offset_x < visited_w);
-    assert(0 <= item.sstate.pivot.y + visited_offset_y);
-    assert(item.sstate.pivot.y + visited_offset_y < visited_h);
-    const int visited_index =
-      visited_w * 6 * (item.sstate.pivot.y + visited_offset_y) +
-      6 * (item.sstate.pivot.x + visited_offset_x) + item.sstate.rot;
+    const int visited_index = getVisitedIndex(game, item.sstate);
 
-    if (visited[visited_index]) { continue; }
-    visited[visited_index] = true;
+    if (parent_char[visited_index] != 0) { continue; }
+    parent_char[visited_index] = item.c;
+    parent_state[visited_index] = item.parent_index;
+
     if (end_point == item.sstate.pivot && end_rot == item.sstate.rot) {
-      return item.commands;
+      string best_commands;
+      int index = visited_index;
+      while (parent_char[index] != 1) {
+        best_commands += parent_char[index];
+        index = parent_state[index];
+        assert(index != -1);
+      }
+      reverse(best_commands.begin(), best_commands.end());
+      return best_commands;
     }
-    if (mid_point == item.sstate.pivot) {
-      mid_point_visited++;
-    }
+    if (mid_point == item.sstate.pivot) { mid_point_visited++; }
     if (item.sstate.pivot.y < mid_point.y &&
         mid_point_visited == game.CurrentPeriod(initial_state.source_idx)) {
       // can't go down
@@ -299,6 +332,9 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, commands[0]);
       assert(result != GAMEOVER && result != CLEAR);
+      const int next_visited_index = getVisitedIndex(game, next_sstate);
+      if (parent_char[next_visited_index]) { continue; }
+
       if (end_point.y < next_sstate.pivot.y) {
         continue;
       } if (result == ERROR || result == LOCK) {
@@ -313,16 +349,15 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       } else {
         assert(false);
       }
-      int max_pos = -1;
       for (auto c : commands) {
         next_sstate.pma_node = item.sstate.pma_node;
         next_sstate.UpdatePowerPMA(game, initial_state, c);
-        if (next_sstate.pma_node->pos < max_pos) { continue; }
-        max_pos = next_sstate.pma_node->pos;
-
-        const string next_commands = item.commands + string(1, c);
         Cell target_point = next_sstate.pivot.y < mid_point.y ? mid_point : end_point;
-        Q.push(ItemAnnealing(game, initial_state, next_sstate, next_commands, base_score, target_point));
+        ItemAnnealing next_item = ItemAnnealing(game, initial_state, next_sstate, c, base_score, target_point, visited_index);
+        if (next_item.priority <= priority[next_visited_index]) { continue; }
+        priority[next_visited_index] = next_item.priority;
+
+        Q.push(next_item);
       }
     }
   }
