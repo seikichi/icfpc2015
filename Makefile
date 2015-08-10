@@ -8,14 +8,14 @@ OVERALL_OPTIONS = -pipe
 LANGUAGE_OPTIONS = -std=c++11
 WARNING_OPTIONS = -Wall -Wextra -Woverloaded-virtual #-Werror #-fcolor-diagnostics
 OPTIMIZATION_OPTIONS = -O3 -fno-omit-frame-pointer -march=native -mtune=native
-CODE_GENERATION_OPTIONS = -fPIC
+CODE_GENERATION_OPTIONS = -fPIC -pthread
 PREPROCESSOR_OPTIONS = -MMD -MP
-DEBUGGING_OPTIONS = -gdwarf-3 # -fsanitize=address
+DEBUGGING_OPTIONS = -gdwarf-3 -fsanitize=address
 INCLUDE_OPTIONS = -Iextlib
 CXXFLAGS = $(OVERALL_OPTIONS) $(LANGUAGE_OPTIONS) $(WARNING_OPTIONS) $(OPTIMIZATION_OPTIONS) \
            $(CODE_GENERATION_OPTIONS) $(PREPROCESSOR_OPTIONS) $(DEBUGGING_OPTIONS) $(INCLUDE_OPTIONS)
 
-LDFLAGS = # -fsanitize=address
+LDFLAGS = -pthread -fsanitize=address
 LIBS = -lm -lpthread
 
 SOURCES = $(wildcard src/*.cc)

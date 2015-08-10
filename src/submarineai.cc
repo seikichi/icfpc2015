@@ -8,6 +8,7 @@
 #include <cmath>
 #include <sys/time.h>
 #include <set>
+#include <thread>
 using namespace std;
 
 namespace {
@@ -61,7 +62,7 @@ TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_l
     return TleState::Yellow;
   }
   if (time_keeper->RemainingTimeForTheSeed() <= 0) {
-    cerr << "ShouldExitLoop: Red" << endl;
+    cerr << "[" << std::this_thread::get_id() << "] ShouldExitLoop: Red" << endl;
     return TleState::Red;
   }
   return TleState::Green;
@@ -132,7 +133,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
     }
   }
 
-  cerr << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
+  cerr << "[" << std::this_thread::get_id() << "] " << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
 
   return make_pair(max_score, best_commands);
 }
@@ -178,7 +179,7 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     }
     counter++;
   }
-  cerr << "Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << endl;
+  cerr << "[" << std::this_thread::get_id() << "] Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << endl;
   return best_answer.second;
 }
 

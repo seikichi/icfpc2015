@@ -3,6 +3,7 @@
 #include "echo_ai.h"
 #include "game.h"
 #include "util.h"
+#include "task.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -14,6 +15,7 @@
 #include <streambuf>
 #include <string>
 #include <vector>
+#include <atomic>
 
 #include "picojson/picojson.h"
 using namespace std;
@@ -35,6 +37,60 @@ int Evaluate(const Game& g, const string commands) {
 }
 
 }  // namespace
+
+string solve_one_seed(const Game& game, TimeKeeper& time_keeper, int problem_idx, int source_seed_idx) {
+  cerr << "problem_id = " << game.problem_id << ", source_seed_idx = " << source_seed_idx << endl;
+  time_keeper.StartNewSeed(problem_idx, source_seed_idx);
+
+  pair<int, string> best{-1, "???????"};
+
+  // Fetch result of annotated solution
+  {
+    auto echo_ai = make_shared<EchoAI>();
+    echo_ai->Init(time_keeper);
+    string solution = echo_ai->Run(game);
+
+    int eval = Evaluate(game, solution);
+    best = max(best, make_pair(eval, solution));
+    cerr << "# Annotated score: " << eval << endl;
+  }
+
+  // Then, execute specified AI
+  {
+    auto ai = AI::CreateAI();
+    ai->Init(time_keeper);
+    auto solution = ai->Run(game);
+
+    best = max(best, make_pair(Evaluate(game, solution), solution));
+  }
+
+  cerr << "best_score: " << best.first << endl;
+
+  return best.second;
+}
+
+string MakeOutputJson(map<TaskId, string> result_map) {
+  // process
+  stringstream ss;
+  ss << "[";
+  bool first = true;
+  for (auto p : result_map) {
+      if (!first) { ss << ","; }
+
+      int problem_id = p.first.first;
+      int source_seed = p.first.second;
+      const auto& solution = p.second;
+
+      ss << "{";
+      ss << "\"problemId\": " << problem_id << ", ";
+      ss << "\"seed\": " << source_seed << ", ";
+      ss << "\"solution\": " << "\"" << solution << "\"";
+      ss << "}";
+      first = false;
+  }
+  ss << "]";
+  return ss.str();
+}
 
 int main(int argc, char** argv) {
   util::Init();
@@ -71,63 +127,32 @@ int main(int argc, char** argv) {
   TimeKeeper time_keeper;
   time_keeper.Init(problem_files, (long long)time_limit_seconds * 1000000);
 
-  // process
-  stringstream ss;
-  ss << "[";
-  bool first = true;
-  for (int problem_id = 0; problem_id < (int)problem_files.size(); ++problem_id) {
+  TaskRunner task_runner;
+
+  for (int problem_idx = 0; problem_idx < (int)problem_files.size(); ++problem_idx) {
     Game game;
 
-    ifstream ifs(problem_files[problem_id].c_str());
+    ifstream ifs(problem_files[problem_idx].c_str());
     string problem((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
-
-    time_keeper.StartNewProblem(problem_id);
 
     for (int source_seed_idx = 0; ; ++source_seed_idx) {
       bool ok = game.Init(problem, source_seed_idx, phrases_of_power);
       if (!ok)
         break;
-      time_keeper.StartNewSeed(source_seed_idx);
-
-      if (!first) { ss << ","; }
-
-      pair<int, string> best{-1, "???????"};
-
-      // Fetch result of annotated solution
-      {
-        auto echo_ai = make_shared<EchoAI>();
-        echo_ai->Init(time_keeper);
-        string solution = echo_ai->Run(game);
-
-        int eval = Evaluate(game, solution);
-        best = max(best, make_pair(eval, solution));
-        cerr << "# Annotated score: " << eval << endl;
-      }
-
-      // Then, execute specified AI
-      {
-        auto ai = AI::CreateAI();
-        ai->Init(time_keeper);
-        auto solution = ai->Run(game);
-
-        best = max(best, make_pair(Evaluate(game, solution),
-                                   solution));
-      }
-
-      cerr << "best_score: " << best.first << endl;
-
-      auto solution = best.second;
-      ss << "{";
-      ss << "\"problemId\": " << game.problem_id << ", ";
-      ss << "\"seed\": " << game.source_seed << ", ";
-      ss << "\"solution\": " << "\"" << solution << "\"";
-      ss << "}";
-      first = false;
+      task_runner.RegisterTask(
+          make_pair(game.problem_id, game.source_seed),
+          [game, time_keeper, problem_idx, source_seed_idx]() mutable -> string {
+            return solve_one_seed(game, time_keeper, problem_idx, source_seed_idx);
+          });
     }
   }
-  ss << "]";
+
+  std::atomic_thread_fence(std::memory_order_release);
+  auto result_map = task_runner.RunAndWait(cores);
 
   // output
-  cout << ss.str() << endl;
+  auto output_json = MakeOutputJson(result_map);
+  cout << output_json << endl;
+
   return 0;
 }

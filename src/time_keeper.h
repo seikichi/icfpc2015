@@ -5,8 +5,7 @@
 
 struct TimeKeeper {
   void Init(const std::vector<std::string>& problems, long long time_limit_usec);
-  void StartNewProblem(int problem);
-  void StartNewSeed(int seed_idx);
+  void StartNewSeed(int problem, int seed_idx);
   long long TimeLimitForTheSeed() const;
   long long RemainingTimeForTheSeed() const;
 

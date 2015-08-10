@@ -36,12 +36,8 @@ void TimeKeeper::Init(const vector<string>& problems, long long time_limit_usec)
   execution_end_time = execution_start_time + time_limit_usec * 5 / 6;
 }
 
-void TimeKeeper::StartNewProblem(int problem) {
+void TimeKeeper::StartNewSeed(int problem, int seed_idx) {
   current_problem = problem;
-  current_seed_index = 0;
-}
-
-void TimeKeeper::StartNewSeed(int seed_idx) {
   current_seed_index = seed_idx;
   seed_start_time = getTime();
   seed_end_time = seed_start_time + TimeLimitForTheSeed();
