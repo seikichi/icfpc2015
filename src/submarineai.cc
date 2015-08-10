@@ -78,7 +78,7 @@ TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_l
     return TleState::Yellow;
   }
   if (time_keeper->RemainingTimeForTheSeed() <= 0) {
-    cerr << "[" << std::this_thread::get_id() << "] ShouldExitLoop: Red" << endl;
+    // cerr << "[" << std::this_thread::get_id() << "] ShouldExitLoop: Red" << endl;
     return TleState::Red;
   }
   return TleState::Green;
@@ -161,7 +161,7 @@ pair<int, string> SubmarineAI::Step(const Game& game, const State& initial_state
   }
   reverse(best_commands.begin(), best_commands.end());
 
-  cerr << "[" << std::this_thread::get_id() << "] " << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
+  // cerr << "[" << std::this_thread::get_id() << "] " << "Loop " << loop_count << ": time=" << getTime() - start_time << " usec, total=" << getTime() - time_keeper->seed_start_time << " usec" << endl;
 
   return make_pair(max_score, best_commands);
 }
@@ -209,7 +209,7 @@ string SubmarineAI::Annealing(const Game &game, const State& initial_state, stri
     counter++;
   }
   total_counter += counter;
-  cerr << "[" << std::this_thread::get_id() << "] Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << " total_count=" << total_counter << endl;
+  // cerr << "[" << std::this_thread::get_id() << "] Anneaing Loop " << loop_count << ": time=" << getTime() - start_time << " count: " << counter << " total_count=" << total_counter << endl;
   return best_answer.second;
 }
 
@@ -379,7 +379,7 @@ string SubmarineAI::Run(const Game& game) {
   State state;
   state.Init(game);
 
-  cerr << "AI: submarine" << endl;
+  // cerr << "AI: submarine" << endl;
 
   long long time_limit_per_unit = time_keeper->TimeLimitForTheSeed() / (game.source_seq.size() + 1);
   time_limit_per_unit_for_initial_search = time_limit_per_unit * 0.5;
@@ -400,7 +400,7 @@ string SubmarineAI::Run(const Game& game) {
     solution += best_commands;
   }
 
-  std::cerr << state.score << endl;
+  // std::cerr << state.score << endl;
   return solution;
 }
 
