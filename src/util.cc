@@ -56,6 +56,7 @@ Node* PMA::Go(Node* n, int k) const {
 std::vector<std::vector<char> > command_map;
 Command rev_command_map[256];
   void Init() {
+    for (int i = 0; i < 256; i++) { rev_command_map[i] = Command::SIZE; }
     command_map =  {
       { 'p', '\'', '!', '.', '0', '3', },
       { 'b', 'c', 'e', 'f', 'y', '2', },

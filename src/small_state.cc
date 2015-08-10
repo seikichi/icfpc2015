@@ -20,23 +20,7 @@ CommandResult SmallState::Command(const Game& g, const State& state, char c) {
   assert(!state.IsClear(g));
   assert(!state.IsGameOver(g));
 
-  const string command_chars[] = {
-    "p'!.03",
-    "bcefy2",
-    "aghij4",
-    "lmno 5",
-    "dqrvz1",
-    "kstuwx",
-    "\t\n\r",
-  };
-
-  util::Command command = util::Command::SIZE;
-  for (int i = 0; i < (int)util::Command::SIZE; ++i) {
-    if (command_chars[i].find(c) != string::npos) {
-      command = (util::Command)i;
-    }
-  }
-
+  util::Command command = util::GetCommand(c);
   if (command == util::Command::SIZE) {
     cerr << "AHOKA:Invalid command c=" << c << endl;
     exit(1);

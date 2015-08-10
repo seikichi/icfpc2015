@@ -2,6 +2,7 @@ play_icfp2015
 profile
 visualizer
 obj/
+score_logs/
 *.swp
 
 *~

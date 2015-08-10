@@ -83,7 +83,7 @@ TEST(GameTest, Init) {
   auto json = ReadAll("problems/problem_1.json");
 
   Game g;
-  bool init_result = g.Init(json, 0);
+  bool init_result = g.Init(json, 0, {});
   EXPECT_TRUE(init_result);
 
   // Check member values of g
@@ -107,7 +107,7 @@ TEST(UnitTest, GetSpawnPos) {
   auto json = ReadAll("test/game_test/get_spawn_pos.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
   Unit unit = g.units[0];
   int w = 10;
   auto spawn_pos = unit.GetSpawnPos(w);
@@ -130,7 +130,7 @@ TEST(GameTest, ComputePeriod) {
   auto json = ReadAll("test/game_test/compute_period.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   EXPECT_EQ(1, g.period[0]);
   EXPECT_EQ(2, g.period[1]);
@@ -142,7 +142,7 @@ TEST(StateTest, Init) {
   auto json = ReadAll("test/game_test/state_init.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -180,7 +180,7 @@ TEST(StateTest, LineDelete) {
   auto json = ReadAll("test/game_test/state_init.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -205,7 +205,7 @@ TEST(StateTest, Command) {
   auto json = ReadAll("test/game_test/state_command.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -247,7 +247,7 @@ TEST(StateTest, CommandRotation) {
   auto json = ReadAll("test/game_test/state_rotation.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -299,7 +299,7 @@ TEST(StateTest, GameOver) {
   auto json = ReadAll("test/game_test/state_command.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -315,7 +315,7 @@ TEST(StateTest, Clear) {
   auto json = ReadAll("test/game_test/state_clear.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -334,7 +334,7 @@ TEST(StateTest, Error) {
   auto json = ReadAll("test/game_test/state_clear.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
@@ -350,7 +350,7 @@ TEST(StateTest, PowerEi) {
   auto json = ReadAll("test/game_test/state_power.json");
 
   Game g;
-  g.Init(json, 0);
+  g.Init(json, 0, {});
 
   State s;
   s.Init(g);
