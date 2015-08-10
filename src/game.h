@@ -90,11 +90,11 @@ struct Game {
   std::vector<int> power_len;
 
   // return true if source_seed_idx < num of source seeds.
-  bool Init(std::string json, int source_seed_idx);
+  bool Init(std::string json, int source_seed_idx, const std::vector<std::string>& phrases);
 
   void GenerateSourceSequense(int seed, int length, int mod);
   void ComputePeriod();
-  void SetPowerInfo();
+  void SetPowerInfo(const std::vector<std::string>& given_phrases);
 
   Unit& CurrentUnit(int source_idx) {
     return units[source_seq[source_idx]];

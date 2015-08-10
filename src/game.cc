@@ -82,7 +82,7 @@ Cell Unit::GetSpawnPos(int w) const {
   return Cell(-66666666, -6666666);
 }
 
-bool Game::Init(std::string json, int source_seed_idx) {
+bool Game::Init(std::string json, int source_seed_idx, const std::vector<string>& phrases) {
   value v;
   string err = parse(v, json);
   if (!err.empty()) {
@@ -140,7 +140,7 @@ bool Game::Init(std::string json, int source_seed_idx) {
   ComputePeriod();
 
   // Init power PMA and power length
-  SetPowerInfo();
+  SetPowerInfo(phrases);
 
   return true;
 }
@@ -177,7 +177,7 @@ void Game::ComputePeriod() {
   }
 }
 
-void Game::SetPowerInfo() {
+void Game::SetPowerInfo(const std::vector<std::string>& given_phrases) {
   ifstream ifs("ini/power.txt");
   string line;
 
@@ -188,6 +188,13 @@ void Game::SetPowerInfo() {
     transform(line.begin(), line.end(), line.begin(), ::tolower);
     powers.push_back(line);
     power_len.push_back((int)line.size());
+  }
+
+  for (auto power : given_phrases) {
+    transform(power.begin(), power.end(), power.begin(), ::tolower);
+    if (find(powers.begin(), powers.end(), power) != powers.end()) { continue; }
+    powers.push_back(power);
+    power_len.push_back((int)power.size());
   }
 
   power_pma.Build(powers);
@@ -233,23 +240,7 @@ CommandResult State::Command(const Game& g, char c) {
     return GAMEOVER;
   }
 
-  const string command_chars[] = {
-    "p'!.03",
-    "bcefy2",
-    "aghij4",
-    "lmno 5",
-    "dqrvz1",
-    "kstuwx",
-    "\t\n\r",
-  };
-
-  util::Command command = util::Command::SIZE;
-  for (int i = 0; i < (int)util::Command::SIZE; ++i) {
-    if (command_chars[i].find(c) != string::npos) {
-      command = (util::Command)i;
-    }
-  }
-
+  util::Command command = util::GetCommand(c);
   if (command == util::Command::SIZE) {
     cerr << "AHOKA:Invalid command c=" << c << endl;
     exit(1);
