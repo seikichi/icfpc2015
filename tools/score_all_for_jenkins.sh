@@ -3,7 +3,7 @@
 export AI=submarineai
 
 export TIMEOUT=30
-./tools/calc_score.sh > submarineai_20_output.csv
+./tools/calc_score.sh > submarineai_30_output.csv
 
 export TIMEOUT=60
 ./tools/calc_score.sh > submarineai_60_output.csv
