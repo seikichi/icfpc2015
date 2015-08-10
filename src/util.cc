@@ -11,9 +11,9 @@ void PMA::Build(std::vector<std::string> &words) {
   // make trie
   for (int i = 0; i < (int)words.size(); ++i) {
     Node* node = root;
-    for (auto& ct : words[i]) {
-      int k = (int)ct;
-      if (node->to[k] == NULL) node->to[k] = new Node(i + 1);
+    for (int j = 0; j < (int)words[i].size(); j++) {
+      int k = words[i][j];
+      if (node->to[k] == NULL) node->to[k] = new Node(j + 1);
       node = node->to[k];
     }
     node->ac.set(i, 1);
@@ -54,9 +54,8 @@ Node* PMA::Go(Node* n, int k) const {
 }
 
 std::vector<std::vector<char> > command_map;
-std::unordered_map<char, Command> rev_command_map;
+Command rev_command_map[256];
   void Init() {
-    if (rev_command_map.size() != 0) { return; }
     command_map =  {
       { 'p', '\'', '!', '.', '0', '3', },
       { 'b', 'c', 'e', 'f', 'y', '2', },
@@ -68,7 +67,7 @@ std::unordered_map<char, Command> rev_command_map;
     };
     for (int i = 0; i < (int)Command::SIZE; i++) {
       for (char c : command_map[i]) {
-        rev_command_map[c] = (Command)i;
+        rev_command_map[(int)c] = (Command)i;
       }
     }
   }

@@ -36,7 +36,7 @@ struct ItemAnnealing {
   ItemAnnealing(const Game& , const State& , const SmallState& sstate, const string& commands, int base_score, const Cell& target_cell)
     : sstate(sstate), commands(commands), priority(0) {
       int dist = abs(target_cell.x - sstate.pivot.x) + abs(target_cell.y - sstate.pivot.y);
-      priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 10 - dist;
+      priority = (sstate.score - base_score) * 100 + sstate.pma_node->pos * 100 - dist;
   }
   bool operator<(const ItemAnnealing& rhs) const {
     return priority < rhs.priority;
@@ -325,7 +325,7 @@ string SubmarineAI::ChangePath(const Game &game, const State& initial_state, con
   vector<int> down_poss = { 0 };
   for (int i = 0; i < (int)commands.size(); i++) {
     util::Command c = util::GetCommand(commands[i]);
-    if (c == util::Command::SOUTH_WEST || c == util::Command::SOUTH_EAST) {
+    if (c == util::Command::SOUTH_WEST || c == util::Command::SOUTH_EAST || i == (int)commands.size() - 1) {
       down_poss.push_back(i);
     }
   }
@@ -366,35 +366,36 @@ string SubmarineAI::ChangeNode(const Game &game, const State& initial_state, con
     SmallState mid_sstate = temp_sstate;
     Cell mid_point = mid_sstate.pivot;
     mid_point.x += random.next(-5, 5);
-    int mid_rot = mid_sstate.rot;
+    // int mid_rot = mid_sstate.rot;
     for (int i = mid_pos; i < end_pos; i++) {
       temp_sstate.Command(game, initial_state, commands[i]);
     }
     Cell end_point = temp_sstate.pivot;
     int end_rot = temp_sstate.rot;
 
-    string mid1 = FindPath(game, initial_state, start_sstate, loop_count, mid_point, mid_rot, start_time);
-    if (mid1.size() == 0) { goto fail; }
-    ret += mid1;
-    mid_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
-    assert(mid_sstate.pivot == mid_point && mid_sstate.rot == mid_rot);
-    bool success = false;
-    char cs[2] = { 'a', 'l' };
-    for (int i = 0; i < 2; i++) {
-      char c = cs[i];
-      SmallState temp_sstate2 = mid_sstate;
-      CommandResult command_result = temp_sstate2.Command(game, initial_state, c);
-      if (command_result == MOVE) {
-        mid_sstate = temp_sstate2;
-        ret.push_back(c);
-        success = true;
-        break;
-      }
-    }
-    if (!success) { goto fail; }
-    string mid2 = FindPath(game, initial_state, mid_sstate, loop_count, end_point, end_rot, start_time);
-    if (mid2.size() == 0) { goto fail; }
-    ret += mid2;
+    string mid = FindPath(game, initial_state, start_sstate, loop_count, mid_point, end_point, end_rot, start_time);
+    // cout << mid_point.x << " " << mid_point.y << " " << mid << endl;
+    if (mid.size() == 0) { goto fail; }
+    ret += mid;
+    // mid_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
+    // assert(mid_sstate.pivot == mid_point && mid_sstate.rot == mid_rot);
+    // bool success = false;
+    // char cs[2] = { 'a', 'l' };
+    // for (int i = 0; i < 2; i++) {
+    //   char c = cs[i];
+    //   SmallState temp_sstate2 = mid_sstate;
+    //   CommandResult command_result = temp_sstate2.Command(game, initial_state, c);
+    //   if (command_result == MOVE) {
+    //     mid_sstate = temp_sstate2;
+    //     ret.push_back(c);
+    //     success = true;
+    //     break;
+    //   }
+    // }
+    // if (!success) { goto fail; }
+    // string mid2 = FindPath(game, initial_state, mid_sstate, loop_count, end_point, end_rot, start_time);
+    // if (mid2.size() == 0) { goto fail; }
+    // ret += mid2;
     temp_sstate = CalcLastState(game, initial_state, initial_sstate, ret);
     assert(temp_sstate.pivot == end_point && temp_sstate.rot == end_rot);
     ret += commands.substr(end_pos, commands.size() - end_pos);
@@ -404,7 +405,7 @@ fail:
   return commands;
 }
 
-std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int , Cell end_point, int end_rot, long long start_time) const {
+std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, const SmallState& initial_sstate, int , Cell mid_point, Cell end_point, int end_rot, long long start_time) const {
   int base_score = initial_sstate.score;
   priority_queue<ItemAnnealing> Q;
   Q.push(ItemAnnealing(game, initial_state, initial_sstate, "", base_score, end_point));
@@ -414,6 +415,7 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
   const int visited_h = 3 * game.h;
   const int visited_offset_y = game.h;
   vector<bool> visited(visited_h * visited_w * 6, false);
+  int mid_point_visited = 0;
   while (!Q.empty()) {
     TleState tle_state = ShouldExitLoop(start_time, time_limit_per_unit_for_annealing);
     if (tle_state != TleState::Green)
@@ -434,12 +436,19 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
     if (end_point == item.sstate.pivot && end_rot == item.sstate.rot) {
       return item.commands;
     }
+    if (mid_point == item.sstate.pivot) {
+      mid_point_visited++;
+    }
+    if (item.sstate.pivot.y < mid_point.y &&
+        mid_point_visited == game.CurrentPeriod(initial_state.source_idx)) {
+      // can't go down
+      continue;
+    }
 
     const string commands = { "p'!.03bcefy2aghij4lmno 5dqrvz1kstuwx" };
     for (auto c : commands) {
       SmallState next_sstate = item.sstate;
       const CommandResult result = next_sstate.Command(game, initial_state, c);
-      const string next_commands = item.commands + string(1, c);
 
       assert(result != GAMEOVER && result != CLEAR);
       if (end_point.y < next_sstate.pivot.y) {
@@ -447,7 +456,15 @@ std::string SubmarineAI::FindPath(const Game &game, const State& initial_state, 
       } if (result == ERROR || result == LOCK) {
         continue;
       } else if (result == MOVE) {
-        Q.push(ItemAnnealing(game, initial_state, next_sstate, next_commands, base_score, end_point));
+        if (next_sstate.pivot.y == mid_point.y &&
+            next_sstate.pivot.x != mid_point.x &&
+            (util::GetCommand(c) == util::Command::SOUTH_WEST ||
+             util::GetCommand(c) == util::Command::SOUTH_EAST)) {
+          continue;
+        }
+        const string next_commands = item.commands + string(1, c);
+        Cell target_point = next_sstate.pivot.y < mid_point.y ? mid_point : end_point;
+        Q.push(ItemAnnealing(game, initial_state, next_sstate, next_commands, base_score, target_point));
       } else {
         assert(false);
       }
