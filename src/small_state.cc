@@ -66,9 +66,9 @@ CommandResult SmallState::UpdateVisitedAndLock(const Game& g, const State& state
   UpdatePowerPMA(g, state, c);
 
   // Check Lock
-  const auto& unit = g.CurrentUnit(state.source_idx);
+  const auto& unit = g.CurrentUnit(state.source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || state.board[c.Lin(g.w)]) {
       // The unit must be locked, revert the pivot and terminate
       pivot = pivot.TranslateSub(move);
@@ -86,9 +86,9 @@ CommandResult SmallState::UpdateRotAndLock(const Game& g, const State& state, in
   UpdatePowerPMA(g, state, c);
 
   // NOTE: Copy & Paste is good
-  const auto& unit = g.CurrentUnit(state.source_idx);
+  const auto& unit = g.CurrentUnit(state.source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || state.board[c.Lin(g.w)]) {
       // Revert and lock
       rot = (rot - dir + p) % p;
@@ -120,9 +120,9 @@ void SmallState::UpdatePowerPMA(const Game& g, const State& , char c) {
 
 void SmallState::Lock(const Game& g, const State& state) {
   vector<short> fill_count = state.fill_count;
-  const auto& unit = g.CurrentUnit(state.source_idx);
+  const auto& unit = g.CurrentUnit(state.source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     const int idx = c.Lin(g.w);
     assert(state.board[idx] == 0);
     fill_count[c.y]++;

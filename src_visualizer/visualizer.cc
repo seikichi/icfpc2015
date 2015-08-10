@@ -154,8 +154,10 @@ void Visualizer::DrawGameState(const Game& game, const State& state) {
       }
     }
   }
-  for (const Cell& cell : state.GetCurrentUnitCells(game)) {
-    Draw(CellX(cell), CellY(cell), Image::UNIT);
+  const auto& unit = game.CurrentUnit(state.source_idx, state.rot);
+  for (const Cell& cell : unit.cells) {
+    Cell c = cell.TranslateAdd(state.pivot);
+    Draw(CellX(c), CellY(c), Image::UNIT);
   }
   Draw(CellX(state.pivot), CellY(state.pivot), Image::PIVOT);
   DrawText(8, GetBoardHeight(game) + 8, "Score: %d", state.score);

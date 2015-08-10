@@ -108,7 +108,15 @@ bool Game::Init(std::string json, int source_seed_idx, const std::vector<string>
     }
     unit.pivot = Cell(0, 0);  // NOTE: Do not use this
     unit.spawn_pos[w] = unit.GetSpawnPos(w); // memoize spown pos
-    units.push_back(unit);
+    vector<Unit> us;
+    for (int rot = 0; rot < 6; rot++) {
+      Unit temp_unit = unit;
+      for (auto& cell : temp_unit.cells) {
+        cell = cell.Rotate(Cell(0, 0), rot);
+      }
+      us.push_back(temp_unit);
+    }
+    units.push_back(us);
   }
 
   initial.resize(h * w);
@@ -161,12 +169,12 @@ void Game::ComputePeriod() {
   period.clear();
 
   for (const auto& unit : units) {
-    std::vector<Cell> s1 = unit.cells, s2;
+    std::vector<Cell> s1 = unit[0].cells, s2;
     sort(s1.begin(), s1.end());
     s2 = s1;
 
     for (int p = 1; ; ++p) {
-      for (auto& c : s2) c = c.Rotate(unit.pivot, 1);
+      for (auto& c : s2) c = c.Rotate(unit[0].pivot, 1);
       sort(s2.begin(), s2.end());
 
       if (s1 == s2) {
@@ -298,9 +306,9 @@ CommandResult State::UpdateVisitedAndLock(const Game& g, Cell move, char c) {
   UpdatePowerPMA(g, c);
 
   // Check Lock
-  const auto& unit = g.CurrentUnit(source_idx);
+  const auto& unit = g.CurrentUnit(source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
       // The unit must be locked, revert the pivot and terminate
       pivot = pivot.TranslateSub(move);
@@ -325,9 +333,9 @@ CommandResult State::UpdateRotAndLock(const Game& g, int dir, char c) {
   UpdatePowerPMA(g, c);
 
   // NOTE: Copy & Paste is good
-  const auto& unit = g.CurrentUnit(source_idx);
+  const auto& unit = g.CurrentUnit(source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     if (c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h || board[c.Lin(g.w)]) {
       // Revert and lock
       rot = (rot - dir + p) % p;
@@ -358,9 +366,9 @@ void State::UpdatePowerPMA(const Game& g, char c) {
 }
 
 void State::Lock(const Game& g) {
-  const auto& unit = g.CurrentUnit(source_idx);
+  const auto& unit = g.CurrentUnit(source_idx, rot);
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     const int idx = c.Lin(g.w);
     assert(board[idx] == 0);
     board[idx] = 1;
@@ -389,12 +397,12 @@ void State::Reset(const Game& g) {
   if (source_idx >= (int)g.source_seq.size()) {
     return;
   }
-  const auto& unit = g.CurrentUnit(source_idx);
+  const auto& unit = g.CurrentUnit(source_idx, rot);
   pivot = unit.spawn_pos.find(g.w)->second;
 
   // Check game over
   for (const auto& cell : unit.cells) {
-    Cell c = cell.Rotate(Cell(0, 0), rot).TranslateAdd(pivot);
+    Cell c = cell.TranslateAdd(pivot);
     assert(!(c.x < 0 || c.y < 0 || c.x >= g.w || c.y >= g.h)); // something is strange!
     if (board[c.Lin(g.w)]) {
       gameover = 1;
@@ -445,11 +453,11 @@ int State::LineDelete(const Game& g) {
   return ls;
 }
 
-vector<Cell> State::GetCurrentUnitCells(const Game& game) const {
-  const Unit& unit = game.CurrentUnit(source_idx);
-  std::vector<Cell> ret;
-  for (const Cell& cell : unit.cells) {
-    ret.push_back(cell.GetCurrentPos(rot, pivot));
-  }
-  return ret;
-}
+// vector<Cell> State::GetCurrentUnitCells(const Game& game) const {
+//   const Unit& unit = game.CurrentUnit(source_idx);
+//   std::vector<Cell> ret;
+//   for (const Cell& cell : unit.cells) {
+//     ret.push_back(cell.GetCurrentPos(rot, pivot));
+//   }
+//   return ret;
+// }

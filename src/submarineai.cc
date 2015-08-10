@@ -18,9 +18,9 @@ struct Item {
   int priority;
   Item(const Game& game, const State& initial_state, const SmallState& sstate, const string& commands)
     : sstate(sstate), commands(commands), priority(0) {
-    const Unit& unit = game.CurrentUnit(initial_state.source_idx);
+    const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
     for (const auto& cell : unit.cells) {
-        Cell c = cell.Rotate(Cell(0, 0), sstate.rot).TranslateAdd(sstate.pivot);
+        Cell c = cell.TranslateAdd(sstate.pivot);
         priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
     }
   }
@@ -53,9 +53,7 @@ long long getTime() {
   gettimeofday(&tv, NULL);
   return (long long)tv.tv_sec * 1000000 + (long long)tv.tv_usec;
 }
-
-};
-
+}
 
 TleState SubmarineAI::ShouldExitLoop(long long unit_start_time, long long time_limit_per_unit) const {
   long long now = getTime();

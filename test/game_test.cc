@@ -95,10 +95,10 @@ TEST(GameTest, Init) {
   EXPECT_EQ(15 * 15, (int)g.initial.size());
 
   EXPECT_EQ(1, (int)g.units.size());
-  EXPECT_EQ(0, g.units[0].cells[0].x);
-  EXPECT_EQ(0, g.units[0].cells[0].y);
-  EXPECT_EQ(0, g.units[0].pivot.x);
-  EXPECT_EQ(0, g.units[0].pivot.y);
+  EXPECT_EQ(0, g.units[0][0].cells[0].x);
+  EXPECT_EQ(0, g.units[0][0].cells[0].y);
+  EXPECT_EQ(0, g.units[0][0].pivot.x);
+  EXPECT_EQ(0, g.units[0][0].pivot.y);
 
   EXPECT_EQ(100, (int)g.source_seq.size());
 }
@@ -108,7 +108,7 @@ TEST(UnitTest, GetSpawnPos) {
 
   Game g;
   g.Init(json, 0, {});
-  Unit unit = g.units[0];
+  Unit unit = g.units[0][0];
   int w = 10;
   auto spawn_pos = unit.GetSpawnPos(w);
 

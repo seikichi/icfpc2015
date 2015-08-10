@@ -14,9 +14,9 @@ struct Item {
   int priority;
   Item(const Game& game, const State& state, const string& commands)
     : state(state), commands(commands), priority(0) {
-    const Unit& unit = game.CurrentUnit(state.source_idx);
+    const Unit& unit = game.CurrentUnit(state.source_idx, state.rot);
     for (const auto& cell : unit.cells) {
-        Cell c = cell.Rotate(Cell(0, 0), state.rot).TranslateAdd(state.pivot);
+        Cell c = cell.TranslateAdd(state.pivot);
         priority = max((int)(fabs(c.x - game.w/2.0) + (double)game.w * c.y / game.h), priority);
     }
   }

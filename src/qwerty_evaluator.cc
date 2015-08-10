@@ -119,10 +119,10 @@ int QwertyEvaluator::evaluate(
   };
 
   // get current status
-  const Unit& unit = game.CurrentUnit(initial_state.source_idx);
+  const Unit& unit = game.CurrentUnit(initial_state.source_idx, sstate.rot);
   vector<pair<int,int> > current_cell_positions;
   for (const auto& cell : unit.cells) {
-    Cell current_cell = cell.Rotate(Cell(0,0), sstate.rot).TranslateAdd(sstate.pivot);
+    Cell current_cell = cell.TranslateAdd(sstate.pivot);
     current_cell_positions.push_back(make_pair(current_cell.x, current_cell.y));
   }
 

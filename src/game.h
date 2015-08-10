@@ -82,7 +82,7 @@ struct Game {
   int source_seed;
   int h, w;
   Board initial;
-  std::vector<Unit> units;
+  std::vector<std::vector<Unit> > units;
   std::vector<int> period;
   std::vector<int> source_seq;
   int num_source_seeds;
@@ -96,11 +96,13 @@ struct Game {
   void ComputePeriod();
   void SetPowerInfo(const std::vector<std::string>& given_phrases);
 
-  Unit& CurrentUnit(int source_idx) {
-    return units[source_seq[source_idx]];
+  Unit& CurrentUnit(int source_idx, int rot) {
+    // assert(rot < CurrentPeriod(source_idx));
+    return units[source_seq[source_idx]][rot];
   }
-  const Unit& CurrentUnit(int source_idx) const {
-    return units[source_seq[source_idx]];
+  const Unit& CurrentUnit(int source_idx, int rot) const {
+    // assert(rot < CurrentPeriod[source_idx]);
+    return units[source_seq[source_idx]][rot];
   }
   int CurrentPeriod(int source_idx) const {
     return period[source_seq[source_idx]];
@@ -147,7 +149,7 @@ struct State {
   void Reset(const Game& g);
   // return the number of lines cleared with the current unit
   int LineDelete(const Game& g);
-  std::vector<Cell> GetCurrentUnitCells(const Game& gaem) const;
+  // std::vector<Cell> GetCurrentUnitCells(const Game& gaem) const;
 
   void SetCell(const Game& g, Cell c, int val) {
     board[c.Lin(g.w)] = val;
